@@ -10,6 +10,13 @@
         "EXPO_UPDATES_CHANNEL": "development"
       }
     },
+    "development-simulator": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_UPDATES_CHANNEL": "development"
+      }
+    },
     "preview": {
       "distribution": "internal",
       "env": {
