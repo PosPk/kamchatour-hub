@@ -13,11 +13,13 @@ export function EmergencyProvider({ children }: any) {
 
 	async function send(note?: string) {
 		if (!coordinates) return;
-		await sendSos({ coordinates, note });
+		const payload = note === undefined ? { coordinates } : { coordinates, note };
+		await sendSos(payload);
 	}
 
+	const value = React.useMemo(() => ({ send }), [coordinates]);
 	return (
-		<EmergencyContext.Provider value={{ send }}>
+		<EmergencyContext.Provider value={value}>
 			{children}
 		</EmergencyContext.Provider>
 	);

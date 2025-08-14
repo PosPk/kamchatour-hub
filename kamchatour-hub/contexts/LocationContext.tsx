@@ -20,8 +20,9 @@ export function LocationProvider({ children }: any) {
 		refresh();
 	}, []);
 
+	const value = React.useMemo(() => ({ coordinates, refresh }), [coordinates]);
 	return (
-		<LocationContext.Provider value={{ coordinates, refresh }}>
+		<LocationContext.Provider value={value}>
 			{children}
 		</LocationContext.Provider>
 	);
