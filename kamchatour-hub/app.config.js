@@ -24,6 +24,12 @@ module.exports = ({ config }) => {
       requestHeaders: {
         'expo-channel-name': channel
       }
+    },
+    android: {
+      package: 'ru.posservis.kamchatourhub'
+    },
+    ios: {
+      bundleIdentifier: 'ru.posservis.kamchatourhub'
     }
   };
 };
