@@ -1,0 +1,29 @@
+module.exports = ({ config }) => {
+  const channel = process.env.EXPO_UPDATES_CHANNEL || 'production';
+  return {
+    ...config,
+    name: 'Kamchatour Hub',
+    slug: 'trey-kamchatka',
+    owner: 'pos-servis',
+    version: '0.1.0',
+    orientation: 'portrait',
+    icon: './assets/icons/app-icon.png',
+    splash: {
+      image: './assets/images/splash.png',
+      backgroundColor: '#ffffff'
+    },
+    assetBundlePatterns: ['**/*'],
+    extra: {
+      eas: {
+        projectId: 'b7c5578c-0ec3-4f23-a88e-131de9ab4f72'
+      }
+    },
+    runtimeVersion: { policy: 'appVersion' },
+    updates: {
+      url: 'https://u.expo.dev/b7c5578c-0ec3-4f23-a88e-131de9ab4f72',
+      requestHeaders: {
+        'expo-channel-name': channel
+      }
+    }
+  };
+};
