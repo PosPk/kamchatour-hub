@@ -66,6 +66,13 @@ export default function HomeScreen() {
 					<Text style={styles.link}>Календарь событий →</Text>
 				</Pressable>
 			</View>
+
+			<View style={styles.section}>
+				<Text style={styles.sectionTitle}>Эко‑безопасность</Text>
+				<Pressable>
+					<Text style={styles.link}>Открыть рекомендации →</Text>
+				</Pressable>
+			</View>
 		</View>
 	);
 }
