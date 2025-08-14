@@ -3,7 +3,7 @@ module.exports = ({ config }) => {
   return {
     ...config,
     name: 'Kamchatour Hub',
-    slug: 'trey-kamchatka',
+    slug: 'kamchatour-hub',
     owner: 'pos-servis',
     version: '0.1.0',
     orientation: 'portrait',
@@ -15,12 +15,12 @@ module.exports = ({ config }) => {
     assetBundlePatterns: ['**/*'],
     extra: {
       eas: {
-        projectId: 'b7c5578c-0ec3-4f23-a88e-131de9ab4f72'
+        projectId: '34abf0cb-fdf3-48b7-b93a-129e3ba369b0'
       }
     },
     runtimeVersion: { policy: 'appVersion' },
     updates: {
-      url: 'https://u.expo.dev/b7c5578c-0ec3-4f23-a88e-131de9ab4f72',
+      url: 'https://u.expo.dev/34abf0cb-fdf3-48b7-b93a-129e3ba369b0',
       requestHeaders: {
         'expo-channel-name': channel
       }
