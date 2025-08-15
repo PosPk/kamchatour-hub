@@ -28,6 +28,16 @@
     },
     "web": {
       "bundler": "metro"
-    }
+    },
+    "plugins": [
+      [
+        "sentry-expo",
+        {
+          "organization": "YOUR_SENTRY_ORG",
+          "project": "kamchatour-hub",
+          "url": "https://sentry.io/"
+        }
+      ]
+    ]
   }
 }
