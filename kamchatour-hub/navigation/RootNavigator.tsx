@@ -1,6 +1,5 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '@screens/main/HomeScreen';
 import EcoSafetyScreen from '@screens/eco/EcoSafetyScreen';
 import MarketplaceScreen from '@screens/marketplace/MarketplaceScreen';
