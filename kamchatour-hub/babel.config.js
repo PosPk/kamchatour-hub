@@ -21,13 +21,13 @@ module.exports = function (api) {
 						'@features': './features'
 					}
 				}
-			]
+			],
+			'react-native-reanimated/plugin'
 		],
 		env: {
 			production: {
 				plugins: [['transform-remove-console', { exclude: ['error', 'warn'] }]]
 			}
-		},
-		plugins: ['react-native-reanimated/plugin']
+		}
 	};
 };
