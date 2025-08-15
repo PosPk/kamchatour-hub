@@ -8,7 +8,7 @@ export function initializeI18n() {
 		i18n
 			.use(initReactI18next)
 							.init({
-					resources: { ru: { translation: ru as any }, en: { translation: en as any } },
+					resources: { ru: { translation: ru as unknown as Record<string, unknown> }, en: { translation: en as unknown as Record<string, unknown> } },
 					lng: 'ru',
 					fallbackLng: 'en',
 					interpolation: { escapeValue: false }

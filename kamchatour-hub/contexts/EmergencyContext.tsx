@@ -8,16 +8,16 @@ type EmergencyContextValue = {
 
 const EmergencyContext = React.createContext<EmergencyContextValue | undefined>(undefined);
 
-export function EmergencyProvider({ children }: any) {
+export function EmergencyProvider({ children }: { children: React.ReactNode }) {
 	const { coordinates } = useLocationContext();
 
-	async function send(note?: string) {
+	const send = React.useCallback(async (note?: string) => {
 		if (!coordinates) return;
 		const payload = note === undefined ? { coordinates } : { coordinates, note };
 		await sendSos(payload);
-	}
+	}, [coordinates]);
 
-	const value = React.useMemo(() => ({ send }), [coordinates]);
+	const value = React.useMemo(() => ({ send }), [send]);
 	return (
 		<EmergencyContext.Provider value={value}>
 			{children}

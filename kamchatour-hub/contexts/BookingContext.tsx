@@ -9,7 +9,7 @@ type BookingContextValue = {
 
 const BookingContext = React.createContext<BookingContextValue | undefined>(undefined);
 
-export function BookingProvider({ children }: any) {
+export function BookingProvider({ children }: { children: React.ReactNode }) {
 	const [bookings, setBookings] = React.useState<Booking[]>([]);
 
 	function addBooking(b: Booking) {

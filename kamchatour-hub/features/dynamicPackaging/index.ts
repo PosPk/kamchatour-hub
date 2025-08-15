@@ -1,1 +1,1 @@
-export function buildDynamicPackage(): any { return {}; }
+export function buildDynamicPackage(): Record<string, unknown> { return {}; }

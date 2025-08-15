@@ -8,7 +8,7 @@ type LocationContextValue = {
 
 const LocationContext = React.createContext<LocationContextValue | undefined>(undefined);
 
-export function LocationProvider({ children }: any) {
+export function LocationProvider({ children }: { children: React.ReactNode }) {
 	const [coordinates, setCoordinates] = React.useState<Coordinates | null>(null);
 
 	async function refresh() {

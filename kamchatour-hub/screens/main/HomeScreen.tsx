@@ -28,7 +28,7 @@ export default function HomeScreen() {
 		<Animated.View entering={FadeInUp.duration(300)} style={styles.cardWrap}>
 			<CraftMasterCard name={item.name} craft={item.craft} village={item.village} />
 		</Animated.View>
-	), [masters]);
+	), []);
 
 	return (
 		<Screen>
@@ -54,8 +54,8 @@ export default function HomeScreen() {
 				<Text style={styles.sectionTitle}>{t('craft.title', 'Мастера промыслов')}</Text>
 				<FlatList
 					data={masters}
-					keyExtractor={(it) => it.id}
-					renderItem={renderMaster as any}
+					keyExtractor={(it: (typeof masters)[number]) => it.id}
+					renderItem={renderMaster}
 					initialNumToRender={4}
 					removeClippedSubviews
 					windowSize={5}
