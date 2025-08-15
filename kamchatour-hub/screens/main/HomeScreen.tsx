@@ -1,18 +1,19 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
+import Screen from '@components/ui/Screen';
 import SOSButton from '@components/ui/SOSButton';
 import { useLocation } from '@hooks/useLocation';
 import { getCurrentWeather } from '@lib/weatherIntegration';
 import { getMasters } from '@services/craftService';
-import { getEvents } from '@services/eventService';
+import { useTranslation } from 'react-i18next';
 import CraftMasterCard from '@components/culture/CraftMasterCard';
-import EventCard from '@components/culture/EventCard';
 
 export default function HomeScreen() {
+	const { t } = useTranslation();
 	const { coordinates } = useLocation();
 	const [weather, setWeather] = React.useState<{ temperatureC: number; condition: string } | null>(null);
-	const masters = React.useMemo(() => getMasters().slice(0, 2), []);
-	const events = React.useMemo(() => getEvents().slice(0, 2), []);
+	const masters = React.useMemo(() => getMasters().slice(0, 6), []);
 
 	React.useEffect(() => {
 		async function load() {
@@ -23,62 +24,51 @@ export default function HomeScreen() {
 		load();
 	}, [coordinates]);
 
+	const renderMaster = React.useCallback(({ item }: { item: (typeof masters)[number] }) => (
+		<Animated.View entering={FadeInUp.duration(300)} style={styles.cardWrap}>
+			<CraftMasterCard name={item.name} craft={item.craft} village={item.village} />
+		</Animated.View>
+	), [masters]);
+
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>КамчатТур Хаб</Text>
+		<Screen>
+			<Text style={styles.title}>{t('common.appName', 'КамчатТур Хаб')}</Text>
 
 			<View style={styles.section}>
-				<Text style={styles.sectionTitle}>Безопасность</Text>
+				<Text style={styles.sectionTitle}>{t('sos.title', 'Аварийная помощь')}</Text>
 				<SOSButton />
 			</View>
 
 			<View style={styles.section}>
-				<Text style={styles.sectionTitle}>Погода</Text>
+				<Text style={styles.sectionTitle}>{t('weather.title', 'Погода')}</Text>
 				{weather ? (
 					<Text style={styles.text}>
 						{weather.temperatureC}°C • {weather.condition}
 					</Text>
 				) : (
-					<Text style={styles.text}>Загрузка...</Text>
+					<Text style={styles.text}>{t('common.loading', 'Загрузка...')}</Text>
 				)}
 			</View>
 
 			<View style={styles.section}>
-				<Text style={styles.sectionTitle}>Мастера промыслов</Text>
-				{masters.map(m => (
-					<View key={m.id} style={styles.cardWrap}>
-						<CraftMasterCard name={m.name} craft={m.craft} village={m.village} />
-					</View>
-				))}
+				<Text style={styles.sectionTitle}>{t('craft.title', 'Мастера промыслов')}</Text>
+				<FlatList
+					data={masters}
+					keyExtractor={(it) => it.id}
+					renderItem={renderMaster as any}
+					initialNumToRender={4}
+					removeClippedSubviews
+					windowSize={5}
+				/>
 				<Pressable>
-					<Text style={styles.link}>Все мастера →</Text>
+					<Text style={styles.link}>{t('craft.all', 'Все мастера →')}</Text>
 				</Pressable>
 			</View>
-
-			<View style={styles.section}>
-				<Text style={styles.sectionTitle}>Этнособытия</Text>
-				{events.map(e => (
-					<View key={e.id} style={styles.cardWrap}>
-						<EventCard title={e.title} location={e.location} month={e.month} />
-					</View>
-				))}
-				<Pressable>
-					<Text style={styles.link}>Календарь событий →</Text>
-				</Pressable>
-			</View>
-
-			<View style={styles.section}>
-				<Text style={styles.sectionTitle}>Эко‑безопасность</Text>
-				<Pressable>
-					<Text style={styles.link}>Открыть рекомендации →</Text>
-				</Pressable>
-			</View>
-		</View>
+		</Screen>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: { padding: 16, gap: 16 },
 	title: { fontSize: 24, fontWeight: '700' },
 	section: { paddingVertical: 8, gap: 8 },
 	sectionTitle: { fontSize: 18, fontWeight: '600' },
