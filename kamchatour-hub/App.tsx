@@ -7,21 +7,24 @@ import { EmergencyProvider } from '@contexts/EmergencyContext';
 import { ThemeProvider } from '@contexts/ThemeContext';
 import { initializeI18n } from '@lib/i18n';
 import RootNavigator from '@navigation/RootNavigator';
+import { AppQueryProvider } from '@lib/queryClient';
 
 export default function App() {
 	React.useEffect(() => { initializeI18n(); }, []);
 
 	return (
-		<ThemeProvider>
-			<AuthProvider>
-				<LocationProvider>
-					<EmergencyProvider>
-						<NavigationContainer>
-							<RootNavigator />
-						</NavigationContainer>
-					</EmergencyProvider>
-				</LocationProvider>
-			</AuthProvider>
-		</ThemeProvider>
+		<AppQueryProvider>
+			<ThemeProvider>
+				<AuthProvider>
+					<LocationProvider>
+						<EmergencyProvider>
+							<NavigationContainer>
+								<RootNavigator />
+							</NavigationContainer>
+						</EmergencyProvider>
+					</LocationProvider>
+				</AuthProvider>
+			</ThemeProvider>
+		</AppQueryProvider>
 	);
 }

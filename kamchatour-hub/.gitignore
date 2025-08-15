@@ -33,3 +33,7 @@ coverage/
 
 # Misc
 .tmp/
+
+# Secrets
+credentials/
+credentials.json

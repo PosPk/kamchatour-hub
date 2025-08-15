@@ -4,25 +4,16 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import Screen from '@components/ui/Screen';
 import SOSButton from '@components/ui/SOSButton';
 import { useLocation } from '@hooks/useLocation';
-import { getCurrentWeather } from '@lib/weatherIntegration';
-import { getMasters } from '@services/craftService';
+import { useWeather } from '@lib/weatherIntegration';
+import { useMasters } from '@services/craftService';
 import { useTranslation } from 'react-i18next';
 import CraftMasterCard from '@components/culture/CraftMasterCard';
 
 export default function HomeScreen() {
 	const { t } = useTranslation();
 	const { coordinates } = useLocation();
-	const [weather, setWeather] = React.useState<{ temperatureC: number; condition: string } | null>(null);
-	const masters = React.useMemo(() => getMasters().slice(0, 6), []);
-
-	React.useEffect(() => {
-		async function load() {
-			if (!coordinates) return;
-			const w = await getCurrentWeather(coordinates.latitude, coordinates.longitude);
-			setWeather(w);
-		}
-		load();
-	}, [coordinates]);
+	const { data: weather } = useWeather(coordinates?.latitude, coordinates?.longitude);
+	const { data: masters = [] } = useMasters();
 
 	const renderMaster = React.useCallback(({ item }: { item: (typeof masters)[number] }) => (
 		<Animated.View entering={FadeInUp.duration(300)} style={styles.cardWrap}>
