@@ -1,6 +1,6 @@
 export type AuthUser = { id: string; email?: string };
 
-export async function signIn(email: string, password: string): Promise<AuthUser> {
+export async function signIn(email: string, _password: string): Promise<AuthUser> {
 	return { id: 'demo', email };
 }
 
