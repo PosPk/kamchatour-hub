@@ -1,1 +1,0 @@
-export function getIndigenousTips(): string[] { return []; }

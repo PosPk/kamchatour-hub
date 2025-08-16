@@ -1,1 +1,0 @@
-export function computeEcoRating(): number { return 0; }

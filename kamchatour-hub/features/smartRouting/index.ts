@@ -1,1 +1,0 @@
-export function getSmartRoute(): { points: [number, number][] } { return { points: [] }; }
