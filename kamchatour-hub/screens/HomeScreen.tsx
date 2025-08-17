@@ -66,6 +66,14 @@ export default function HomeScreen() {
       icon: 'vr-headset',
       color: ['#a8edea', '#fed6e3'],
       route: 'ARVR'
+    },
+    {
+      id: 'quantum-blockchain',
+      title: 'Квантово-блокчейн',
+      subtitle: 'Технологии будущего',
+      icon: 'blockchain',
+      color: ['#FF6B6B', '#4ECDC4'],
+      route: 'QuantumBlockchain'
     }
   ];
 
