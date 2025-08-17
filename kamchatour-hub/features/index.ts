@@ -22,6 +22,15 @@ export * from './quantumComputing';
 // Нейронные сети для предсказаний
 export * from './neuralNetworks';
 
+// Система страхования для туристов
+export * from './insurance';
+
+// Бусты и дополнительные услуги
+export * from './boosts';
+
+// Фотоотчеты туристов с AI-анализом
+export * from './photoReports';
+
 // Комиссионная система
 export * from './commissionSystem';
 
@@ -87,6 +96,15 @@ export class KamchatourHub {
       // Инициализация системы нейронных сетей
       console.log('🧠 Инициализация системы нейронных сетей...');
       
+      // Инициализация системы страхования
+      console.log('🛡️ Инициализация системы страхования...');
+      
+      // Инициализация системы бустов
+      console.log('💪 Инициализация системы бустов...');
+      
+      // Инициализация системы фотоотчетов
+      console.log('📸 Инициализация системы фотоотчетов...');
+      
       console.log('🎯 Все системы инициализированы успешно!');
     } catch (error) {
       console.error('❌ Ошибка инициализации систем:', error);
@@ -127,11 +145,23 @@ export class KamchatourHub {
     return import('./neuralNetworks');
   }
 
+  public getInsuranceSystem() {
+    return import('./insurance');
+  }
+
+  public getBoostSystem() {
+    return import('./boosts');
+  }
+
+  public getPhotoReportSystem() {
+    return import('./photoReports');
+  }
+
   // Метод для получения статистики системы
   public async getSystemStats(): Promise<any> {
     return {
       timestamp: new Date(),
-      version: '3.0.0',
+      version: '4.0.0',
       features: {
         ai: 'active',
         emergency: 'active',
@@ -140,11 +170,17 @@ export class KamchatourHub {
         routing: 'active',
         arvr: 'active',
         quantum: 'active',
-        neural: 'active'
+        neural: 'active',
+        insurance: 'active',
+        boosts: 'active',
+        photoReports: 'active'
       },
       status: 'operational',
       quantumAdvantage: true,
-      neuralNetworkAccuracy: 0.95
+      neuralNetworkAccuracy: 0.95,
+      insuranceProviders: 4,
+      boostServices: 5,
+      photoReports: 0
     };
   }
 
@@ -180,7 +216,18 @@ export const {
   getQuantumRoutes,
   createNeuralNetwork,
   trainNetwork,
-  predict
+  predict,
+  getInsuranceQuote,
+  purchaseInsurance,
+  submitClaim,
+  getEmergencyAssistance,
+  getBoosts,
+  getBoostRecommendations,
+  bookBoost,
+  createPhotoReport,
+  getPhotoReports,
+  likePhotoReport,
+  addComment
 } = {
   getAIRecommendations: () => import('./aiRecommendations'),
   getSmartRoute: () => import('./smartRouting'),
@@ -198,5 +245,16 @@ export const {
   getQuantumRoutes: () => import('./quantumComputing'),
   createNeuralNetwork: () => import('./neuralNetworks'),
   trainNetwork: () => import('./neuralNetworks'),
-  predict: () => import('./neuralNetworks')
+  predict: () => import('./neuralNetworks'),
+  getInsuranceQuote: () => import('./insurance'),
+  purchaseInsurance: () => import('./insurance'),
+  submitClaim: () => import('./insurance'),
+  getEmergencyAssistance: () => import('./insurance'),
+  getBoosts: () => import('./boosts'),
+  getBoostRecommendations: () => import('./boosts'),
+  bookBoost: () => import('./boosts'),
+  createPhotoReport: () => import('./photoReports'),
+  getPhotoReports: () => import('./photoReports'),
+  likePhotoReport: () => import('./photoReports'),
+  addComment: () => import('./photoReports')
 };
