@@ -13,6 +13,9 @@ export * from './gamification';
 // Умная маршрутизация
 export * from './smartRouting';
 
+// AR/VR система для виртуальных экскурсий
+export * from './arVr';
+
 // Комиссионная система
 export * from './commissionSystem';
 
@@ -69,6 +72,9 @@ export class KamchatourHub {
       // Инициализация умной маршрутизации
       console.log('🗺️ Инициализация умной маршрутизации...');
       
+      // Инициализация AR/VR системы
+      console.log('🥽 Инициализация AR/VR системы...');
+      
       console.log('🎯 Все системы инициализированы успешно!');
     } catch (error) {
       console.error('❌ Ошибка инициализации систем:', error);
@@ -97,6 +103,10 @@ export class KamchatourHub {
     return import('./smartRouting');
   }
 
+  public getARVRSystem() {
+    return import('./arVr');
+  }
+
   // Метод для получения статистики системы
   public async getSystemStats(): Promise<any> {
     return {
@@ -107,7 +117,8 @@ export class KamchatourHub {
         emergency: 'active',
         eco: 'active',
         gamification: 'active',
-        routing: 'active'
+        routing: 'active',
+        arvr: 'active'
       },
       status: 'operational'
     };
@@ -136,7 +147,11 @@ export const {
   unlockAchievement,
   joinChallenge,
   getUserProfile,
-  getLeaderboard
+  getLeaderboard,
+  startARExperience,
+  startVRExperience,
+  getARExperiences,
+  getVRExperiences
 } = {
   getAIRecommendations: () => import('./aiRecommendations'),
   getSmartRoute: () => import('./smartRouting'),
@@ -145,5 +160,9 @@ export const {
   unlockAchievement: () => import('./gamification'),
   joinChallenge: () => import('./gamification'),
   getUserProfile: () => import('./gamification'),
-  getLeaderboard: () => import('./gamification')
+  getLeaderboard: () => import('./gamification'),
+  startARExperience: () => import('./arVr'),
+  startVRExperience: () => import('./arVr'),
+  getARExperiences: () => import('./arVr'),
+  getVRExperiences: () => import('./arVr')
 };
