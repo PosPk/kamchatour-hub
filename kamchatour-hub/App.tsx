@@ -14,8 +14,9 @@ import InsuranceScreen from './screens/InsuranceScreen';
 import BoostsScreen from './screens/BoostsScreen';
 import PhotoReportsScreen from './screens/PhotoReportsScreen';
 import ProfileScreen from './screens/ProfileScreen';
-import ARVRScreen from './screens/ARVRScreen';
-import QuantumBlockchainScreen from './screens/QuantumBlockchainScreen';
+            import ARVRScreen from './screens/ARVRScreen';
+            import QuantumBlockchainScreen from './screens/QuantumBlockchainScreen';
+            import EcoTokenScreen from './screens/EcoTokenScreen';
 
 // Импорты контекстов
 import { AuthProvider } from './contexts/AuthContext';
@@ -87,11 +88,16 @@ export default function App() {
                       component={ARVRScreen} 
                       options={{ title: 'AR/VR тур' }}
                     />
-                    <Stack.Screen 
-                      name="QuantumBlockchain" 
-                      component={QuantumBlockchainScreen} 
-                      options={{ title: 'Квантово-блокчейн' }}
-                    />
+                                                    <Stack.Screen
+                                  name="QuantumBlockchain"
+                                  component={QuantumBlockchainScreen}
+                                  options={{ title: 'Квантово-блокчейн' }}
+                                />
+                                <Stack.Screen
+                                  name="EcoToken"
+                                  component={EcoTokenScreen}
+                                  options={{ title: 'KAMCHA Токены' }}
+                                />
                   </Stack.Navigator>
                 </NavigationContainer>
               </QuantumProvider>

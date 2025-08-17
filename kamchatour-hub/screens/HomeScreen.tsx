@@ -67,14 +67,22 @@ export default function HomeScreen() {
       color: ['#a8edea', '#fed6e3'],
       route: 'ARVR'
     },
-    {
-      id: 'quantum-blockchain',
-      title: 'Квантово-блокчейн',
-      subtitle: 'Технологии будущего',
-      icon: 'blockchain',
-      color: ['#FF6B6B', '#4ECDC4'],
-      route: 'QuantumBlockchain'
-    }
+                    {
+                  id: 'quantum-blockchain',
+                  title: 'Квантово-блокчейн',
+                  subtitle: 'Технологии будущего',
+                  icon: 'blockchain',
+                  color: ['#FF6B6B', '#4ECDC4'],
+                  route: 'QuantumBlockchain'
+                },
+                {
+                  id: 'eco-token',
+                  title: 'KAMCHA Токены',
+                  subtitle: 'Зарабатывайте за эко-действия',
+                  icon: 'leaf',
+                  color: ['#4CAF50', '#45B7D1'],
+                  route: 'EcoToken'
+                }
   ];
 
   const handleFeaturePress = (route: string) => {
