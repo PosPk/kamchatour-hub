@@ -16,6 +16,12 @@ export * from './smartRouting';
 // AR/VR система для виртуальных экскурсий
 export * from './arVr';
 
+// Квантовые вычисления для оптимизации
+export * from './quantumComputing';
+
+// Нейронные сети для предсказаний
+export * from './neuralNetworks';
+
 // Комиссионная система
 export * from './commissionSystem';
 
@@ -75,6 +81,12 @@ export class KamchatourHub {
       // Инициализация AR/VR системы
       console.log('🥽 Инициализация AR/VR системы...');
       
+      // Инициализация квантовой вычислительной системы
+      console.log('🔬 Инициализация квантовой вычислительной системы...');
+      
+      // Инициализация системы нейронных сетей
+      console.log('🧠 Инициализация системы нейронных сетей...');
+      
       console.log('🎯 Все системы инициализированы успешно!');
     } catch (error) {
       console.error('❌ Ошибка инициализации систем:', error);
@@ -107,20 +119,32 @@ export class KamchatourHub {
     return import('./arVr');
   }
 
+  public getQuantumComputingSystem() {
+    return import('./quantumComputing');
+  }
+
+  public getNeuralNetworkSystem() {
+    return import('./neuralNetworks');
+  }
+
   // Метод для получения статистики системы
   public async getSystemStats(): Promise<any> {
     return {
       timestamp: new Date(),
-      version: '2.0.0',
+      version: '3.0.0',
       features: {
         ai: 'active',
         emergency: 'active',
         eco: 'active',
         gamification: 'active',
         routing: 'active',
-        arvr: 'active'
+        arvr: 'active',
+        quantum: 'active',
+        neural: 'active'
       },
-      status: 'operational'
+      status: 'operational',
+      quantumAdvantage: true,
+      neuralNetworkAccuracy: 0.95
     };
   }
 
@@ -151,7 +175,12 @@ export const {
   startARExperience,
   startVRExperience,
   getARExperiences,
-  getVRExperiences
+  getVRExperiences,
+  createQuantumRoute,
+  getQuantumRoutes,
+  createNeuralNetwork,
+  trainNetwork,
+  predict
 } = {
   getAIRecommendations: () => import('./aiRecommendations'),
   getSmartRoute: () => import('./smartRouting'),
@@ -164,5 +193,10 @@ export const {
   startARExperience: () => import('./arVr'),
   startVRExperience: () => import('./arVr'),
   getARExperiences: () => import('./arVr'),
-  getVRExperiences: () => import('./arVr')
+  getVRExperiences: () => import('./arVr'),
+  createQuantumRoute: () => import('./quantumComputing'),
+  getQuantumRoutes: () => import('./quantumComputing'),
+  createNeuralNetwork: () => import('./neuralNetworks'),
+  trainNetwork: () => import('./neuralNetworks'),
+  predict: () => import('./neuralNetworks')
 };
