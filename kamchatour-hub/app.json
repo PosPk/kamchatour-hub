@@ -2,13 +2,79 @@
   "expo": {
     "name": "Kamchatour Hub",
     "slug": "kamchatour-hub",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons/app-icon.png",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/splash.png",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "contain",
+      "backgroundColor": "#4A90E2"
     },
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kamchatour.hub",
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Приложению необходим доступ к камере для AR функций и фото",
+        "NSLocationWhenInUseUsageDescription": "Приложению необходим доступ к геолокации для навигации и безопасности",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Приложению необходим доступ к геолокации для отслеживания в фоне",
+        "NSMicrophoneUsageDescription": "Приложению необходим доступ к микрофону для голосовых команд"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#4A90E2"
+      },
+      "package": "com.kamchatour.hub",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "RECORD_AUDIO",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "VIBRATE",
+        "WAKE_LOCK"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-location",
+      "expo-camera",
+      "expo-media-library",
+      "expo-file-system",
+      "expo-sensors",
+      "expo-notifications",
+      "expo-device",
+      "expo-constants",
+      "expo-linking",
+      "expo-web-browser",
+      "expo-status-bar",
+      "expo-system-ui",
+      "expo-splash-screen"
+    ],
+    "scheme": "kamchatour-hub",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "your-project-id"
+      }
+    }
   }
 }
