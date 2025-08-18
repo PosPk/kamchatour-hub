@@ -54,13 +54,19 @@
             body: JSON.stringify({ address: addr, initData })
           });
           const j = await resp.json().catch(() => ({}));
-          if (j.ok) {
-            log('Кошелёк сохранён');
-          } else {
-            log('Ошибка при сохранении: ' + (j.error || resp.status));
-          }
+          if (j.ok) { log('Кошелёк сохранён'); return; }
+          // Fallback: отправить через web_app_data боту
+          const data = { type: 'wallet', address: addr };
+          tg?.sendData(JSON.stringify(data));
+          log('Сохранение через бота...');
         } catch (e) {
-          log('Ошибка: ' + e);
+          try {
+            const data = { type: 'wallet', address: addr };
+            tg?.sendData(JSON.stringify(data));
+            log('Сохранение через бота...');
+          } catch (ee) {
+            log('Ошибка: ' + e);
+          }
         }
       });
     </script>
