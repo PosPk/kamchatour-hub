@@ -1,11 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <WebView
+        source={{ uri: process.env.EXPO_PUBLIC_WEBAPP_URL || 'http://localhost:5173' }}
+        style={{ flex: 1, width: '100%' }}
+        allowsInlineMediaPlayback
+        mediaPlaybackRequiresUserAction={false}
+      />
+      <StatusBar style="light" />
     </View>
   );
 }
@@ -13,8 +19,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#10141f'
   },
 });
