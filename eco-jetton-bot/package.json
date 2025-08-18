@@ -1,0 +1,27 @@
+{
+  "name": "eco-jetton-bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db:prepare": "node ./scripts/prepare-db.mjs",
+    "dev": "npm run db:prepare && tsx src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc -p tsconfig.json",
+    "lint": "echo 'no linter configured'",
+    "prepare": "node ./scripts/prepare-db.mjs"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.5",
+    "telegraf": "^4.16.3",
+    "tonweb": "^0.0.66"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/node": "^22.7.4",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.2"
+  }
+}
+
