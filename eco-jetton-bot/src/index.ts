@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { Telegraf } from 'telegraf';
-import { ensureUserExists, addEcoPoints, getBalance, listTop } from './storage.js';
+import { ensureUserExists, addEcoPoints, getBalance, listTop, listTasks, upsertTask, completeTask, addReferral, awardJoinBonus, rewardReferral, getUserCount, getClaimsStats } from './storage.js';
+import { config } from './config.js';
 import { requestJettonPayout } from './ton.js';
 
 const botToken = process.env.BOT_TOKEN;
@@ -14,8 +15,21 @@ const adminUserId = process.env.ADMIN_USER_ID ? Number(process.env.ADMIN_USER_ID
 const bot = new Telegraf(botToken);
 
 bot.start(async (ctx) => {
-  await ensureUserExists(ctx.from);
-  await ctx.reply('Привет! Это эко-бот. Копи эко-баллы и конвертируй их в Jetton на TON. Команды: /balance, /claim, /top, /give');
+  const createdInfo = ensureUserExists(ctx.from);
+  const text = ctx.message && 'text' in ctx.message ? ctx.message.text : undefined;
+  const payload = text?.split(/\s+/).slice(1).join(' ');
+  if (createdInfo.created && config.joinBonusPoints > 0) {
+    awardJoinBonus(ctx.from.id, config.joinBonusPoints);
+  }
+  if (payload) {
+    const maybeRefId = Number(payload.trim());
+    if (Number.isFinite(maybeRefId) && maybeRefId > 0 && maybeRefId !== ctx.from.id) {
+      if (addReferral(maybeRefId, ctx.from.id)) {
+        rewardReferral(maybeRefId, config.referralPoints);
+      }
+    }
+  }
+  await ctx.reply('Привет! Это эко-бот. Копи эко-баллы и конвертируй их в Jetton на TON. Команды: /balance, /claim, /top, /tasks');
 });
 
 bot.command('balance', async (ctx) => {
@@ -37,6 +51,14 @@ bot.command('top', async (ctx) => {
 bot.command('me', async (ctx) => {
   await ensureUserExists(ctx.from);
   await ctx.reply(`Твой ID: ${ctx.from.id}\nИмя: @${ctx.from.username ?? 'без_имени'}`);
+});
+
+bot.command('ref', async (ctx) => {
+  await ensureUserExists(ctx.from);
+  await ctx.reply('Поделись ссылкой-приглашением:')
+  const botUsername = ctx.botInfo?.username ?? 'your_bot';
+  const link = `https://t.me/${botUsername}?start=${ctx.from.id}`;
+  await ctx.reply(link);
 });
 
 bot.command('give', async (ctx) => {
@@ -81,6 +103,61 @@ bot.command('claim', async (ctx) => {
     console.error(err);
     await ctx.reply('Внутренняя ошибка');
   }
+});
+
+bot.command('tasks', async (ctx) => {
+  const tasks = listTasks();
+  if (tasks.length === 0) {
+    await ctx.reply('Пока нет заданий');
+    return;
+  }
+  const lines = tasks.map((t) => `- ${t.id}: ${t.title} (+${t.points})`);
+  await ctx.reply('Задания:\n' + lines.join('\n'));
+});
+
+bot.command('task_complete', async (ctx) => {
+  await ensureUserExists(ctx.from);
+  const parts = ctx.message && 'text' in ctx.message ? ctx.message.text.trim().split(/\s+/) : [];
+  // /task_complete <task_id>
+  if (parts.length < 2) {
+    await ctx.reply('Использование: /task_complete <task_id>');
+    return;
+  }
+  const taskId = parts[1];
+  const ok = completeTask(ctx.from.id, taskId);
+  await ctx.reply(ok ? 'Задание засчитано, баллы начислены' : 'Не удалось засчитать (возможно, уже выполнено или нет такого задания)');
+});
+
+bot.command('task_upsert', async (ctx) => {
+  if (!adminUserId || ctx.from.id !== adminUserId) {
+    await ctx.reply('Команда доступна только администратору');
+    return;
+  }
+  const parts = ctx.message && 'text' in ctx.message ? ctx.message.text.trim().split(/\s+/) : [];
+  // /task_upsert <id> <points> <title...>
+  if (parts.length < 4) {
+    await ctx.reply('Использование: /task_upsert <id> <points> <title...>');
+    return;
+  }
+  const id = parts[1];
+  const points = Number(parts[2]);
+  const title = parts.slice(3).join(' ');
+  if (!Number.isFinite(points) || points <= 0) {
+    await ctx.reply('Баллы должны быть положительным числом');
+    return;
+  }
+  upsertTask(id, title, points);
+  await ctx.reply('Задание сохранено');
+});
+
+bot.command('stats', async (ctx) => {
+  if (!adminUserId || ctx.from.id !== adminUserId) {
+    await ctx.reply('Команда доступна только администратору');
+    return;
+  }
+  const users = getUserCount();
+  const claims = getClaimsStats();
+  await ctx.reply(`Пользователи: ${users}\nЗаявки: pending=${claims.pending}, done=${claims.done}, failed=${claims.failed}`);
 });
 
 bot.launch().then(() => {
