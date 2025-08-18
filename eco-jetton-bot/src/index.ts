@@ -193,11 +193,16 @@ bot.command('stats', async (ctx) => {
 
 bot.command('app', async (ctx) => {
   const appUrl = process.env.APP_URL || 'http://localhost:8080';
-  await ctx.reply('Открыть мини‑приложение:', {
-    reply_markup: {
-      inline_keyboard: [[{ text: 'Open App', web_app: { url: appUrl } }]],
-    },
-  } as any);
+  try {
+    await ctx.reply('Открыть мини‑приложение:', {
+      reply_markup: {
+        inline_keyboard: [[{ text: 'Open App', web_app: { url: appUrl } }]],
+      },
+    } as any);
+  } catch (error) {
+    // Без HTTPS Telegram отклоняет web_app кнопку. Покажем прямую ссылку.
+    await ctx.reply(`Нужен HTTPS. Текущий URL: ${appUrl}\nОткрой ссылку вручную: ${appUrl}`);
+  }
 });
 
 bot.command('wallet', async (ctx) => {
