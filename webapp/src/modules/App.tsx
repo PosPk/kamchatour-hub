@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import WebApp from '@twa-dev/sdk';
 import { TonConnectUIProvider, TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react';
+import { JETTON_NAME, JETTON_SYMBOL } from '../config/token';
 
 const MANIFEST_URL = '/tonconnect-manifest.json';
 
 function Header() {
 	return (
 		<header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12 }}>
-			<h3 style={{ margin: 0 }}>Eco MemeCoin</h3>
+			<h3 style={{ margin: 0 }}>{JETTON_NAME} ({JETTON_SYMBOL})</h3>
 			<TonConnectButton />
 		</header>
 	);
@@ -63,4 +64,3 @@ export function App() {
 		</TonConnectUIProvider>
 	);
 }
-
