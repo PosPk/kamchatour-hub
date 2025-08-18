@@ -8,3 +8,58 @@
 
 Database prepared at ./data/eco.db
 Mini app server listening on :8080
+Unhandled error while processing {
+  update_id: 794889045,
+  message: {
+    message_id: 15,
+    from: {
+      id: 171286547,
+      is_bot: false,
+      first_name: '👌',
+      username: 'PosPk41',
+      language_code: 'ru',
+      is_premium: true
+    },
+    chat: {
+      id: 171286547,
+      first_name: '👌',
+      username: 'PosPk41',
+      type: 'private'
+    },
+    date: 1755513061,
+    text: '/app',
+    entities: [ [Object] ]
+  }
+}
+/workspace/eco-jetton-bot/node_modules/telegraf/lib/core/network/client.js:315
+            throw new error_1.default(data, { method, payload });
+                  ^
+
+TelegramError: 400: Bad Request: inline keyboard button Web App URL 'http://localhost:8080' is invalid: Only HTTPS links are allowed
+    at Telegram.callApi (/workspace/eco-jetton-bot/node_modules/telegraf/lib/core/network/client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async <anonymous> (/workspace/eco-jetton-bot/src/index.ts:195:3)
+    at async execute (/workspace/eco-jetton-bot/node_modules/telegraf/lib/composer.js:518:17)
+    at async /workspace/eco-jetton-bot/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/workspace/eco-jetton-bot/node_modules/telegraf/lib/composer.js:518:17)
+    at async /workspace/eco-jetton-bot/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/workspace/eco-jetton-bot/node_modules/telegraf/lib/composer.js:518:17)
+    at async /workspace/eco-jetton-bot/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/workspace/eco-jetton-bot/node_modules/telegraf/lib/composer.js:518:17) {
+  response: {
+    ok: false,
+    error_code: 400,
+    description: "Bad Request: inline keyboard button Web App URL 'http://localhost:8080' is invalid: Only HTTPS links are allowed"
+  },
+  on: {
+    method: 'sendMessage',
+    payload: {
+      chat_id: 171286547,
+      message_thread_id: undefined,
+      reply_markup: { inline_keyboard: [ [ [Object] ] ] },
+      text: 'Открыть мини‑приложение:'
+    }
+  }
+}
+
+Node.js v22.16.0
