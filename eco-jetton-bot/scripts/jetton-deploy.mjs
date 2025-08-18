@@ -16,6 +16,32 @@ function getTonWeb() {
   return new TonWeb(provider);
 }
 
+function makeSnakeCell(bytes) {
+  const root = new TonWeb.boc.Cell();
+  let current = root;
+  let i = 0;
+  while (i < bytes.length) {
+    const chunk = bytes.slice(i, Math.min(bytes.length, i + 127));
+    // @ts-ignore writeBytes is available on BitString
+    current.bits.writeBytes(chunk);
+    i += chunk.length;
+    if (i < bytes.length) {
+      const next = new TonWeb.boc.Cell();
+      current.refs.push(next);
+      current = next;
+    }
+  }
+  return root;
+}
+
+function makeOffchainContent(url) {
+  const cell = new TonWeb.boc.Cell();
+  cell.bits.writeUint(0, 8); // offchain
+  const bytes = new TextEncoder().encode(url);
+  cell.refs.push(makeSnakeCell(bytes));
+  return cell;
+}
+
 async function main() {
   if (!JETTON_CONTENT_URL) {
     console.error('Set JETTON_CONTENT_URL to a public JSON with metadata');
@@ -38,7 +64,7 @@ async function main() {
   const JettonMinter = (TonWeb).token?.jetton?.JettonMinter;
   if (!JettonMinter) throw new Error('JettonMinter not found');
 
-  const content = TonWeb.boc.Cell.oneFromBoc(await (await fetch(JETTON_CONTENT_URL)).arrayBuffer());
+  const content = makeOffchainContent(JETTON_CONTENT_URL);
   const minter = new JettonMinter(tonweb.provider, { adminAddress, content });
   const minterAddress = await minter.getAddress();
   console.log('Minter address:', minterAddress.toString(true, true, true));
