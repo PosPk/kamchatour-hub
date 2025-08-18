@@ -17,6 +17,18 @@ export default function HomeScreen() {
           </Pressable>
         </Link>
       </View>
+
+      <View style={{ height: 16 }} />
+
+      <View style={styles.block}>
+        <Text style={styles.blockTitle}>Фотоотчёты</Text>
+        <Text style={styles.blockText}>Создавайте короткие отчёты с фото за пару нажатий — камера или галерея, минимум полей.</Text>
+        <Link href="/reports" asChild>
+          <Pressable style={styles.cta}>
+            <Text style={styles.ctaText}>Открыть фотоотчёты</Text>
+          </Pressable>
+        </Link>
+      </View>
     </View>
   );
 }
