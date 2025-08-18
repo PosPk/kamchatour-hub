@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Eco Jetton Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script defer src="https://unpkg.com/@tonconnect/ui@2.0.7/dist/tonconnect-ui.min.js"></script>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif; margin: 16px; }
+      .row { margin: 12px 0; }
+      #status { white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <h3>Eco Jetton</h3>
+    <div class="row">
+      <div id="connect"></div>
+    </div>
+    <div class="row">
+      <button id="save" disabled>Сохранить кошелёк в боте</button>
+    </div>
+    <div id="status"></div>
+    <script>
+      const tg = window.Telegram?.WebApp;
+      tg?.ready();
+      const status = document.getElementById('status');
+      function log(msg){ status.textContent = String(msg); }
+
+      const manifestUrl = new URL('/tonconnect-manifest.json', window.location.origin).toString();
+      const walletUI = new TON_CONNECT_UI.TonConnectUI({ manifestUrl });
+      walletUI.mount('#connect');
+      const saveBtn = document.getElementById('save');
+
+      walletUI.onStatusChange(async (wallet) => {
+        if (!wallet) {
+          saveBtn.disabled = true;
+          log('Кошелёк не подключён');
+          return;
+        }
+        saveBtn.disabled = false;
+        log('Подключено: ' + wallet.account?.address);
+      });
+
+      saveBtn.addEventListener('click', async () => {
+        const wallet = await walletUI.getWallet();
+        const addr = wallet?.account?.address;
+        if (!addr) { log('Нет адреса'); return; }
+        try {
+          const initData = tg?.initData || '';
+          const resp = await fetch('/api/save-wallet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ address: addr, initData })
+          });
+          const j = await resp.json().catch(() => ({}));
+          if (j.ok) { log('Кошелёк сохранён'); return; }
+          // Fallback: отправить через web_app_data боту
+          const data = { type: 'wallet', address: addr };
+          tg?.sendData(JSON.stringify(data));
+          log('Сохранение через бота...');
+        } catch (e) {
+          try {
+            const data = { type: 'wallet', address: addr };
+            tg?.sendData(JSON.stringify(data));
+            log('Сохранение через бота...');
+          } catch (ee) {
+            log('Ошибка: ' + e);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
+
