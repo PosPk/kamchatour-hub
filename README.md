@@ -48,3 +48,19 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Telegram Mini App for Eco MemeCoin
+
+A `webapp/` React (Vite) Mini App with TON Connect is included.
+
+Run it locally:
+
+```bash
+cd webapp
+npm i
+npm run dev
+```
+
+Expose it via a tunnel and set the Web App URL in `@BotFather` to your public URL.
+
+Expo loads the Mini App in a `WebView`. Override the URL with `EXPO_PUBLIC_WEBAPP_URL` if needed.
