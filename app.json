@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Kamchatour Hub",
+    "slug": "kamchatour-hub",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#4A90E2"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.posservis.kamchatourhub"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#4A90E2"
+      },
+      "package": "com.posservis.kamchatourhub"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "trey-kamchatka-app"
+      }
+    },
+    "owner": "pos-servis",
+    "repository": "https://github.com/PosPk/kamchatour-hub",
+    "updates": {
+      "url": "https://u.expo.dev/trey-kamchatka-app"
+    }
+  }
+}
