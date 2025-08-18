@@ -90,6 +90,15 @@ export function getClaimsStats(): { pending: number; done: number; failed: numbe
   return { pending: map['pending'] ?? 0, done: map['done'] ?? 0, failed: map['failed'] ?? 0 };
 }
 
+export function setUserWallet(userId: number, wallet: string) {
+  db.prepare('UPDATE users SET wallet_address = ? WHERE id = ?').run(wallet, userId);
+}
+
+export function getUserWallet(userId: number): string | null {
+  const row = db.prepare('SELECT wallet_address FROM users WHERE id = ?').get(userId) as { wallet_address: string | null } | undefined;
+  return row?.wallet_address ?? null;
+}
+
 export function listTasks(): Array<{ id: string; title: string; points: number }> {
   return db.prepare('SELECT id, title, points FROM tasks ORDER BY points DESC').all() as Array<{ id: string; title: string; points: number }>;
 }

@@ -12,7 +12,8 @@ db.exec(`
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY,
   username TEXT,
-  joined_at INTEGER
+  joined_at INTEGER,
+  wallet_address TEXT
 );
 
 CREATE TABLE IF NOT EXISTS balances (
@@ -55,6 +56,11 @@ CREATE TABLE IF NOT EXISTS referrals (
   FOREIGN KEY(referred_id) REFERENCES users(id)
 );
 `);
+
+// Add wallet_address column if database already existed without it
+try {
+  db.prepare('ALTER TABLE users ADD COLUMN wallet_address TEXT').run();
+} catch {}
 db.close();
 console.log('Database prepared at', dbPath);
 

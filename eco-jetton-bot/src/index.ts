@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import { Telegraf } from 'telegraf';
-import { ensureUserExists, addEcoPoints, getBalance, listTop, listTasks, upsertTask, completeTask, addReferral, awardJoinBonus, rewardReferral, getUserCount, getClaimsStats } from './storage.js';
+import { ensureUserExists, addEcoPoints, getBalance, listTop, listTasks, upsertTask, completeTask, addReferral, awardJoinBonus, rewardReferral, getUserCount, getClaimsStats, setUserWallet, getUserWallet } from './storage.js';
 import { config } from './config.js';
+import express from 'express';
+import path from 'node:path';
 import { requestJettonPayout } from './ton.js';
 
 const botToken = process.env.BOT_TOKEN;
@@ -158,6 +160,53 @@ bot.command('stats', async (ctx) => {
   const users = getUserCount();
   const claims = getClaimsStats();
   await ctx.reply(`Пользователи: ${users}\nЗаявки: pending=${claims.pending}, done=${claims.done}, failed=${claims.failed}`);
+});
+
+bot.command('app', async (ctx) => {
+  const appUrl = process.env.APP_URL || 'http://localhost:8080';
+  await ctx.reply('Открыть мини‑приложение:', {
+    reply_markup: {
+      inline_keyboard: [[{ text: 'Open App', web_app: { url: appUrl } }]],
+    },
+  } as any);
+});
+
+bot.command('wallet', async (ctx) => {
+  await ensureUserExists(ctx.from);
+  const w = getUserWallet(ctx.from.id);
+  await ctx.reply(w ? `Твой кошелёк: ${w}` : 'Кошелёк не привязан. Нажми /app и подключи через TON Connect.');
+});
+
+bot.on('message', async (ctx, next) => {
+  const anyMessage: any = ctx.message as any;
+  const webAppData = anyMessage?.web_app_data?.data;
+  if (webAppData) {
+    try {
+      const parsed = JSON.parse(webAppData);
+      if (parsed && parsed.type === 'wallet' && typeof parsed.address === 'string') {
+        setUserWallet(ctx.from.id, parsed.address);
+        await ctx.reply(`Кошелёк сохранён: ${parsed.address}`);
+        return;
+      }
+    } catch {}
+  }
+  return next();
+});
+
+// Express mini-app server
+const app = express();
+const port = Number(process.env.PORT || 8080);
+const publicDir = path.resolve('./public');
+app.use(express.static(publicDir));
+app.get('/tonconnect-manifest.json', (req, res) => {
+  const url = process.env.APP_URL || `http://localhost:${port}`;
+  const name = process.env.APP_NAME || 'Eco Jetton';
+  const iconUrl = process.env.APP_ICON_URL || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Ton_symbol.svg';
+  res.json({ url, name, iconUrl });
+});
+
+app.listen(port, () => {
+  console.log(`Mini app server listening on :${port}`);
 });
 
 bot.launch().then(() => {
