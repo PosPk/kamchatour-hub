@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
-import { Link, useFocusEffect } from 'expo-router';
+import { Link } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ReportRow({ report }) {
