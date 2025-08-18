@@ -1,0 +1,10 @@
+
+> eco-jetton-bot@0.1.0 dev
+> npm run db:prepare && tsx src/index.ts
+
+
+> eco-jetton-bot@0.1.0 db:prepare
+> node ./scripts/prepare-db.mjs
+
+Database prepared at ./data/eco.db
+Mini app server listening on :8080
