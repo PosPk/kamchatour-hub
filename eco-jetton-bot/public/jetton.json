@@ -1,0 +1,11 @@
+{
+  "name": "Экотокен",
+  "symbol": "ECO",
+  "decimals": 9,
+  "description": "Экотокен проекта OneHunt — токен вознаграждений за эко‑активности. Подробнее: https://onehunt.ru/",
+  "image": "https://onehunt.ru/favicon.ico",
+  "social": {
+    "website": "https://onehunt.ru/"
+  }
+}
+

@@ -88,22 +88,50 @@ bot.command('claim', async (ctx) => {
   await ensureUserExists(ctx.from);
   const parts = ctx.message && 'text' in ctx.message ? ctx.message.text.trim().split(/\s+/) : [];
   // /claim <ton_address> <amount>
-  if (parts.length < 3) {
-    await ctx.reply('Использование: /claim <ton_address> <amount>');
+  if (parts.length < 2) {
+    await ctx.reply('Использование: /claim <amount> (или /claim <ton_address> <amount>)');
     return;
   }
-  const address = parts[1];
-  const amount = Number(parts[2]);
+  let address: string | undefined;
+  let amount: number;
+  if (parts.length === 2) {
+    amount = Number(parts[1]);
+    const saved = getUserWallet(ctx.from.id);
+    if (!saved) {
+      await ctx.reply('Сначала привяжи кошелёк: /app → сохранить, либо используй /setwallet <address>');
+      return;
+    }
+    address = saved;
+  } else {
+    address = parts[1];
+    amount = Number(parts[2]);
+  }
   if (!Number.isFinite(amount) || amount <= 0) {
     await ctx.reply('Укажи корректную сумму');
     return;
   }
   try {
-    const { ok, message } = await requestJettonPayout(ctx.from.id, address, amount);
+    const { ok, message } = await requestJettonPayout(ctx.from.id, address!, amount);
     await ctx.reply(ok ? `Заявка создана: ${message}` : `Ошибка: ${message}`);
   } catch (err) {
     console.error(err);
     await ctx.reply('Внутренняя ошибка');
+  }
+});
+
+bot.command('setwallet', async (ctx) => {
+  await ensureUserExists(ctx.from);
+  const parts = ctx.message && 'text' in ctx.message ? ctx.message.text.trim().split(/\s+/) : [];
+  if (parts.length < 2) {
+    await ctx.reply('Использование: /setwallet <ton_address>');
+    return;
+  }
+  const address = parts[1];
+  try {
+    setUserWallet(ctx.from.id, address);
+    await ctx.reply('Кошелёк сохранён');
+  } catch {
+    await ctx.reply('Не удалось сохранить адрес');
   }
 });
 

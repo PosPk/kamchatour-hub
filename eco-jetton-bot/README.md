@@ -23,11 +23,13 @@ npm run dev
 - /top — лидеры
 - /give <user_id> <amount> — админ: начислить баллы
 - /claim <ton_address> <amount> — заявка на выплату Jetton
+- /claim <amount> — заявка на кошелёк, сохранённый через mini‑app или /setwallet
 - /tasks — список заданий
 - /task_complete <task_id> — отметить выполнение задания
 - /task_upsert <id> <points> <title...> — админ: создать/обновить задание
 - /ref — получить реферальную ссылку
 - /stats — админ: статистика пользователей и заявок
+ - /setwallet <ton_address> — сохранить кошелёк вручную
 
 ## Mini App (TON Connect)
 - Сервер мини‑приложения поднимается вместе с ботом (`express`). Открыть: `/app` в боте. Файлы: `public/index.html` и `/tonconnect-manifest.json`.
@@ -36,7 +38,7 @@ npm run dev
 ## Jetton: деплой и минт
 Требуется кошелёк с балансом TON и сид фраза в `.env` (`TON_WALLET_MNEMONIC`).
 
-1) Подготовьте метаданные и разместите JSON по `JETTON_CONTENT_URL`.
+1) Подготовьте метаданные (см. `public/jetton.json`). По умолчанию берётся `${APP_URL}/jetton.json`.
 2) Деплой minter:
 ```bash
 node scripts/jetton-deploy.mjs

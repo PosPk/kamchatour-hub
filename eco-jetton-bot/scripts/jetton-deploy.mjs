@@ -5,7 +5,9 @@ import { mnemonicToWalletKey } from '@ton/crypto';
 const TON_NETWORK = (process.env.TON_NETWORK || 'testnet').toLowerCase();
 const TONCENTER_API_KEY = process.env.TONCENTER_API_KEY || '';
 const TON_API_ENDPOINT = process.env.TON_API_ENDPOINT || '';
-const JETTON_CONTENT_URL = process.env.JETTON_CONTENT_URL || '';
+const PORT = Number(process.env.PORT || 8080);
+const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
+const JETTON_CONTENT_URL = process.env.JETTON_CONTENT_URL || `${APP_URL}/jetton.json`;
 
 function getTonWeb() {
   const endpoint = TON_API_ENDPOINT || (TON_NETWORK === 'mainnet'
