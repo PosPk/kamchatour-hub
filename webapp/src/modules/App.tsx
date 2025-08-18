@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import WebApp from '@twa-dev/sdk';
 import { TonConnectUIProvider, TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react';
 import { JETTON_NAME, JETTON_SYMBOL } from '../config/token';
+import { Balance } from './Balance';
 
 const MANIFEST_URL = '/tonconnect-manifest.json';
 
@@ -58,6 +59,7 @@ export function App() {
 				<Header />
 				<main>
 					<p style={{ padding: 16, opacity: 0.85 }}>Подключите кошелёк TON и получите эко-баллы.</p>
+					<Balance />
 					<Actions />
 				</main>
 			</div>
