@@ -1,0 +1,11 @@
+{
+  "name": "Eco MemeCoin",
+  "short_name": "EcoCoin",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#10141f",
+  "theme_color": "#1a1f2b",
+  "icons": [],
+  "description": "Telegram Mini App для мемокоина эко-баллов"
+}
+
