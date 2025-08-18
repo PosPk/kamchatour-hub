@@ -3,6 +3,7 @@ import { Telegraf } from 'telegraf';
 import { ensureUserExists, addEcoPoints, getBalance, listTop, listTasks, upsertTask, completeTask, addReferral, awardJoinBonus, rewardReferral, getUserCount, getClaimsStats, setUserWallet, getUserWallet } from './storage.js';
 import { config } from './config.js';
 import express from 'express';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { requestJettonPayout } from './ton.js';
 
@@ -223,6 +224,7 @@ bot.on('message', async (ctx, next) => {
 
 // Express mini-app server
 const app = express();
+app.use(express.json());
 const port = Number(process.env.PORT || 8080);
 const publicDir = path.resolve('./public');
 app.use(express.static(publicDir));
@@ -231,6 +233,53 @@ app.get('/tonconnect-manifest.json', (req, res) => {
   const name = process.env.APP_NAME || 'Eco Jetton';
   const iconUrl = process.env.APP_ICON_URL || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Ton_symbol.svg';
   res.json({ url, name, iconUrl });
+});
+
+function verifyTelegramInitData(initData: string, botToken: string): { ok: boolean; userId?: number; error?: string } {
+  try {
+    if (!initData) return { ok: false, error: 'empty initData' };
+    const params = new URLSearchParams(initData);
+    const hash = params.get('hash') || '';
+    params.delete('hash');
+    const pairs: string[] = [];
+    for (const [key, value] of Array.from(params.entries()).sort(([a], [b]) => a.localeCompare(b))) {
+      pairs.push(`${key}=${value}`);
+    }
+    const dataCheckString = pairs.join('\n');
+    const secretKey = crypto.createHash('sha256').update(botToken).digest();
+    const computed = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
+    if (computed !== hash) return { ok: false, error: 'bad hash' };
+    const userStr = params.get('user');
+    if (!userStr) return { ok: false, error: 'no user' };
+    const user = JSON.parse(userStr);
+    if (!user || typeof user.id !== 'number') return { ok: false, error: 'bad user' };
+    return { ok: true, userId: user.id };
+  } catch (e: any) {
+    return { ok: false, error: e?.message || 'verify error' };
+  }
+}
+
+app.post('/api/save-wallet', async (req, res) => {
+  try {
+    const { address, initData } = req.body || {};
+    if (typeof address !== 'string' || address.length < 10) {
+      res.status(400).json({ ok: false, error: 'bad address' });
+      return;
+    }
+    const token = process.env.BOT_TOKEN || '';
+    const verify = verifyTelegramInitData(String(initData || ''), token);
+    if (!verify.ok || !verify.userId) {
+      res.status(401).json({ ok: false, error: 'unauthorized' });
+      return;
+    }
+    setUserWallet(verify.userId, address);
+    try {
+      await bot.telegram.sendMessage(verify.userId, `Кошелёк сохранён: ${address}`);
+    } catch {}
+    res.json({ ok: true });
+  } catch (e: any) {
+    res.status(500).json({ ok: false });
+  }
 });
 
 app.listen(port, () => {

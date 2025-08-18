@@ -46,12 +46,21 @@
         const wallet = await walletUI.getWallet();
         const addr = wallet?.account?.address;
         if (!addr) { log('Нет адреса'); return; }
-        const data = { type: 'wallet', address: addr };
         try {
-          tg?.sendData(JSON.stringify(data));
-          log('Отправлено в бот');
+          const initData = tg?.initData || '';
+          const resp = await fetch('/api/save-wallet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ address: addr, initData })
+          });
+          const j = await resp.json().catch(() => ({}));
+          if (j.ok) {
+            log('Кошелёк сохранён');
+          } else {
+            log('Ошибка при сохранении: ' + (j.error || resp.status));
+          }
         } catch (e) {
-          log('Ошибка отправки в бот: ' + e);
+          log('Ошибка: ' + e);
         }
       });
     </script>
