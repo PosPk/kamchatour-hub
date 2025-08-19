@@ -15,6 +15,14 @@ export default function Index() {
     });
   };
 
+  const goActivities = () => {
+    router.push({ pathname: '/activities/results', params: { where, date: checkIn, people: guests } });
+  };
+
+  const goTransfers = () => {
+    router.push({ pathname: '/transfers/results', params: { from: where, to: 'Аэропорт', date: checkIn, people: guests } });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Найдите место для пребывания</Text>
@@ -26,7 +34,13 @@ export default function Index() {
         </View>
         <LabeledInput label="Гостей" value={guests} onChangeText={setGuests} placeholder="2" keyboardType="numeric" />
         <Pressable style={styles.button} onPress={goSearch}>
-          <Text style={styles.buttonText}>Показать результаты</Text>
+          <Text style={styles.buttonText}>Жильё — Показать результаты</Text>
+        </Pressable>
+        <Pressable style={[styles.button, { backgroundColor: '#10b981' }]} onPress={goActivities}>
+          <Text style={styles.buttonText}>Активности — Найти</Text>
+        </Pressable>
+        <Pressable style={[styles.button, { backgroundColor: '#f59e0b' }]} onPress={goTransfers}>
+          <Text style={styles.buttonText}>Трансфер — Найти</Text>
         </Pressable>
       </View>
 
