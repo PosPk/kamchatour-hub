@@ -22,7 +22,7 @@ export default function Listing() {
       <Text style={styles.title}>{listing.name}</Text>
       <Text style={styles.meta}>Рейтинг {listing.rating.toFixed(1)} · {listing.reviews} отзывов</Text>
       <Text style={styles.meta}>Адрес: {listing.address}</Text>
-      <Text style={[styles.meta, { marginTop: 6 }]}>Правила отмены: Бесплатно до 24ч до заезда</Text>
+      <Text style={[styles.meta, { marginTop: 6 }]}>Правила отмены: {listing.freeCancel ? 'Бесплатно до 24ч до заезда' : 'Частично невозвратное'}</Text>
       <View style={styles.priceBox}>
         <Text style={styles.priceTitle}>Цена</Text>
         <Text style={styles.priceValue}>{formatMoney(listing.priceRub)}/ночь</Text>
