@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "kamchatka",
-    "slug": "kamchatka",
+    "name": "Kamchatour Hub",
+    "slug": "kamchatour-hub",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "kamchatka",
+    "scheme": "kamchatourhub",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "owner": "pos-servis",
