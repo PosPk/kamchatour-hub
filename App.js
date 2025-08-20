@@ -11,9 +11,17 @@ export default function App() {
     return baseUrlFromEnv.replace(/\/+$/, '');
   }, [baseUrlFromEnv]);
 
-  const [status, setStatus] = useState('idle');
+  const [status, setStatus] = useState('idle'); // idle | loading | success | error
   const [responseText, setResponseText] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [httpStatusCode, setHttpStatusCode] = useState(null);
+  const [requestDurationMs, setRequestDurationMs] = useState(null);
+  const [requestTimestampIso, setRequestTimestampIso] = useState('');
+
+  const requestUrl = useMemo(() => {
+    if (!normalizedBaseUrl) return '';
+    return `${normalizedBaseUrl}/health`;
+  }, [normalizedBaseUrl]);
 
   const runHealthCheck = useCallback(async () => {
     if (!normalizedBaseUrl) {
@@ -26,16 +34,31 @@ export default function App() {
       setStatus('loading');
       setErrorMessage('');
       setResponseText('');
+      setHttpStatusCode(null);
+      setRequestDurationMs(null);
+      setRequestTimestampIso(new Date().toISOString());
 
-      const response = await fetch(`${normalizedBaseUrl}/health`);
+      const startAtMs = Date.now();
+      const response = await fetch(requestUrl);
       const text = await response.text();
+      const durationMs = Date.now() - startAtMs;
+
+      setHttpStatusCode(response.status);
+      setRequestDurationMs(durationMs);
       setResponseText(text);
+
+      if (!response.ok) {
+        setErrorMessage(`HTTP ${response.status}`);
+        setStatus('error');
+        return;
+      }
+
       setStatus('success');
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unknown error');
       setStatus('error');
     }
-  }, [normalizedBaseUrl]);
+  }, [requestUrl]);
 
   useEffect(() => {
     runHealthCheck();
@@ -43,41 +66,45 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Environment Check</Text>
+      <Text style={styles.title}>Проверка окружения</Text>
 
       <View style={styles.card}>
-        <Text style={styles.label}>ENV</Text>
-        <Text style={styles.mono}>{envFromEnv || '(not set)'}</Text>
+        <Text style={styles.label}>Окружение</Text>
+        <Text style={styles.mono}>{envFromEnv || '(не задано)'}</Text>
 
         <Text style={[styles.label, { marginTop: 12 }]}>EXPO_PUBLIC_API_BASE_URL</Text>
         <Text style={styles.mono} numberOfLines={2}>
-          {normalizedBaseUrl || '(not set)'}
+          {normalizedBaseUrl || '(не задано)'}
         </Text>
       </View>
 
       <View style={[styles.card, { marginTop: 16 }]}>
-        <Text style={styles.label}>Health check</Text>
+        <Text style={styles.label}>Отчет</Text>
+        <Text style={styles.mono}>URL запроса: {requestUrl || '-'}</Text>
+        <Text style={styles.mono}>HTTP статус: {httpStatusCode ?? '-'}</Text>
+        <Text style={styles.mono}>Длительность: {requestDurationMs != null ? `${requestDurationMs} мс` : '-'}</Text>
+        <Text style={styles.mono}>Время: {requestTimestampIso || '-'}</Text>
         {status === 'loading' && (
           <View style={styles.rowCenter}>
             <ActivityIndicator />
-            <Text style={{ marginLeft: 8 }}>Checking...</Text>
+            <Text style={{ marginLeft: 8 }}>Выполняется...</Text>
           </View>
         )}
         {status === 'success' && (
           <View>
-            <Text style={styles.success}>Success</Text>
+            <Text style={styles.success}>Успех</Text>
             <Text style={styles.mono} numberOfLines={4}>{responseText}</Text>
           </View>
         )}
         {status === 'error' && (
           <View>
-            <Text style={styles.error}>Error</Text>
+            <Text style={styles.error}>Ошибка</Text>
             <Text style={styles.mono} numberOfLines={4}>{errorMessage}</Text>
           </View>
         )}
 
         <Pressable onPress={runHealthCheck} style={styles.button}>
-          <Text style={styles.buttonText}>Retry</Text>
+          <Text style={styles.buttonText}>Повторить</Text>
         </Pressable>
       </View>
 
