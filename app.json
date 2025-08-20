@@ -8,10 +8,13 @@
     "scheme": "kamchatka",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "owner": "pos-servis",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.posservis.kamchatourhub"
     },
     "android": {
+      "package": "com.posservis.kamchatourhub",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
