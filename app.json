@@ -3,6 +3,7 @@
     "name": "kamchatka",
     "slug": "kamchatka",
     "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
     "orientation": "portrait",
     "scheme": "kamchatka",
     "userInterfaceStyle": "automatic",
