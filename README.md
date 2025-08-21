@@ -1,50 +1,79 @@
-# Welcome to your Expo app 👋
+# Kamchatka (Expo)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Минимальное Expo‑приложение для проверки переменных окружения и доступности API `/health`.
 
-## Get started
+— Владелец: `pos-servis`
+— Slug: `kamchatour-hub`
+— Android package: `com.posservis.kamchatka`
+— Project ID (EAS): `34abf0cb-fdf3-48b7-b93a-129e3ba369b0`
+— Deeplink‑схема: `kamchatka://`
 
-1. Install dependencies
+## Что делает приложение
+На экране «Проверка окружения» отображает:
+- текущее окружение (`EXPO_PUBLIC_ENV`)
+- базовый URL API (`EXPO_PUBLIC_API_BASE_URL`)
+- отчёт по запросу `${EXPO_PUBLIC_API_BASE_URL}/health` (HTTP статус, длительность, время, тело/ошибка)
 
-   ```bash
-   npm install
-   ```
+## Переменные окружения (Expo → Project Settings → Environment Variables)
+Задайте значения для каждого окружения (Development / Preview / Production):
 
-2. Start the app
+- `EXPO_PUBLIC_API_BASE_URL`
+  - Development: https://dev.api.example.com
+  - Preview: https://staging.api.example.com
+  - Production: https://api.example.com
 
-   ```bash
-   npx expo start
-   ```
+- `EXPO_PUBLIC_ENV`
+  - Development: `development`
+  - Preview: `staging`
+  - Production: `production`
 
-In the output, you'll find options to open the app in a
+Примечание: переменные с префиксом `EXPO_PUBLIC_` доступны на клиенте через `process.env.*`.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+## Запуск локально
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
+Доступные варианты: Expo Go, Android эмулятор, iOS симулятор, development build.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Предпросмотр (Snack)
+Для быстрого просмотра можно опубликовать Snack и задать переменные окружения в настройках Snack. Учтите, что в веб‑превью возможны ограничения CORS для запросов к вашему API.
 
-## Learn more
+## Сборка через EAS
+Требуется `eas-cli` и токен/доступ к аккаунту `pos-servis`.
 
-To learn more about developing your project with Expo, look at the following resources:
+1) Конфигурация уже подготовлена:
+- `app.json` — владелец/slug/пакет/`extra.eas.projectId`
+- `eas.json` — профили `preview`/`production`, `cli.appVersionSource: "remote"`
+- `package.json` — `main: "index.js"`
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+2) Android‑креды (обязательно):
+- В Expo → Project → Credentials → Android создайте Keystore (или загрузите свой: .jks + пароли).
+- В неинтерактивном режиме генерация невозможна — придётся сделать это в панели или интерактивно.
 
-## Join the community
+3) Запуск сборки (пример для Android preview):
+```bash
+EXPO_TOKEN=YOUR_TOKEN npx eas-cli build --platform android --profile preview --non-interactive
+```
+После старта команда вернёт URL билда на `expo.dev`.
 
-Join our community of developers creating universal apps.
+4) iOS
+- Добавьте `ios.bundleIdentifier` в `app.json`
+- Настройте сертификаты/профили (через EAS Credentials)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Диагностика и частые проблемы
+- `EXPO_PUBLIC_API_BASE_URL is not set`: переменная не задана в проекте Expo
+- 4xx/5xx на `/health`: проверить URL/бэкенд/авторизацию
+- CORS в Snack/Web: используйте Expo Go на устройстве или настройте CORS на API
+- EAS: «Generating a new Keystore is not supported in --non-interactive mode» — создайте Keystore в панели Expo → Credentials
+- Несоответствие slug/Project ID: `extra.eas.projectId` — это UUID, а не `@owner/slug`
+
+## Текущее дерево и замечания
+- Нет `app/` и роутинга; `expo-router` не используется (можно удалить зависимость)
+- Главный экран: `App.js`
+- Входная точка: `index.js`
+
+## Полезные ссылки
+- Документация Expo: https://docs.expo.dev/
+- EAS Build: https://docs.expo.dev/build/introduction/
+- Переменные окружения: https://docs.expo.dev/guides/environment-variables/
