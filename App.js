@@ -3,6 +3,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
+  // Auth state: unauthenticated | guest (read-only)
+  const [authMode, setAuthMode] = useState('unauthenticated');
+
   const baseUrlFromEnv = process.env.EXPO_PUBLIC_API_BASE_URL ?? '';
   const envFromEnv = process.env.EXPO_PUBLIC_ENV ?? '';
 
@@ -61,12 +64,50 @@ export default function App() {
   }, [requestUrl]);
 
   useEffect(() => {
-    runHealthCheck();
-  }, [runHealthCheck]);
+    if (authMode !== 'unauthenticated') {
+      runHealthCheck();
+    }
+  }, [authMode, runHealthCheck]);
+
+  if (authMode === 'unauthenticated') {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Вход</Text>
+
+        <View style={styles.card}>
+          <Text style={styles.label}>Доступ</Text>
+          <Text style={styles.mono}>Выберите способ входа</Text>
+
+          <View style={{ height: 12 }} />
+
+          <Pressable
+            style={[styles.button, { backgroundColor: '#bbb' }]}
+            disabled
+            onPress={() => {}}
+          >
+            <Text style={styles.buttonText}>Войти (скоро)</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => setAuthMode('guest')}
+            style={[styles.button, { marginTop: 8 }]}
+          >
+            <Text style={styles.buttonText}>Войти как гость</Text>
+          </Pressable>
+        </View>
+
+        <StatusBar style="auto" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Проверка окружения</Text>
+      <Text style={styles.title}>Витрина</Text>
+
+      <View style={[styles.banner, { backgroundColor: '#FFF4CE', borderColor: '#F5D36D' }]}>
+        <Text style={styles.bannerText}>Режим гостя: только просмотр</Text>
+      </View>
 
       <View style={styles.card}>
         <Text style={styles.label}>Окружение</Text>
@@ -108,6 +149,10 @@ export default function App() {
         </Pressable>
       </View>
 
+      <Pressable onPress={() => setAuthMode('unauthenticated')} style={[styles.linkButton, { marginTop: 16 }]}> 
+        <Text style={[styles.linkButtonText]}>Выйти</Text>
+      </Pressable>
+
       <StatusBar style="auto" />
     </View>
   );
@@ -120,6 +165,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
+  },
+  banner: {
+    width: '100%',
+    maxWidth: 560,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+  },
+  bannerText: {
+    color: '#7A5B00',
+    fontWeight: '600',
   },
   title: {
     fontSize: 22,
@@ -171,5 +228,13 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: '600',
+  },
+  linkButton: {
+    paddingVertical: 8,
+  },
+  linkButtonText: {
+    color: '#007bff',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });
