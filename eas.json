@@ -1,0 +1,19 @@
+{
+  "cli": { "version": ">= 13.0.0", "appVersionSource": "remote" },
+  "build": {
+    "preview": {
+      "developmentClient": false,
+      "distribution": "internal",
+      "android": { "buildType": "apk" },
+      "ios": { "simulator": true },
+      "env": { "EXPO_PUBLIC_ENV": "staging" }
+    },
+    "production": {
+      "developmentClient": false,
+      "distribution": "store",
+      "android": { "buildType": "app-bundle" },
+      "env": { "EXPO_PUBLIC_ENV": "production" }
+    }
+  },
+  "submit": { "production": {} }
+}
