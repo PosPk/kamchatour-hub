@@ -2,7 +2,7 @@
   "expo": {
     "owner": "pos-servis",
     "name": "kamchatka",
-    "slug": "kamchatka",
+    "slug": "kamchatour-hub",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "kamchatka",
@@ -22,7 +22,7 @@
     "plugins": [],
     "extra": {
       "eas": {
-        "projectId": "@pos-servis/kamchatka"
+        "projectId": "34abf0cb-fdf3-48b7-b93a-129e3ba369b0"
       }
     }
   }
