@@ -1,0 +1,19 @@
+{
+  "cli": {
+    "version": ">= 11.0.0"
+  },
+  "submit": {
+    "production": {}
+  },
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "ios": {
+        "simulator": false
+      }
+    }
+  },
+  "update": {}
+}

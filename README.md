@@ -121,6 +121,14 @@ EMERGENCY_API_KEY=your_emergency_api_key
 WEATHER_API_KEY=your_weather_api_key
 ```
 
+### CI: Автоматическая загрузка в Expo (EAS)
+
+1. В GitHub репозитории откройте Settings → Secrets and variables → Actions → New repository secret и добавьте секрет `EXPO_TOKEN`.
+   - Токен можно создать командой локально: `npx expo login` → `npx expo whoami` → `npx expo token:create`.
+2. Обновите `app.json` при необходимости полями `owner` и `slug` для вашего аккаунта Expo.
+3. Ветку `main` при пуше будет публиковать обновление через GitHub Actions (`.github/workflows/expo-update.yml`). Также доступен ручной запуск (Run workflow).
+4. Проверить статус: вкладка Actions в GitHub. Логи шага "Publish update to main" покажут номер апдейта.
+
 ### Настройка геолокации
 Приложение автоматически запрашивает разрешения на геолокацию при первом запуске.
 
