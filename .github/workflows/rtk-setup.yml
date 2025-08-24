@@ -1,9 +1,2 @@
-name: Scaffold RTK App
-on:
-  workflow_dispatch:
-
-jobs:
-  ok:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "ok"
+name: a on: workflow_dispatch: jobs: ok: runs-on: ubuntu-latest steps:
+run: echo ok
