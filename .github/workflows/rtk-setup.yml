@@ -1,67 +1,9 @@
-nname: Scaffold RTK App
+name: Scaffold RTK App
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
-  scaffold:
+  ok:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Create branch
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B feat/rtk-setup
-      - name: Add deps (no install)
-        run: |
-          node -e "let p=require('./package.json');p.dependencies={...(p.dependencies||{}),'@reduxjs/toolkit':'^2.2.7','react-redux':'^9.2.0','redux-persist':'^6.0.0','@react-native-async-storage/async-storage':'^1.23.1','@react-navigation/native':'^7.0.14','@react-navigation/native-stack':'^7.2.0','@react-navigation/bottom-tabs':'^7.0.14','react-native-screens':'^4.1.0','react-native-safe-area-context':'^4.10.5'};require('fs').writeFileSync('package.json',JSON.stringify(p,null,2));"
-      - name: Create folders
-        run: |
-          mkdir -p src/shared/api src/features/auth/model src/pages/{Home,Catalog,Order,Profile} src/app
-      - name: Write base files
-        run: |
-          cat > src/shared/api/baseApi.js <<'EOF'
-          import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-          const BASE_URL='https://example.com/api';
-          export const baseApi=createApi({reducerPath:'api',baseQuery:fetchBaseQuery({baseUrl:BASE_URL}),endpoints:(b)=>({})});
-          EOF
-          cat > src/features/auth/model/authSlice.js <<'EOF'
-          import { createSlice } from '@reduxjs/toolkit';
-          export default createSlice({name:'auth',initialState:{token:null,user:null},reducers:{}}).reducer;
-          EOF
-          cat > src/app/store.js <<'EOF'
-          import { configureStore } from '@reduxjs/toolkit';
-          import auth from '../features/auth/model/authSlice';
-          export const store=configureStore({reducer:{auth}});
-          EOF
-          cat > src/pages/Home/HomeScreen.js <<'EOF'
-          import React from 'react'; import { View, Text } from 'react-native';
-          export default function HomeScreen(){ return(<View><Text>Home</Text></View>); }
-          EOF
-          cat > App.js <<'EOF'
-          import React from 'react';
-          import { Provider } from 'react-redux';
-          import { store } from './src/app/store';
-          import HomeScreen from './src/pages/Home/HomeScreen';
-          export default function App(){ return(<Provider store={store}><HomeScreen/></Provider>); }
-          EOF
-      - name: Commit and PR
-        run: |
-          git add -A
-          git commit -m "chore: minimal scaffold" || true
-        shell: bash
-      - uses: peter-evans/create-pull-request@v6
-        with:
-          branch: feat/rtk-setup
-          title: "Scaffold base"
-          body: "Minimal scaffold to fix YAML and open PR."
-          draft: false
+      - run: echo "ok"
