@@ -1,0 +1,66 @@
+name: Expo Updates
+
+on:
+  push:
+    branches:
+      - "**"
+    tags-ignore:
+      - "*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  eas-update:
+    name: Publish update to Expo (EAS)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set variables
+        run: |
+          echo "SANITIZED_BRANCH=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
+          echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Configure EAS Update (first run)
+        run: npx eas update:configure --non-interactive || echo "EAS Update already configured"
+
+      - name: Publish update to current branch
+        run: npx eas update --branch "$SANITIZED_BRANCH" --message "ci: update $SHORT_SHA"
+
+      - name: Create and push tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          TAG="expo-update-${SANITIZED_BRANCH}-${SHORT_SHA}"
+          git tag -a "$TAG" -m "Expo update for ${GITHUB_REF_NAME} @ ${SHORT_SHA}"
+          git push origin "$TAG"
+
