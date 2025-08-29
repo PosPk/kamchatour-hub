@@ -106,10 +106,10 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         coordinates: {
           latitude: currentLocation.coords.latitude,
           longitude: currentLocation.coords.longitude,
-          accuracy: currentLocation.coords.accuracy,
-          altitude: currentLocation.coords.altitude,
-          heading: currentLocation.coords.heading,
-          speed: currentLocation.coords.speed,
+          accuracy: currentLocation.coords.accuracy ?? undefined,
+          altitude: currentLocation.coords.altitude ?? undefined,
+          heading: currentLocation.coords.heading ?? undefined,
+          speed: currentLocation.coords.speed ?? undefined,
         },
         timestamp: currentLocation.timestamp,
       };
@@ -152,10 +152,10 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             coordinates: {
               latitude: newLocation.coords.latitude,
               longitude: newLocation.coords.longitude,
-              accuracy: newLocation.coords.accuracy,
-              altitude: newLocation.coords.altitude,
-              heading: newLocation.coords.heading,
-              speed: newLocation.coords.speed,
+              accuracy: newLocation.coords.accuracy ?? undefined,
+              altitude: newLocation.coords.altitude ?? undefined,
+              heading: newLocation.coords.heading ?? undefined,
+              speed: newLocation.coords.speed ?? undefined,
             },
             timestamp: newLocation.timestamp,
           };

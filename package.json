@@ -8,7 +8,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern",
+    "typecheck": "tsc --noEmit",
+    "build": "expo export --platform web"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
