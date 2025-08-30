@@ -17,7 +17,7 @@ export const useBookingStatus = (bookingId: string | undefined): BookingStatusRe
   const [status, setStatus] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | undefined>(undefined);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const delayRef = useRef<number>(5000);
 
   useEffect(() => {
