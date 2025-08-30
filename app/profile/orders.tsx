@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL as string | undefined;
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY as string | undefined;
-const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
+import { supabase } from '../../lib/supabase';
 
 export default function OrdersScreen() {
   const [orders, setOrders] = useState<any[]>([]);

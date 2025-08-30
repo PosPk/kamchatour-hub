@@ -2,12 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../../../lib/supabase';
 import { useBookingStatus } from '../../../hooks/useBookingStatus';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL as string | undefined;
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY as string | undefined;
-const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 export default function OrderDetailsScreen() {
   const params = useLocalSearchParams<{ id?: string }>();

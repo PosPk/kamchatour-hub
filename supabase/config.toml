@@ -1,0 +1,11 @@
+# Supabase CLI project configuration
+[project]
+ref = "your-project-ref" # e.g., abcdefghijklmnop
+
+[api]
+enabled = true
+schemas = ["public"]
+
+[db]
+major_version = 15
+

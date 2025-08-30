@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL as string | undefined;
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY as string | undefined;
-const supabase: SupabaseClient | null = supabaseUrl && supabaseKey
-  ? createClient(supabaseUrl, supabaseKey)
-  : null;
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { supabase as client } from '../lib/supabase';
+const supabase: SupabaseClient | null = client;
 
 export interface BookingStatusResult {
   status: string | undefined;
