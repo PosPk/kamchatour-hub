@@ -15,9 +15,11 @@ jobs:
         with:
           node-version: 18
       - name: Cache node modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
-          path: ~/.npm
+          path: |
+            ~/.npm
+            ~/.expo/cache
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -31,6 +33,7 @@ jobs:
         with:
           name: web-dist
           path: dist
+          retention-days: 14
       - name: Cleanup artifacts
         if: always()
         env:
