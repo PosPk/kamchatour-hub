@@ -8,6 +8,7 @@ import { FavoritesProvider } from '../contexts/FavoritesContext';
 import { BoostsProvider } from '../contexts/BoostsContext';
 import { OrdersProvider } from '../contexts/OrdersContext';
 import { RoleProvider } from '../contexts/RoleContext';
+import { TotemProvider } from '../contexts/TotemContext';
 
 export default function RootLayout() {
   return (
@@ -19,6 +20,7 @@ export default function RootLayout() {
             <BoostsProvider>
             <OrdersProvider>
             <RoleProvider>
+            <TotemProvider>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="auth" options={{ headerShown: false }} />
@@ -33,6 +35,7 @@ export default function RootLayout() {
               <Stack.Screen name="admin" options={{ headerShown: false }} />
             </Stack>
             <StatusBar style="auto" />
+            </TotemProvider>
             </RoleProvider>
             </OrdersProvider>
             </BoostsProvider>

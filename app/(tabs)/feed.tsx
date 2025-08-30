@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { track } from '../../lib/analytics';
+import { useTotems } from '../../contexts/TotemContext';
 
 interface FeedItem { id: string; uri: string; title?: string; likes: number; }
 
@@ -9,13 +10,15 @@ export default function FeedScreen() {
 	const [items, setItems] = useState<FeedItem[]>([]);
 	const [title, setTitle] = useState('');
 	const [uri, setUri] = useState('');
+	const { award } = useTotems();
 
-	const addPost = () => {
+	const addPost = async () => {
 		if (!uri) return;
 		const post: FeedItem = { id: Date.now().toString(), uri, title, likes: 0 };
 		setItems([post, ...items]);
 		setTitle(''); setUri('');
 		track('feed_view', { action: 'post_added' });
+		await award('volcano', 15, 'post_in_feed');
 	};
 
 	const like = (id: string) => {

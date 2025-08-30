@@ -3,9 +3,11 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFavorites } from '../../hooks/useFavorites';
+import { useTotems } from '../../contexts/TotemContext';
 
 export default function FavoritesScreen() {
   const { favorites, removeFavorite, clearFavorites } = useFavorites();
+  const { award } = useTotems();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -36,7 +38,7 @@ export default function FavoritesScreen() {
                     <Text style={styles.kind}>{labelByKind(item.kind)}</Text>
                   </View>
                 </View>
-                <TouchableOpacity onPress={() => removeFavorite(item.id, item.kind)}>
+                <TouchableOpacity onPress={async () => { removeFavorite(item.id, item.kind); try { await award('salmon', 5, 'favorite_remove'); } catch {} }}>
                   <Ionicons name="heart" size={22} color="#ef4444" />
                 </TouchableOpacity>
               </View>

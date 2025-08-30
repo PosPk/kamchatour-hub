@@ -5,11 +5,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
 import { useFavorites } from '../../hooks/useFavorites';
 import { useBoosts } from '../../hooks/useBoosts';
+import { useTotems } from '../../contexts/TotemContext';
 
 export default function BookingScreen() {
   const { user } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { getDiscountFor } = useBoosts();
+  const { award } = useTotems();
   const [selectedCategory, setSelectedCategory] = useState<string>('tours');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -157,8 +159,9 @@ export default function BookingScreen() {
         { text: 'Отмена', style: 'cancel' },
         {
           text: 'Забронировать',
-          onPress: () => {
+          onPress: async () => {
             Alert.alert('Успешно', 'Ваше бронирование подтверждено!');
+            try { await award('bear', 5, 'begin_checkout'); } catch {}
           },
         },
       ]
