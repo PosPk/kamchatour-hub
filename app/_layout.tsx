@@ -7,6 +7,7 @@ import { ThemeProvider } from '../contexts/ThemeContext';
 import { FavoritesProvider } from '../contexts/FavoritesContext';
 import { BoostsProvider } from '../contexts/BoostsContext';
 import { OrdersProvider } from '../contexts/OrdersContext';
+import { RoleProvider } from '../contexts/RoleContext';
 
 export default function RootLayout() {
   return (
@@ -17,6 +18,7 @@ export default function RootLayout() {
             <FavoritesProvider>
             <BoostsProvider>
             <OrdersProvider>
+            <RoleProvider>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="auth" options={{ headerShown: false }} />
@@ -24,8 +26,14 @@ export default function RootLayout() {
               <Stack.Screen name="boosts" options={{ headerShown: false }} />
               <Stack.Screen name="tours" options={{ headerShown: false }} />
               <Stack.Screen name="env" options={{ headerShown: false }} />
+              <Stack.Screen name="operator" options={{ headerShown: false }} />
+              <Stack.Screen name="guide" options={{ headerShown: false }} />
+              <Stack.Screen name="transfer" options={{ headerShown: false }} />
+              <Stack.Screen name="agent" options={{ headerShown: false }} />
+              <Stack.Screen name="admin" options={{ headerShown: false }} />
             </Stack>
             <StatusBar style="auto" />
+            </RoleProvider>
             </OrdersProvider>
             </BoostsProvider>
             </FavoritesProvider>
