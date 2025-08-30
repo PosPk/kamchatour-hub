@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as Location from 'expo-location';
-import { Alert } from 'react-native';
+// import { Alert } from 'react-native';
 
 export interface Coordinates {
   latitude: number;
@@ -53,7 +53,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         locationSubscription.remove();
       }
     };
-  }, []);
+  }, [locationSubscription]);
 
   const checkPermissions = async () => {
     try {

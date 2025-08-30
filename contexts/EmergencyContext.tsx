@@ -82,6 +82,7 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       // Load from AsyncStorage or API
       // For now, using default settings
+      return;
     } catch (error) {
       console.error('Error loading emergency settings:', error);
     }
