@@ -95,7 +95,7 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       setIsLoading(true);
 
-      const report: EmergencyReport = {
+      const newReport: EmergencyReport = {
         id: Date.now().toString(),
         coordinates,
         note: note || settings.sosMessage,
@@ -104,22 +104,22 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         emergencyType: type,
         severity: 'critical',
       };
-
       // Add to local reports
-      setEmergencyReports(prev => [report, ...prev]);
+      setEmergencyReports(prev => [newReport, ...prev]);
 
       // Send to emergency services
       const result = await sendEmergencySignal({
         coordinates,
-        note: report.note,
-        type: report.emergencyType,
-        severity: report.severity,
+        note: newReport.note,
+        type: newReport.emergencyType,
+        severity: newReport.severity,
+        timestamp: newReport.timestamp,
       });
 
       if (result.success) {
         // Update status to sent
         setEmergencyReports(prev =>
-          prev.map(r => r.id === report.id ? { ...r, status: 'sent' } : r)
+          prev.map(r => r.id === newReport.id ? { ...r, status: 'sent' } : r)
         );
 
         // Show confirmation
@@ -149,10 +149,7 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         [{ text: 'OK' }]
       );
 
-      // Update status to failed
-      setEmergencyReports(prev =>
-        prev.map(r => r.id === report?.id ? { ...r, status: 'pending' } : r)
-      );
+      // Keep the report in 'pending' state (no change needed)
     } finally {
       setIsLoading(false);
     }
@@ -220,7 +217,8 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       // Implement shelter search logic
       // This would typically call an API or use local data
-      return [];
+      const shelters: any[] = [];
+      return shelters;
     } catch (error) {
       console.error('Error getting nearby shelters:', error);
       return [];
@@ -231,7 +229,8 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       // Implement emergency info logic
       // This would provide guidance based on emergency type
-      return {};
+      const info: any = {};
+      return info;
     } catch (error) {
       console.error('Error getting emergency info:', error);
       return {};

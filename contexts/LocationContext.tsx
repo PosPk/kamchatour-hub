@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import * as Location from 'expo-location';
-import { Alert } from 'react-native';
+// import { Alert } from 'react-native';
 
 export interface Coordinates {
   latitude: number;
@@ -46,16 +46,52 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [error, setError] = useState<string | null>(null);
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription | null>(null);
 
-  useEffect(() => {
-    checkPermissions();
-    return () => {
-      if (locationSubscription) {
-        locationSubscription.remove();
+  
+  const getCurrentLocation = useCallback(async (): Promise<LocationData | null> => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const currentLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+        timeInterval: 10000,
+        distanceInterval: 10,
+      });
+
+      const locationData: LocationData = {
+        coordinates: {
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+          accuracy: currentLocation.coords.accuracy ?? undefined,
+          altitude: currentLocation.coords.altitude ?? undefined,
+          heading: currentLocation.coords.heading ?? undefined,
+          speed: currentLocation.coords.speed ?? undefined,
+        },
+        timestamp: currentLocation.timestamp,
+      };
+
+      // Try to get address
+      try {
+        const address = await reverseGeocode(locationData.coordinates);
+        if (address) {
+          locationData.address = address;
+        }
+      } catch (error) {
+        console.warn('Could not get address:', error);
       }
-    };
+
+      setLocation(locationData);
+      return locationData;
+    } catch (error) {
+      console.error('Error getting current location:', error);
+      setError('Не удалось получить текущее местоположение');
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const checkPermissions = async () => {
+  const checkPermissions = useCallback(async () => {
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
       if (status === 'granted') {
@@ -66,7 +102,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       console.error('Error checking permissions:', error);
       setError('Ошибка проверки разрешений');
     }
-  };
+  }, [getCurrentLocation]);
 
   const requestPermissions = async (): Promise<boolean> => {
     try {
@@ -91,49 +127,16 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  const getCurrentLocation = async (): Promise<LocationData | null> => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const currentLocation = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-        timeInterval: 10000,
-        distanceInterval: 10,
-      });
-
-      const locationData: LocationData = {
-        coordinates: {
-          latitude: currentLocation.coords.latitude,
-          longitude: currentLocation.coords.longitude,
-          accuracy: currentLocation.coords.accuracy,
-          altitude: currentLocation.coords.altitude,
-          heading: currentLocation.coords.heading,
-          speed: currentLocation.coords.speed,
-        },
-        timestamp: currentLocation.timestamp,
-      };
-
-      // Try to get address
-      try {
-        const address = await reverseGeocode(locationData.coordinates);
-        if (address) {
-          locationData.address = address;
-        }
-      } catch (error) {
-        console.warn('Could not get address:', error);
+  useEffect(() => {
+    checkPermissions();
+    return () => {
+      if (locationSubscription) {
+        locationSubscription.remove();
       }
+    };
+  }, [checkPermissions, locationSubscription]);
 
-      setLocation(locationData);
-      return locationData;
-    } catch (error) {
-      console.error('Error getting current location:', error);
-      setError('Не удалось получить текущее местоположение');
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
 
   const startLocationUpdates = async () => {
     try {
@@ -152,10 +155,10 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             coordinates: {
               latitude: newLocation.coords.latitude,
               longitude: newLocation.coords.longitude,
-              accuracy: newLocation.coords.accuracy,
-              altitude: newLocation.coords.altitude,
-              heading: newLocation.coords.heading,
-              speed: newLocation.coords.speed,
+              accuracy: newLocation.coords.accuracy ?? undefined,
+              altitude: newLocation.coords.altitude ?? undefined,
+              heading: newLocation.coords.heading ?? undefined,
+              speed: newLocation.coords.speed ?? undefined,
             },
             timestamp: newLocation.timestamp,
           };
