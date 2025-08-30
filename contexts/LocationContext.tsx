@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import * as Location from 'expo-location';
 // import { Alert } from 'react-native';
 
@@ -53,9 +53,9 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         locationSubscription.remove();
       }
     };
-  }, [locationSubscription]);
+  }, [checkPermissions, locationSubscription]);
 
-  const checkPermissions = async () => {
+  const checkPermissions = useCallback(async () => {
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
       if (status === 'granted') {
@@ -66,7 +66,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       console.error('Error checking permissions:', error);
       setError('Ошибка проверки разрешений');
     }
-  };
+  }, [getCurrentLocation]);
 
   const requestPermissions = async (): Promise<boolean> => {
     try {
@@ -91,7 +91,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  const getCurrentLocation = async (): Promise<LocationData | null> => {
+  const getCurrentLocation = useCallback(async (): Promise<LocationData | null> => {
     try {
       setIsLoading(true);
       setError(null);
@@ -133,7 +133,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const startLocationUpdates = async () => {
     try {

@@ -82,7 +82,6 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       // Load from AsyncStorage or API
       // For now, using default settings
-      return;
     } catch (error) {
       console.error('Error loading emergency settings:', error);
     }
@@ -93,7 +92,6 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     note?: string,
     type: EmergencyReport['emergencyType'] = 'other'
   ) => {
-    let createdReportId: string | null = null;
     try {
       setIsLoading(true);
 
@@ -106,8 +104,6 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         emergencyType: type,
         severity: 'critical',
       };
-      createdReportId = newReport.id;
-
       // Add to local reports
       setEmergencyReports(prev => [newReport, ...prev]);
 
@@ -221,7 +217,8 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       // Implement shelter search logic
       // This would typically call an API or use local data
-      return [];
+      const shelters: any[] = [];
+      return shelters;
     } catch (error) {
       console.error('Error getting nearby shelters:', error);
       return [];
@@ -232,7 +229,8 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       // Implement emergency info logic
       // This would provide guidance based on emergency type
-      return {};
+      const info: any = {};
+      return info;
     } catch (error) {
       console.error('Error getting emergency info:', error);
       return {};
