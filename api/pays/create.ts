@@ -26,7 +26,7 @@ export default async function handler(req: any, res: any) {
     // TODO: Integrate real CloudPayments init if needed
 
     res.status(200).json({ success: true, paymentData, message: 'Платеж инициирован' });
-  } catch (error) {
+  } catch {
     res.status(500).json({ success: false, error: 'Ошибка создания платежа' });
   }
 }

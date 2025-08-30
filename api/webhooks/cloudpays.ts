@@ -13,10 +13,7 @@ export default async function handler(req: any, res: any) {
   try {
     const body = req.body || {};
     // Basic log for debugging; replace with proper logger/Sentry in prod
-    try {
-      // eslint-disable-next-line no-console
-      console.log('cloudpays webhook', { headers: req.headers, body });
-    } catch {}
+    try { console.log('cloudpays webhook', { headers: req.headers, body }); } catch {}
 
     // TODO: Verify CloudPayments signature (X-Signature)
 
@@ -42,7 +39,6 @@ export default async function handler(req: any, res: any) {
 
     res.status(200).json({ success: true });
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('cloudpays webhook error', error);
     res.status(500).json({ success: false, error: 'Ошибка обработки вебхука' });
   }

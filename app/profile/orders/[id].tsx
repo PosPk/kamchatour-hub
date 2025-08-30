@@ -25,7 +25,11 @@ export default function OrderDetailsScreen() {
       try {
         const { data, error: qErr } = await supabase
           .from('bookings')
-          .select('id, created_at, status, total_price')
+          .select(`
+            id, created_at, status, total_price,
+            tour:tour_id ( name ),
+            order_items ( quantity, price )
+          `)
           .eq('id', bookingId)
           .single();
         if (qErr) throw qErr;
@@ -52,11 +56,20 @@ export default function OrderDetailsScreen() {
     if (!info) return <Text style={styles.info}>Заказ не найден</Text>;
 
     return (
-      <View style={{ gap: 8 }}>
+      <View style={{ gap: 12 }}>
         <Text style={styles.item}>ID: {info.id}</Text>
         <Text style={styles.item}>Дата: {new Date(info.created_at).toLocaleString()}</Text>
         <Text style={styles.item}>Сумма: {info.total_price ?? '—'} ₽</Text>
         <Text style={styles.item}>Статус (live): {statusLoading ? '…' : (status || info.status)}</Text>
+        {info.tour?.name && <Text style={styles.item}>Тур: {info.tour.name}</Text>}
+        {Array.isArray(info.order_items) && info.order_items.length > 0 && (
+          <View>
+            <Text style={[styles.item, { fontWeight: '700', marginTop: 8 }]}>Услуги:</Text>
+            {info.order_items.map((it: any, idx: number) => (
+              <Text key={idx} style={styles.item}>- {it.quantity} × {it.price} ₽</Text>
+            ))}
+          </View>
+        )}
       </View>
     );
   };
