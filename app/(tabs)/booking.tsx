@@ -3,9 +3,11 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
+import { useFavorites } from '../../hooks/useFavorites';
 
 export default function BookingScreen() {
   const { user } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [selectedCategory, setSelectedCategory] = useState<string>('tours');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -174,6 +176,9 @@ export default function BookingScreen() {
             <Text style={styles.cardGroupSize}>• {item.groupSize}</Text>
           </View>
         </View>
+        <TouchableOpacity onPress={() => toggleFavorite({ id: item.id, kind: 'tours', title: item.title, subtitle: item.duration, emoji: item.image })}>
+          <Ionicons name={isFavorite(item.id, 'tours') ? 'heart' : 'heart-outline'} size={22} color={isFavorite(item.id, 'tours') ? '#ef4444' : '#94a3b8'} />
+        </TouchableOpacity>
       </View>
       <View style={styles.cardFooter}>
         <View style={styles.cardRating}>
@@ -207,6 +212,9 @@ export default function BookingScreen() {
             <Text style={styles.cardMaxPeople}>• До {item.maxPeople} чел.</Text>
           </View>
         </View>
+        <TouchableOpacity onPress={() => toggleFavorite({ id: item.id, kind: 'activities', title: item.title, subtitle: item.duration, emoji: item.image })}>
+          <Ionicons name={isFavorite(item.id, 'activities') ? 'heart' : 'heart-outline'} size={22} color={isFavorite(item.id, 'activities') ? '#ef4444' : '#94a3b8'} />
+        </TouchableOpacity>
       </View>
       <View style={styles.cardFooter}>
         <View style={styles.cardRating}>
@@ -243,6 +251,9 @@ export default function BookingScreen() {
             </View>
           </View>
         </View>
+        <TouchableOpacity onPress={() => toggleFavorite({ id: item.id, kind: 'accommodations', title: item.title, subtitle: item.capacity, emoji: item.image })}>
+          <Ionicons name={isFavorite(item.id, 'accommodations') ? 'heart' : 'heart-outline'} size={22} color={isFavorite(item.id, 'accommodations') ? '#ef4444' : '#94a3b8'} />
+        </TouchableOpacity>
       </View>
       <View style={styles.cardFooter}>
         <View style={styles.cardRating}>
