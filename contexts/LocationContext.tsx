@@ -46,14 +46,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [error, setError] = useState<string | null>(null);
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription | null>(null);
 
-  useEffect(() => {
-    checkPermissions();
-    return () => {
-      if (locationSubscription) {
-        locationSubscription.remove();
-      }
-    };
-  }, [checkPermissions, locationSubscription]);
+  
 
   const checkPermissions = useCallback(async () => {
     try {
@@ -90,6 +83,15 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    checkPermissions();
+    return () => {
+      if (locationSubscription) {
+        locationSubscription.remove();
+      }
+    };
+  }, [checkPermissions, locationSubscription]);
 
   const getCurrentLocation = useCallback(async (): Promise<LocationData | null> => {
     try {
