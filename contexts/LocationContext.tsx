@@ -47,6 +47,49 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription | null>(null);
 
   
+  const getCurrentLocation = useCallback(async (): Promise<LocationData | null> => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const currentLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+        timeInterval: 10000,
+        distanceInterval: 10,
+      });
+
+      const locationData: LocationData = {
+        coordinates: {
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+          accuracy: currentLocation.coords.accuracy ?? undefined,
+          altitude: currentLocation.coords.altitude ?? undefined,
+          heading: currentLocation.coords.heading ?? undefined,
+          speed: currentLocation.coords.speed ?? undefined,
+        },
+        timestamp: currentLocation.timestamp,
+      };
+
+      // Try to get address
+      try {
+        const address = await reverseGeocode(locationData.coordinates);
+        if (address) {
+          locationData.address = address;
+        }
+      } catch (error) {
+        console.warn('Could not get address:', error);
+      }
+
+      setLocation(locationData);
+      return locationData;
+    } catch (error) {
+      console.error('Error getting current location:', error);
+      setError('Не удалось получить текущее местоположение');
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const checkPermissions = useCallback(async () => {
     try {
@@ -93,49 +136,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
   }, [checkPermissions, locationSubscription]);
 
-  const getCurrentLocation = useCallback(async (): Promise<LocationData | null> => {
-    try {
-      setIsLoading(true);
-      setError(null);
 
-      const currentLocation = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-        timeInterval: 10000,
-        distanceInterval: 10,
-      });
-
-      const locationData: LocationData = {
-        coordinates: {
-          latitude: currentLocation.coords.latitude,
-          longitude: currentLocation.coords.longitude,
-          accuracy: currentLocation.coords.accuracy ?? undefined,
-          altitude: currentLocation.coords.altitude ?? undefined,
-          heading: currentLocation.coords.heading ?? undefined,
-          speed: currentLocation.coords.speed ?? undefined,
-        },
-        timestamp: currentLocation.timestamp,
-      };
-
-      // Try to get address
-      try {
-        const address = await reverseGeocode(locationData.coordinates);
-        if (address) {
-          locationData.address = address;
-        }
-      } catch (error) {
-        console.warn('Could not get address:', error);
-      }
-
-      setLocation(locationData);
-      return locationData;
-    } catch (error) {
-      console.error('Error getting current location:', error);
-      setError('Не удалось получить текущее местоположение');
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   const startLocationUpdates = async () => {
     try {
