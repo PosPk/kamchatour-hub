@@ -18,6 +18,15 @@ export default function TabLayout() {
         headerTintColor: '#ffffff',
       }}>
       <Tabs.Screen
+        name="feed"
+        options={{
+          title: 'Лента',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="images" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
           title: 'Главная',
