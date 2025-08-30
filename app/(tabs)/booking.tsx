@@ -4,10 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
 import { useFavorites } from '../../hooks/useFavorites';
+import { useBoosts } from '../../hooks/useBoosts';
 
 export default function BookingScreen() {
   const { user } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { getDiscountFor } = useBoosts();
   const [selectedCategory, setSelectedCategory] = useState<string>('tours');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -163,7 +165,10 @@ export default function BookingScreen() {
     );
   };
 
-  const renderTourCard = (item: any) => (
+  const renderTourCard = (item: any) => {
+    const discount = getDiscountFor('tours');
+    const finalPrice = Math.max(0, Math.round(item.price * (1 - discount / 100)));
+    return (
     <TouchableOpacity key={item.id} style={styles.card}>
       <View style={styles.cardHeader}>
         <Text style={styles.cardImage}>{item.image}</Text>
@@ -187,7 +192,14 @@ export default function BookingScreen() {
           <Text style={styles.reviewsText}>({item.reviews})</Text>
         </View>
         <View style={styles.cardPrice}>
-          <Text style={styles.priceText}>{item.price} ₽</Text>
+          {discount > 0 ? (
+            <>
+              <Text style={styles.oldPriceText}>{item.price} ₽</Text>
+              <Text style={styles.priceText}>{finalPrice} ₽</Text>
+            </>
+          ) : (
+            <Text style={styles.priceText}>{item.price} ₽</Text>
+          )}
           <TouchableOpacity 
             style={styles.bookButton}
             onPress={() => handleBooking(item)}
@@ -197,9 +209,12 @@ export default function BookingScreen() {
         </View>
       </View>
     </TouchableOpacity>
-  );
+  ); };
 
-  const renderActivityCard = (item: any) => (
+  const renderActivityCard = (item: any) => {
+    const discount = getDiscountFor('activities');
+    const finalPrice = Math.max(0, Math.round(item.price * (1 - discount / 100)));
+    return (
     <TouchableOpacity key={item.id} style={styles.card}>
       <View style={styles.cardHeader}>
         <Text style={styles.cardImage}>{item.image}</Text>
@@ -223,7 +238,14 @@ export default function BookingScreen() {
           <Text style={styles.reviewsText}>({item.reviews})</Text>
         </View>
         <View style={styles.cardPrice}>
-          <Text style={styles.priceText}>{item.price} ₽</Text>
+          {discount > 0 ? (
+            <>
+              <Text style={styles.oldPriceText}>{item.price} ₽</Text>
+              <Text style={styles.priceText}>{finalPrice} ₽</Text>
+            </>
+          ) : (
+            <Text style={styles.priceText}>{item.price} ₽</Text>
+          )}
           <TouchableOpacity 
             style={styles.bookButton}
             onPress={() => handleBooking(item)}
@@ -233,9 +255,12 @@ export default function BookingScreen() {
         </View>
       </View>
     </TouchableOpacity>
-  );
+  ); };
 
-  const renderAccommodationCard = (item: any) => (
+  const renderAccommodationCard = (item: any) => {
+    const discount = getDiscountFor('accommodations');
+    const finalPrice = Math.max(0, Math.round(item.price * (1 - discount / 100)));
+    return (
     <TouchableOpacity key={item.id} style={styles.card}>
       <View style={styles.cardHeader}>
         <Text style={styles.cardImage}>{item.image}</Text>
@@ -262,7 +287,14 @@ export default function BookingScreen() {
           <Text style={styles.reviewsText}>({item.reviews})</Text>
         </View>
         <View style={styles.cardPrice}>
-          <Text style={styles.priceText}>{item.price} ₽/ночь</Text>
+          {discount > 0 ? (
+            <>
+              <Text style={styles.oldPriceText}>{item.price} ₽/ночь</Text>
+              <Text style={styles.priceText}>{finalPrice} ₽/ночь</Text>
+            </>
+          ) : (
+            <Text style={styles.priceText}>{item.price} ₽/ночь</Text>
+          )}
           <TouchableOpacity 
             style={styles.bookButton}
             onPress={() => handleBooking(item)}
@@ -272,7 +304,7 @@ export default function BookingScreen() {
         </View>
       </View>
     </TouchableOpacity>
-  );
+  ); };
 
   const renderCard = (item: any) => {
     switch (item.category) {
@@ -570,6 +602,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#0891b2',
     marginBottom: 8,
+  },
+  oldPriceText: {
+    fontSize: 14,
+    color: '#94a3b8',
+    textDecorationLine: 'line-through',
   },
   bookButton: {
     backgroundColor: '#0891b2',
