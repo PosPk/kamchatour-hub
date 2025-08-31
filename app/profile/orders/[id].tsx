@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { supabase } from '../../../lib/supabase';
+import { useOrders } from '../../../hooks/useOrders';
 import { useBookingStatus } from '../../../hooks/useBookingStatus';
 import { issueTicket } from '../../../lib/tickets';
+import { track } from '../../../lib/analytics';
 
 
 export default function OrderDetailsScreen() {
   const params = useLocalSearchParams<{ id?: string }>();
   const bookingId = (params.id || '') as string;
+  const { orders, confirmOrder } = useOrders();
   const { status, isLoading: statusLoading, error: statusError } = useBookingStatus(bookingId);
   const [info, setInfo] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -17,30 +19,12 @@ export default function OrderDetailsScreen() {
   const [ticketToken, setTicketToken] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    const load = async () => {
-      if (!supabase || !bookingId) return;
-      setLoading(true);
-      setError(undefined);
-      try {
-        const { data, error: qErr } = await supabase
-          .from('bookings')
-          .select(`
-            id, created_at, status, total_price,
-            tour:tour_id ( name ),
-            order_items ( quantity, price )
-          `)
-          .eq('id', bookingId)
-          .single();
-        if (qErr) throw qErr;
-        setInfo(data);
-      } catch (e: any) {
-        setError(e?.message || 'Ошибка загрузки заказа');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [bookingId]);
+    setLoading(true);
+    setError(undefined);
+    const local = orders.find(o => o.id === bookingId) || null;
+    setInfo(local);
+    setLoading(false);
+  }, [bookingId, orders]);
 
   const onIssueTicket = async () => {
     try {
@@ -66,15 +50,14 @@ export default function OrderDetailsScreen() {
     return (
       <View style={{ gap: 12 }}>
         <Text style={styles.item}>ID: {info.id}</Text>
-        <Text style={styles.item}>Дата: {new Date(info.created_at).toLocaleString()}</Text>
-        <Text style={styles.item}>Сумма: {info.total_price ?? '—'} ₽</Text>
-        <Text style={styles.item}>Статус (live): {statusLoading ? '…' : (status || info.status)}</Text>
-        {info.tour?.name && <Text style={styles.item}>Тур: {info.tour.name}</Text>}
-        {Array.isArray(info.order_items) && info.order_items.length > 0 && (
+        <Text style={styles.item}>Дата: {new Date(info.createdAt).toLocaleString()}</Text>
+        <Text style={styles.item}>Сумма: {info.total} ₽</Text>
+        <Text style={styles.item}>Статус: {statusLoading ? info.status : (status || info.status)}</Text>
+        {Array.isArray(info.items) && info.items.length > 0 && (
           <View>
-            <Text style={[styles.item, { fontWeight: '700', marginTop: 8 }]}>Услуги:</Text>
-            {info.order_items.map((it: any, idx: number) => (
-              <Text key={idx} style={styles.item}>- {it.quantity} × {it.price} ₽</Text>
+            <Text style={[styles.item, { fontWeight: '700', marginTop: 8 }]}>Состав:</Text>
+            {info.items.map((it: any, idx: number) => (
+              <Text key={idx} style={styles.item}>- {it.quantity} × {it.price} ₽ — {it.title}</Text>
             ))}
           </View>
         )}
@@ -92,7 +75,7 @@ export default function OrderDetailsScreen() {
         </View>
         <View style={styles.body}>
           {renderBody()}
-          {status === 'paid' && (
+          {(status === 'paid' || info?.status === 'paid') && (
             <View style={{ marginTop: 16, gap: 8 }}>
               {!ticketToken ? (
                 <TouchableOpacity onPress={onIssueTicket} style={styles.btn}>
@@ -105,6 +88,21 @@ export default function OrderDetailsScreen() {
                   <Text style={styles.info}>Покажите этот код контролёру (демо)</Text>
                 </View>
               )}
+            </View>
+          )}
+          {info?.status !== 'paid' && (
+            <View style={{ marginTop: 16 }}>
+              <TouchableOpacity
+                onPress={async () => {
+                  const updated = await confirmOrder(bookingId);
+                  if (updated) {
+                    track('purchase', { id: updated.id, total: updated.total });
+                  }
+                }}
+                style={styles.btn}
+              >
+                <Text style={styles.btnText}>Оплатить (демо)</Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>
