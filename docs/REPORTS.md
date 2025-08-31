@@ -31,3 +31,8 @@
   - Transfer: выдача и валидация QR билетов
   - Totems: RPC + Realtime синхронизация
   - QA: e2e критические пути; DevOps: Sentry/окружения
+
+### Обновление (вечер)
+- CI/Runtime: добавлен `.nvmrc` (Node 18) для выравнивания локально/CI
+- Payments: укреплён вебхук CloudPayments — проверка `TransactionId`, ранняя идемпотентность, примечание по raw body для HMAC
+- Документы для инвестора: `docs/DEMO.md`, `docs/SLIDES.md`, в README добавлена ценность и ссылки
