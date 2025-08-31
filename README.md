@@ -223,7 +223,11 @@ OPENAI_API_KEY=sk-xxxxx
   - `CLOUDPAYMENTS_API_SECRET`
   - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
 - В Expo app использовать `EXPO_PUBLIC_*` переменные (подхватываются клиентом).
-- Проектный ref: используйте ссылку на org и project ref из Supabase Dashboard.
+- Проектный ref: `zohfnqtqytsrrurgiati`
+  - URL: `https://zohfnqtqytsrrurgiati.supabase.co`
+  - Пример значений:
+    - `EXPO_PUBLIC_SUPABASE_URL=https://zohfnqtqytsrrurgiati.supabase.co`
+    - `SUPABASE_URL=https://zohfnqtqytsrrurgiati.supabase.co`
 
 ## 🛡️ Фолбэки и UX‑улучшения
 
