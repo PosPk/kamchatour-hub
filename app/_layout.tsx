@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import Bugsnag from '@bugsnag/expo';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from '../contexts/AuthContext';
 import { LocationProvider } from '../contexts/LocationContext';
@@ -12,6 +13,10 @@ import { TotemProvider } from '../contexts/TotemContext';
 import { AIProvider } from '../contexts/AIContext';
 
 export default function RootLayout() {
+  try {
+    const apiKey = process.env.EXPO_PUBLIC_BUGSNAG_API_KEY as string | undefined;
+    if (apiKey) Bugsnag.start({ apiKey });
+  } catch {}
   return (
     <ThemeProvider>
       <AuthProvider>

@@ -1,5 +1,6 @@
 import { createServiceClient } from '../../lib/supabase';
 import crypto from 'crypto';
+import { serverLog } from '../../lib/logger';
 const supabase = createServiceClient();
 
 export default async function handler(req: any, res: any) {
@@ -10,13 +11,13 @@ export default async function handler(req: any, res: any) {
 
   try {
     const body = req.body || {};
-    // Basic log for debugging; replace with proper logger/Sentry in prod
-    try { console.log('cloudpays webhook', { headers: req.headers, body }); } catch {}
+    try { await serverLog('cloudpays:webhook:receive', { headers: req.headers, body }); } catch {}
 
     // Verify CloudPayments signature (X-Signature) using HMAC SHA256 of raw body
     const signature = req.headers['x-signature'] as string | undefined;
     const secret = process.env.CLOUDPAYMENTS_API_SECRET as string | undefined;
     if (!secret || !signature) {
+      try { await serverLog('cloudpays:webhook:auth_fail', {}, 'warn'); } catch {}
       res.status(401).json({ success: false, error: 'No signature/secret' });
       return;
     }
@@ -29,6 +30,7 @@ export default async function handler(req: any, res: any) {
         : JSON.stringify(req.body || {});
     const hmac = crypto.createHmac('sha256', secret).update(payloadString, 'utf8').digest('base64');
     if (hmac !== signature) {
+      try { await serverLog('cloudpays:webhook:bad_signature', { signature }, 'warn'); } catch {}
       res.status(401).json({ success: false, error: 'Bad signature' });
       return;
     }
@@ -60,10 +62,10 @@ export default async function handler(req: any, res: any) {
       .eq('id', bookingId);
 
     if (error) throw error;
-
+    try { await serverLog('cloudpays:webhook:updated', { bookingId, status, actionId }); } catch {}
     res.status(200).json({ success: true });
   } catch (error) {
-    console.error('cloudpays webhook error', error);
+    try { await serverLog('cloudpays:webhook:error', { error: (error as any)?.message }, 'error'); } catch {}
     res.status(500).json({ success: false, error: 'Ошибка обработки вебхука' });
   }
 }
