@@ -212,8 +212,9 @@ CLOUDPAYMENTS_API_SECRET=your_api_secret
 SUPABASE_URL=https://your-project-ref.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 OPENAI_API_KEY=sk-xxxxx
-AI_PROVIDER=openai # или groq
+AI_PROVIDER=deepseek # или openai/groq
 GROQ_API_KEY=grq-xxxxx
+DEEPSEEK_API_KEY=sk-deepseek-xxxxx
 ```
 
 ### Supabase настройки (когда появится проект)

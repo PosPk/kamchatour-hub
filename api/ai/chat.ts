@@ -6,7 +6,7 @@ export default async function handler(req: any, res: any) {
   }
   try {
     const provider = (process.env.AI_PROVIDER || 'openai').toLowerCase();
-    const { messages, model = provider === 'groq' ? 'llama-3.1-8b-instant' : 'gpt-4o-mini', temperature = 0.5 } = req.body || {};
+    const { messages, model = provider === 'groq' ? 'llama-3.1-8b-instant' : provider === 'deepseek' ? 'deepseek-chat' : 'gpt-4o-mini', temperature = 0.5 } = req.body || {};
     if (!Array.isArray(messages)) {
       res.status(400).json({ error: 'messages array required' });
       return;
@@ -16,9 +16,12 @@ export default async function handler(req: any, res: any) {
     if (provider === 'groq') {
       url = 'https://api.groq.com/openai/v1/chat/completions';
       key = process.env.GROQ_API_KEY as string | undefined;
+    } else if (provider === 'deepseek') {
+      url = 'https://api.deepseek.com/v1/chat/completions';
+      key = process.env.DEEPSEEK_API_KEY as string | undefined;
     }
     if (!key) {
-      res.status(500).json({ error: provider === 'groq' ? 'GROQ_API_KEY is not configured' : 'OPENAI_API_KEY is not configured' });
+      res.status(500).json({ error: provider === 'groq' ? 'GROQ_API_KEY is not configured' : provider === 'deepseek' ? 'DEEPSEEK_API_KEY is not configured' : 'OPENAI_API_KEY is not configured' });
       return;
     }
     const r = await fetch(url, {
