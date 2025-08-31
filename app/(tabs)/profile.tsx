@@ -296,6 +296,15 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Кабинеты</Text>
           <View style={styles.sectionContent}>
+            <Link href="/ai" asChild>
+              <TouchableOpacity style={styles.profileItem}>
+                <View style={styles.profileItemLeft}>
+                  <View style={styles.profileItemIcon}><Ionicons name="sparkles" size={20} color="#0891b2" /></View>
+                  <View style={styles.profileItemInfo}><Text style={styles.profileItemTitle}>AI помощник</Text><Text style={styles.profileItemValue}>Ответы и подсказки</Text></View>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#cbd5e1" />
+              </TouchableOpacity>
+            </Link>
             {hasRole('operator') && (
               <Link href="/operator" asChild>
                 <TouchableOpacity style={styles.profileItem}>
