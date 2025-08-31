@@ -1,5 +1,4 @@
 import { Stack } from 'expo-router';
-import Bugsnag from '@bugsnag/expo';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from '../contexts/AuthContext';
 import { LocationProvider } from '../contexts/LocationContext';
@@ -15,7 +14,12 @@ import { AIProvider } from '../contexts/AIContext';
 export default function RootLayout() {
   try {
     const apiKey = process.env.EXPO_PUBLIC_BUGSNAG_API_KEY as string | undefined;
-    if (apiKey) Bugsnag.start({ apiKey });
+    if (apiKey && typeof window !== 'undefined') {
+      // Dynamic import to avoid SSR issues in static rendering
+      import('@bugsnag/expo').then(m => {
+        try { (m as any)?.default?.start({ apiKey }); } catch {}
+      }).catch(() => {});
+    }
   } catch {}
   return (
     <ThemeProvider>
