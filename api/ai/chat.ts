@@ -5,21 +5,27 @@ export default async function handler(req: any, res: any) {
     return;
   }
   try {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      res.status(500).json({ error: 'OPENAI_API_KEY is not configured' });
-      return;
-    }
-    const { messages, model = 'gpt-4o-mini', temperature = 0.5 } = req.body || {};
+    const provider = (process.env.AI_PROVIDER || 'openai').toLowerCase();
+    const { messages, model = provider === 'groq' ? 'llama-3.1-8b-instant' : 'gpt-4o-mini', temperature = 0.5 } = req.body || {};
     if (!Array.isArray(messages)) {
       res.status(400).json({ error: 'messages array required' });
       return;
     }
-    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+    let url = 'https://api.openai.com/v1/chat/completions';
+    let key = process.env.OPENAI_API_KEY;
+    if (provider === 'groq') {
+      url = 'https://api.groq.com/openai/v1/chat/completions';
+      key = process.env.GROQ_API_KEY as string | undefined;
+    }
+    if (!key) {
+      res.status(500).json({ error: provider === 'groq' ? 'GROQ_API_KEY is not configured' : 'OPENAI_API_KEY is not configured' });
+      return;
+    }
+    const r = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${key}`,
       },
       body: JSON.stringify({ model, messages, temperature, stream: false }),
     });
