@@ -27,7 +27,11 @@
 - Активности на природе
 - Размещение в эко-лоджах
 - Поиск и фильтрация предложений
- - Голосовой поиск (web) и AI‑подбор туров
+- Голосовой поиск (web) и AI‑подбор туров
+
+### 🧭 **Активности**
+- Экран `/activities` с карточками активностей (изображение, описание, бейджи сложности/длительности/тегов, цена)
+- Источник данных: партнёр (Tilda API) с демо‑фолбэком
 
 ### 🚌 **Трансфер**
 - Поиск рейсов, удержание мест (hold), бронирование, билеты (QR)
@@ -96,6 +100,7 @@
 app/
 ├── (tabs)/           # Основные табы приложения
 │   ├── index.tsx     # Главный экран
+│   ├── activities.tsx# Активности (каталог от партнёра)
 │   ├── feed.tsx      # Фото-лента (локально)
 │   ├── culture.tsx   # Культура
 │   ├── eco.tsx       # Экология
@@ -113,6 +118,7 @@ app/
 
 components/            # Переиспользуемые компоненты
 ├── ui/               # UI компоненты
+│  └── ActivityCard.tsx # Карточка активности
 ├── safety/           # Компоненты безопасности
 ├── culture/          # Культурные компоненты
 └── eco/              # Экологические компоненты
@@ -140,15 +146,28 @@ lib/                  # Библиотеки
 └── seatmaps/         # Схемы мест (bus/jeep)
 
 api/                  # Serverless API (Vercel)
+├── health.ts         # Проверка статуса
+├── config.ts         # Публичные фичи/флаги
+├── env.ts            # Наличие критичных ENV
 ├── pays/             # CloudPayments
 │  └── create.ts      # Инициация платежа
 ├── webhooks/cloudpays.ts # Вебхуки оплаты (HMAC + идемпотентность)
+├── orders/
+│  ├── list.ts        # Список заказов (Supabase + фолбэк)
+│  └── [id].ts        # Детали заказа
 ├── transfer/         # Трансфер API
 │  ├── search.ts      # Поиск рейсов
 │  ├── hold.ts        # Удержание мест
 │  ├── book.ts        # Бронирование
 │  ├── ticket.ts      # Выпуск QR‑билета
 │  └── validate.ts    # Валидация QR‑билета
+├── activities/
+│  └── list.ts        # Каталог активностей (Tilda API + фолбэк)
+├── feed/
+│  ├── list.ts        # Лента постов
+│  ├── post.ts        # Создать пост
+│  ├── like.ts        # Лайк поста
+│  └── comment.ts     # Комментарий к посту
 └── ai/chat.ts        # Прокси к OpenAI (чат)
 
 hooks/                # Кастомные хуки
@@ -217,13 +236,15 @@ DEEPSEEK_API_KEY=sk-deepseek-xxxxx
 EXPO_PUBLIC_BUGSNAG_API_KEY=your_bugsnag_key
 AXIOM_TOKEN=your_axiom_ingest_token
 AXIOM_DATASET=kamchatour-logs
-CLOUDPAYMENTS_API_SECRET=your_api_secret
 SUPABASE_URL=https://your-project-ref.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 OPENAI_API_KEY=sk-xxxxx
 AI_PROVIDER=deepseek # или openai/groq
 GROQ_API_KEY=grq-xxxxx
 DEEPSEEK_API_KEY=sk-deepseek-xxxxx
+TILDA_PUBLIC_KEY=
+TILDA_SECRET_KEY=
+TILDA_PROJECT_ID=
 ```
 
 ### Supabase настройки (когда появится проект)
