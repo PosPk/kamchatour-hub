@@ -34,7 +34,7 @@ export default function TourDetails() {
   track('view_item_detail', { id: tour.id });
 
   const handleCheckout = async () => {
-    track('begin_checkout', { id: tour.id });
+    track('begin_checkout', { id: tour.id, price: tour.price });
     const order = await createOrder([{ id: tour.id, kind: 'tours', title: tour.title, price: tour.price, quantity: 1 }]);
     Alert.alert('Бронь создана', `Заказ №${order.id} на сумму ${order.total} ₽`);
   };

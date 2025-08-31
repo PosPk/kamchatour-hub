@@ -134,17 +134,20 @@ lib/                  # Библиотеки
 ├── location.ts       # Геолокация
 ├── analytics.ts      # Аналитика (события воронки)
 ├── transfer.ts       # Клиент трансфера (fallback на мок‑данные)
+├── tickets.ts        # Выпуск/проверка билетов (клиент)
 ├── nft.ts            # NFT off-chain загрузка (скaffold)
 └── seatmaps/         # Схемы мест (bus/jeep)
 
 api/                  # Serverless API (Vercel)
 ├── pays/             # CloudPayments
 │  └── create.ts      # Инициация платежа
-├── webhooks/cloudpays.ts # Вебхуки оплаты
+├── webhooks/cloudpays.ts # Вебхуки оплаты (HMAC + идемпотентность)
 ├── transfer/         # Трансфер API
 │  ├── search.ts      # Поиск рейсов
 │  ├── hold.ts        # Удержание мест
-│  └── book.ts        # Бронирование
+│  ├── book.ts        # Бронирование
+│  ├── ticket.ts      # Выпуск QR‑билета
+│  └── validate.ts    # Валидация QR‑билета
 └── ai/chat.ts        # Прокси к OpenAI (чат)
 
 hooks/                # Кастомные хуки
