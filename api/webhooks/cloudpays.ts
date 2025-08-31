@@ -22,6 +22,7 @@ export default async function handler(req: any, res: any) {
       return;
     }
 
+    // Raw body handling note: ensure Vercel passes req.rawBody (see vercel.json or middleware if needed)
     // In Vercel/Node, body may already be parsed; reconstruct canonical string
     const payloadString = typeof req.rawBody === 'string'
       ? req.rawBody
@@ -48,9 +49,26 @@ export default async function handler(req: any, res: any) {
 
     // Idempotency by CloudPayments TransactionId
     const actionId = body?.TransactionId || body?.Id || body?.InvoiceId;
+    if (!actionId) {
+      try { await serverLog('cloudpays:webhook:no_action_id', { bookingId }, 'warn'); } catch {}
+      res.status(400).json({ success: false, error: 'No transaction id' });
+      return;
+    }
     const status = body?.Status === 'Completed' ? 'paid' : 'payment_failed';
 
     // Upsert payment record and update booking in a best-effort sequence
+    const { data: existing } = await supabase
+      .from('payments')
+      .select('id')
+      .eq('id', actionId)
+      .limit(1)
+      .maybeSingle();
+    if (existing) {
+      try { await serverLog('cloudpays:webhook:duplicate', { actionId }, 'info'); } catch {}
+      res.status(200).json({ success: true, duplicate: true });
+      return;
+    }
+
     const { error: pErr } = await supabase
       .from('payments')
       .upsert({ id: actionId, booking_id: bookingId, status, provider: 'cloudpayments', payload: body }, { onConflict: 'id' });
