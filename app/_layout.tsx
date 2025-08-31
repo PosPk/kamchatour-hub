@@ -10,6 +10,7 @@ import { OrdersProvider } from '../contexts/OrdersContext';
 import { RoleProvider } from '../contexts/RoleContext';
 import { TotemProvider } from '../contexts/TotemContext';
 import { AIProvider } from '../contexts/AIContext';
+import { PhotoFeedProvider } from '../contexts/PhotoFeedContext';
 
 export default function RootLayout() {
   try {
@@ -32,6 +33,7 @@ export default function RootLayout() {
             <RoleProvider>
             <TotemProvider>
             <AIProvider>
+            <PhotoFeedProvider>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="auth" options={{ headerShown: false }} />
@@ -46,6 +48,7 @@ export default function RootLayout() {
               <Stack.Screen name="admin" options={{ headerShown: false }} />
             </Stack>
             <StatusBar style="auto" />
+            </PhotoFeedProvider>
             </AIProvider>
             </TotemProvider>
             </RoleProvider>

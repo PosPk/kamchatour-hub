@@ -2,27 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { track } from '../../lib/analytics';
-import { useTotems } from '../../contexts/TotemContext';
-
-interface FeedItem { id: string; uri: string; title?: string; likes: number; }
+import { usePhotoFeed } from '../../hooks/usePhotoFeed';
 
 export default function FeedScreen() {
-	const [items, setItems] = useState<FeedItem[]>([]);
 	const [title, setTitle] = useState('');
 	const [uri, setUri] = useState('');
-	const { award } = useTotems();
+	const { posts, addPost, likePost } = usePhotoFeed();
 
-	const addPost = async () => {
+	const onAdd = async () => {
 		if (!uri) return;
-		const post: FeedItem = { id: Date.now().toString(), uri, title, likes: 0 };
-		setItems([post, ...items]);
+		await addPost({ title, uri });
 		setTitle(''); setUri('');
-		track('feed_view', { action: 'post_added' });
-		await award('volcano', 15, 'post_in_feed');
-	};
-
-	const like = (id: string) => {
-		setItems(prev => prev.map(it => it.id === id ? { ...it, likes: it.likes + 1 } : it));
 	};
 
 	return (
@@ -30,17 +20,17 @@ export default function FeedScreen() {
 			<View style={styles.composer}>
 				<TextInput placeholder="Заголовок" value={title} onChangeText={setTitle} style={styles.input} />
 				<TextInput placeholder="Image URL" value={uri} onChangeText={setUri} style={styles.input} />
-				<TouchableOpacity style={styles.button} onPress={addPost}><Text style={styles.buttonText}>Опубликовать</Text></TouchableOpacity>
+				<TouchableOpacity style={styles.button} onPress={onAdd}><Text style={styles.buttonText}>Опубликовать</Text></TouchableOpacity>
 			</View>
 			<FlatList
-				data={items}
+				data={posts}
 				keyExtractor={it => it.id}
 				renderItem={({ item }) => (
 					<View style={styles.card}>
 						{item.uri ? <Image source={{ uri: item.uri }} style={styles.image} /> : <View style={[styles.image, styles.imagePlaceholder]} />}
 						<Text style={styles.title}>{item.title || 'Без названия'}</Text>
 						<View style={styles.row}>
-							<TouchableOpacity style={styles.like} onPress={() => like(item.id)}>
+							<TouchableOpacity style={styles.like} onPress={() => likePost(item.id)}>
 								<Ionicons name="heart" size={16} color="#ef4444" /><Text style={styles.likeText}>{item.likes}</Text>
 							</TouchableOpacity>
 						</View>
