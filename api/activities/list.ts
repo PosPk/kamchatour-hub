@@ -1,5 +1,4 @@
 // Activities list from partner (Tilda) with demo fallback
-import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Activity = {
   id: string;
@@ -41,7 +40,7 @@ async function fetchFromTilda(): Promise<Activity[]> {
   }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: any, res: any) {
   if (req.method !== 'GET') {
     res.status(405).json({ ok: false, error: 'Method Not Allowed' });
     return;
