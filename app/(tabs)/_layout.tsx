@@ -18,6 +18,15 @@ export default function TabLayout() {
         headerTintColor: '#ffffff',
       }}>
       <Tabs.Screen
+        name="activities"
+        options={{
+          title: 'Активности',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bicycle" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="feed"
         options={{
           title: 'Лента',
