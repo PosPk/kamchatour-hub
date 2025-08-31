@@ -213,6 +213,18 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 OPENAI_API_KEY=sk-xxxxx
 ```
 
+### Supabase настройки (когда появится проект)
+- В GitHub Secrets добавить:
+  - `EXPO_PUBLIC_SUPABASE_URL`
+  - `EXPO_PUBLIC_SUPABASE_ANON_KEY` (ваш anon jwt)
+  - `SUPABASE_URL` (https://<project-ref>.supabase.co)
+  - `SUPABASE_SERVICE_ROLE_KEY` (service_role jwt)
+- В Vercel env добавить:
+  - `CLOUDPAYMENTS_API_SECRET`
+  - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+- В Expo app использовать `EXPO_PUBLIC_*` переменные (подхватываются клиентом).
+- Проектный ref: используйте ссылку на org и project ref из Supabase Dashboard.
+
 ## 🛡️ Фолбэки и UX‑улучшения
 
 - Трансфер: при недоступном Supabase (нет `EXPO_PUBLIC_SUPABASE_URL/ANON_KEY`) клиент использует безопасные мок‑данные для демонстрации поиска и схем мест. Реальные бронирования в этом режиме отключены.
