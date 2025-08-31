@@ -13,7 +13,11 @@
     "web": "expo start --web",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern",
     "typecheck": "tsc --noEmit",
-    "build": "expo export --platform web"
+    "build": "expo export --platform web",
+    "deploy:web": "expo export --platform web && vercel --prod",
+    "deploy:preview": "expo export --platform web && vercel",
+    "test:e2e": "playwright test tests/payment.e2e.ts",
+    "test:ci": "npm run typecheck && npm run lint && npm run test:e2e"
   },
   "dependencies": {
     "@bugsnag/expo": "^7.16.2",
