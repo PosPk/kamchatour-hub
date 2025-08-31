@@ -75,9 +75,22 @@ export default function SeatSelect() {
       {trip && (
         <View style={styles.info}> 
           <Text style={styles.sub}>Рейс: {trip.id.slice(0,8)} · {new Date(trip.depart_at).toLocaleString()}</Text>
-          {holdInfo && <Text style={styles.hold}>Удержание: {countdown}s</Text>}
+          {holdInfo && (
+            <View style={styles.holdBox}>
+              <View style={[styles.progress, { width: `${Math.max(0, Math.min(100, (countdown/900)*100))}%` }]} />
+              <Text style={styles.hold}>Удержание: {countdown}s</Text>
+            </View>
+          )}
         </View>
       )}
+      <View style={styles.legend}>
+        <Text style={styles.legendItem}>Свободно</Text>
+        <View style={[styles.legendSwatch, { backgroundColor: '#e2e8f0' }]} />
+        <Text style={styles.legendItem}>Занято</Text>
+        <View style={[styles.legendSwatch, { backgroundColor: '#cbd5e1' }]} />
+        <Text style={styles.legendItem}>Выбрано</Text>
+        <View style={[styles.legendSwatch, { backgroundColor: '#0891b2' }]} />
+      </View>
       <View style={styles.grid}>
         {seatIds.map(sid => (
           <TouchableOpacity key={sid} style={[styles.seat, 
@@ -106,11 +119,16 @@ const styles = StyleSheet.create({
   info: { marginBottom: 8 },
   sub: { color: '#64748b' },
   hold: { color: '#ef4444', fontWeight: '700', marginTop: 4 },
+  holdBox: { marginTop: 4 },
+  progress: { height: 4, backgroundColor: '#0891b2', borderRadius: 2, marginBottom: 4 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginVertical: 12 },
   seat: { width: 56, height: 40, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e2e8f0' },
   seatBusy: { backgroundColor: '#cbd5e1' },
   seatSelected: { backgroundColor: '#0891b2' },
   seatText: { color: '#0f172a', fontWeight: '700' },
+  legend: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  legendItem: { color: '#64748b', fontSize: 12 },
+  legendSwatch: { width: 16, height: 12, borderRadius: 2 },
   actions: { flexDirection: 'row', gap: 12, marginTop: 8 },
   btn: { backgroundColor: '#334155', borderRadius: 8, paddingHorizontal: 16, height: 40, alignItems:'center', justifyContent:'center' },
   btnText: { color: '#fff', fontWeight: '700' },

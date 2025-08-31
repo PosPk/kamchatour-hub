@@ -58,7 +58,11 @@ export const TotemProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	const award = useCallback(async (type: TotemType, points: number, _reason?: string) => {
 		if (points <= 0) return;
 		const allowed = await withinDailyLimit(points);
-		if (!allowed) return;
+		if (!allowed) {
+			// simple toast
+			console.warn('Достигнут дневной лимит начислений');
+			return;
+		}
 		if (type === 'bear') setBear(prev => { const next = prev + points; save({ bear: next, volcano, salmon }); return next; });
 		if (type === 'volcano') setVolcano(prev => { const next = prev + points; save({ bear, volcano: next, salmon }); return next; });
 		if (type === 'salmon') setSalmon(prev => { const next = prev + points; save({ bear, volcano, salmon: next }); return next; });
