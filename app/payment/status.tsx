@@ -5,7 +5,7 @@ import { useBookingStatus } from '../../hooks/useBookingStatus';
 
 export default function PaymentStatusScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ bookingId?: string; initial?: string }>();
+  const params = useLocalSearchParams<{ bookingId?: string; id?: string; initial?: string }>();
   const bookingId = (params?.bookingId || params?.id || '') as string;
   const initial = (params?.initial || '') as string;
 
