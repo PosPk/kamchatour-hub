@@ -1,23 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { supabase } from '../../lib/supabase';
+import { useOrders } from '../../hooks/useOrders';
 
 export default function OrdersScreen() {
-  const [orders, setOrders] = useState<any[]>([]);
-
-  useEffect(() => {
-    loadOrders();
-  }, []);
-
-  const loadOrders = async () => {
-    if (!supabase) return;
-    const { data } = await supabase
-      .from('bookings')
-      .select('id, created_at, status, total_price')
-      .order('created_at', { ascending: false });
-    if (data) setOrders(data);
-  };
+  const { orders } = useOrders();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,9 +16,9 @@ export default function OrdersScreen() {
           {orders.map(o => (
             <View key={o.id} style={styles.card}>
               <Text style={styles.cardTitle}>Заказ #{o.id}</Text>
-              <Text style={styles.cardSub}>{new Date(o.created_at).toLocaleString()}</Text>
+              <Text style={styles.cardSub}>{new Date(o.createdAt).toLocaleString()}</Text>
               <Text style={styles.cardStatus}>Статус: {o.status}</Text>
-              <Text style={styles.cardPrice}>Сумма: {o.total_price ?? '—'} ₽</Text>
+              <Text style={styles.cardPrice}>Сумма: {o.total} ₽</Text>
             </View>
           ))}
         </View>

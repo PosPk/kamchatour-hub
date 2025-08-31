@@ -9,27 +9,24 @@ export default async function handler(req: any, res: any) {
     return;
   }
   try {
-    if (!supabase) {
-      res.status(500).json({ error: 'Supabase not configured' });
-      return;
-    }
-
     const bookingId = String(req.query?.bookingId || '');
     if (!bookingId) {
       res.status(400).json({ error: 'bookingId required' });
       return;
     }
 
-    // Ensure booking is paid
-    const { data: booking, error: bErr } = await supabase
-      .from('bookings')
-      .select('id, status')
-      .eq('id', bookingId)
-      .single();
-    if (bErr) throw bErr;
-    if (!booking || booking.status !== 'paid') {
-      res.status(400).json({ error: 'booking not paid' });
-      return;
+    // If Supabase configured, validate status; otherwise allow (demo mode)
+    if (supabase) {
+      const { data: booking, error: bErr } = await supabase
+        .from('bookings')
+        .select('id, status')
+        .eq('id', bookingId)
+        .single();
+      if (bErr) throw bErr;
+      if (!booking || booking.status !== 'paid') {
+        res.status(400).json({ error: 'booking not paid' });
+        return;
+      }
     }
 
     // Generate token (HMAC of bookingId + ts)

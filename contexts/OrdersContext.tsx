@@ -14,12 +14,13 @@ export interface Order {
   items: OrderItem[];
   total: number;
   createdAt: number;
-  status: 'created' | 'confirmed' | 'cancelled';
+  status: 'created' | 'paid' | 'cancelled';
 }
 
 interface OrdersContextType {
   orders: Order[];
   createOrder: (items: OrderItem[]) => Promise<Order>;
+  confirmOrder: (orderId: string) => Promise<Order | null>;
   cancelOrder: (orderId: string) => Promise<void>;
   clearOrders: () => Promise<void>;
 }
@@ -71,13 +72,25 @@ export const OrdersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return order;
   }, []);
 
+  const confirmOrder = useCallback(async (orderId: string): Promise<Order | null> => {
+    let updated: Order | null = null;
+    setOrders(prev => prev.map(o => {
+      if (o.id === orderId) {
+        updated = { ...o, status: 'paid' };
+        return updated;
+      }
+      return o;
+    }));
+    return updated;
+  }, []);
+
   const cancelOrder = useCallback(async (orderId: string) => {
     setOrders(prev => prev.map(o => (o.id === orderId ? { ...o, status: 'cancelled' } : o)));
   }, []);
 
   const clearOrders = useCallback(async () => setOrders([]), []);
 
-  const value = useMemo<OrdersContextType>(() => ({ orders, createOrder, cancelOrder, clearOrders }), [orders, createOrder, cancelOrder, clearOrders]);
+  const value = useMemo<OrdersContextType>(() => ({ orders, createOrder, confirmOrder, cancelOrder, clearOrders }), [orders, createOrder, confirmOrder, cancelOrder, clearOrders]);
 
   return <OrdersContext.Provider value={value}>{children}</OrdersContext.Provider>;
 };

@@ -17,7 +17,8 @@ export const useBookingStatus = (bookingId: string | undefined): BookingStatusRe
   const delayRef = useRef<number>(5000);
 
   useEffect(() => {
-    if (!bookingId || !supabase) return;
+    if (!bookingId) { setIsLoading(false); return; }
+    if (!supabase) { setIsLoading(false); setStatus(undefined); return; }
 
     let isMounted = true;
 
