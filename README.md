@@ -206,6 +206,7 @@ npm run build
 EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
 EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 EXPO_PUBLIC_CLOUDPAYMENTS_PUBLIC_ID=cp_test_public_id
+CLOUDPAYMENTS_PUBLIC_ID=cp_test_public_id
 EXPO_PUBLIC_SENTRY_DSN=https://example@sentry.io/1
 CLOUDPAYMENTS_API_SECRET=your_api_secret
 SUPABASE_URL=https://your-project-ref.supabase.co
