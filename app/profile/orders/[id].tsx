@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { supabase } from '../../../lib/supabase';
 import { useBookingStatus } from '../../../hooks/useBookingStatus';
+import { issueTicket } from '../../../lib/tickets';
 
 
 export default function OrderDetailsScreen() {
@@ -13,6 +14,7 @@ export default function OrderDetailsScreen() {
   const [info, setInfo] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | undefined>(undefined);
+  const [ticketToken, setTicketToken] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const load = async () => {
@@ -39,6 +41,15 @@ export default function OrderDetailsScreen() {
     };
     load();
   }, [bookingId]);
+
+  const onIssueTicket = async () => {
+    try {
+      const r = await issueTicket(bookingId);
+      setTicketToken(r.token);
+    } catch (e: any) {
+      setError(e?.message || 'Не удалось выпустить билет');
+    }
+  };
 
   const renderBody = () => {
     if (loading) {
@@ -79,7 +90,24 @@ export default function OrderDetailsScreen() {
           <Text style={styles.sub}>Заказ #{bookingId}</Text>
           {statusError && <Text style={styles.error}>Ошибка статуса: {statusError}</Text>}
         </View>
-        <View style={styles.body}>{renderBody()}</View>
+        <View style={styles.body}>
+          {renderBody()}
+          {status === 'paid' && (
+            <View style={{ marginTop: 16, gap: 8 }}>
+              {!ticketToken ? (
+                <TouchableOpacity onPress={onIssueTicket} style={styles.btn}>
+                  <Text style={styles.btnText}>Получить QR-билет</Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.ticketBox}>
+                  <Text style={styles.ticketLabel}>QR токен:</Text>
+                  <Text selectable style={styles.ticketToken}>{ticketToken}</Text>
+                  <Text style={styles.info}>Покажите этот код контролёру (демо)</Text>
+                </View>
+              )}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -96,5 +124,10 @@ const styles = StyleSheet.create({
   info: { color: '#334155', textAlign: 'center' },
   error: { color: '#ef4444', textAlign: 'center' },
   item: { color: '#1e293b' },
+  btn: { backgroundColor: '#0891b2', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 10, alignItems: 'center' },
+  btnText: { color: '#fff', fontWeight: '700' },
+  ticketBox: { padding: 12, borderRadius: 10, backgroundColor: '#f1f5f9', borderWidth: 1, borderColor: '#e2e8f0' },
+  ticketLabel: { color: '#334155', marginBottom: 6 },
+  ticketToken: { color: '#0f172a', fontFamily: 'monospace' },
 });
 
