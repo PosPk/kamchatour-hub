@@ -5,6 +5,11 @@
   ],
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "functions": {
+    "api/**": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "env": {
     "EXPO_PUBLIC_API_URL": "${EXPO_PUBLIC_API_URL}"
   }
