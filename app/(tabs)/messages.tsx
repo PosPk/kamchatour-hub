@@ -4,12 +4,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { listThreads, Thread } from '../../lib/chat';
 import { useRouter } from 'expo-router';
 import { theme } from '../../lib/theme';
+import Protected from '../../components/Protected';
 
 export default function MessagesScreen() {
   const [threads, setThreads] = useState<Thread[]>([]);
   const router = useRouter();
   useEffect(() => { (async () => setThreads(await listThreads()))(); }, []);
   return (
+    <Protected>
     <View style={styles.container}>
       <FlatList
         data={threads}
@@ -28,6 +30,7 @@ export default function MessagesScreen() {
         )}
       />
     </View>
+    </Protected>
   );
 }
 

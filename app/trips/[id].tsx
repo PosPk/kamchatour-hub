@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { getBooking, Booking } from '../../lib/bookings';
+import { getBooking, Booking, calculateRefund } from '../../lib/bookings';
 import { theme } from '../../lib/theme';
 
 export default function TripDetail(){
@@ -9,6 +9,7 @@ export default function TripDetail(){
   const [item, setItem] = useState<Booking | null>(null);
   useEffect(()=>{ (async()=>{ if(!id) return; setItem(await getBooking(String(id))); })(); },[id]);
   if(!item) return <View style={styles.container}><Text>Загрузка…</Text></View>;
+  const refund = calculateRefund(item);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{item.title}</Text>
@@ -39,6 +40,12 @@ export default function TripDetail(){
       <View style={styles.card}>
         <Text style={styles.section}>Документы</Text>
         {item.documents.map((d,i)=>(<Text key={i} style={styles.link}>{d.name}</Text>))}
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.section}>Политика отмены</Text>
+        <Text style={styles.meta}>{refund.note}</Text>
+        <Text style={styles.meta}>К возврату: {refund.refundable.toLocaleString('ru-RU')} ₽ • Штраф: {refund.fee.toLocaleString('ru-RU')} ₽</Text>
       </View>
     </View>
   );

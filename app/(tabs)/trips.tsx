@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import { useRouter } from 'expo-router';
 import { listBookings, Booking } from '../../lib/bookings';
 import { theme } from '../../lib/theme';
+import Protected from '../../components/Protected';
 
 export default function TripsScreen(){
   const [items, setItems] = useState<Booking[]>([]);
   const router = useRouter();
   useEffect(() => { (async () => setItems(await listBookings()))(); }, []);
   return (
+    <Protected>
     <View style={styles.container}>
       <FlatList data={items} keyExtractor={i=>i.id} renderItem={({item}) => (
         <TouchableOpacity style={styles.card} onPress={()=>router.push(`/trips/${item.id}`)}>
@@ -18,6 +20,7 @@ export default function TripsScreen(){
         </TouchableOpacity>
       )}/>
     </View>
+    </Protected>
   );
 }
 
