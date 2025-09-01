@@ -134,6 +134,19 @@ WEATHER_API_KEY=your_weather_api_key
 3. Используйте Service Role ключ ТОЛЬКО на сервере. В клиенте — анонимный ключ с RLS.
 4. Проверьте, что пользователь видит только свои бронирования, сообщения и эко‑действия.
 
+### Аудит, платежи и rate limiting (SQL)
+Порядок применения в Supabase → SQL Editor:
+1) `supabase/schema.sql`
+2) `supabase/rls.sql`
+3) `supabase/audit.sql` — создаёт `audit_log` и триггеры на ключевые таблицы
+4) `supabase/payments.sql` — таблица `payments`, idempotency key + advisory lock
+5) `supabase/rate_limit.sql` — таблица `auth_attempts` и функция `check_rate_limit`
+
+Проверки:
+- Аудит: выполнить INSERT/UPDATE/DELETE в `bookings` и убедиться, что запись попала в `audit_log`.
+- Платежи: два вызова `create_payment_safe` с одинаковым ключом возвращают одну запись.
+- Rate limit: `check_rate_limit(email,'login',5,1)` возвращает false после 5 записей за минуту.
+
 ### Настройка геолокации
 Приложение автоматически запрашивает разрешения на геолокацию при первом запуске.
 
