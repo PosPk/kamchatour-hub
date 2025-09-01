@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { getBooking, Booking, calculateRefund } from '../../lib/bookings';
+import { onchainConfirm, onchainDispute } from '../../lib/onchain';
 import { theme } from '../../lib/theme';
 
 export default function TripDetail(){
@@ -46,6 +47,15 @@ export default function TripDetail(){
         <Text style={styles.section}>Политика отмены</Text>
         <Text style={styles.meta}>{refund.note}</Text>
         <Text style={styles.meta}>К возврату: {refund.refundable.toLocaleString('ru-RU')} ₽ • Штраф: {refund.fee.toLocaleString('ru-RU')} ₽</Text>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.section}>Действия</Text>
+        <Text style={styles.meta}>Подтвердить/оспорить выполнение тура</Text>
+        <View style={{ flexDirection:'row', marginTop: 8 }}>
+          <Text onPress={async()=>{ await onchainConfirm(item.id); }} style={[styles.link,{marginRight:16}]}>Подтвердить</Text>
+          <Text onPress={async()=>{ await onchainDispute(item.id, 'CID_PLACEHOLDER'); }} style={styles.link}>Оспорить</Text>
+        </View>
       </View>
     </View>
   );
