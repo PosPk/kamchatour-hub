@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { getBooking, Booking } from '../../lib/bookings';
 import { theme } from '../../lib/theme';
@@ -17,7 +17,13 @@ export default function TripDetail(){
       <View style={styles.card}>
         <Text style={styles.section}>Ваучер</Text>
         <View style={styles.voucherBox}>
-          <Text style={styles.voucherText}>{item.voucherCode}</Text>
+          {Platform.OS === 'web' ? (
+            // Lazy require to avoid RN bundler issues
+            // @ts-ignore
+            (() => { const QR = require('qrcode.react'); return <QR.QRCode value={item.voucherCode} size={132} /> })()
+          ) : (
+            <Text style={styles.voucherText}>{item.voucherCode}</Text>
+          )}
         </View>
         <Text style={styles.hint}>Покажите код на месте встречи</Text>
       </View>

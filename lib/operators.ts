@@ -52,6 +52,20 @@ const mockOperators: Operator[] = [
 ];
 
 export async function listOperators(query?: { search?: string; region?: string; activity?: string; verified?: boolean }): Promise<Operator[]> {
+  // Try Supabase
+  try {
+    const { supabase } = await import('./supabase');
+    if (supabase) {
+      let q = supabase.from('operators').select('*');
+      if (query?.search) q = q.ilike('name', `%${query.search}%`);
+      if (query?.region) q = q.contains('regions', [query.region]);
+      if (query?.activity) q = q.contains('activities', [query.activity]);
+      if (typeof query?.verified === 'boolean') q = q.eq('verified', query.verified);
+      const { data, error } = await q;
+      if (!error && data) return data as Operator[];
+    }
+  } catch {}
+
   await new Promise(r => setTimeout(r, 300));
   let result = [...mockOperators];
   if (query?.search) {
@@ -71,6 +85,13 @@ export async function listOperators(query?: { search?: string; region?: string; 
 }
 
 export async function getOperatorById(id: string): Promise<Operator | null> {
+  try {
+    const { supabase } = await import('./supabase');
+    if (supabase) {
+      const { data, error } = await supabase.from('operators').select('*').eq('id', id).single();
+      if (!error && data) return data as Operator;
+    }
+  } catch {}
   await new Promise(r => setTimeout(r, 200));
   return mockOperators.find(o => o.id === id) ?? null;
 }

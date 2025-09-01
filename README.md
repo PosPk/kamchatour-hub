@@ -121,6 +121,13 @@ EMERGENCY_API_KEY=your_emergency_api_key
 WEATHER_API_KEY=your_weather_api_key
 ```
 
+### Supabase (схемы — кратко)
+- Таблица `operators`: id (text), name, website, phone, regions (text[]), activities (text[]), verified (bool), partnerLevel (text), score (int), description, logoUrl.
+- Таблица `tours`: id, operatorId, title, region, activity, priceFrom (int), durationDays (int), rating (float), description.
+- Дополнительно: `slots`, `bookings`, `messages` и т.п. по мере внедрения.
+
+В приложении работает отложенное подключение: при наличии `SUPABASE_URL`/`SUPABASE_ANON_KEY` данные будут браться из БД, иначе — использованы моки.
+
 ### Настройка геолокации
 Приложение автоматически запрашивает разрешения на геолокацию при первом запуске.
 

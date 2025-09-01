@@ -30,6 +30,31 @@ export interface TourQuery {
 }
 
 export async function searchTours(query: TourQuery = {}): Promise<Tour[]> {
+  try {
+    const { supabase } = await import('./supabase');
+    if (supabase) {
+      let q = supabase.from('tours').select('*');
+      if (query.q) q = q.ilike('title', `%${query.q}%`);
+      if (query.activity) q = q.eq('activity', query.activity);
+      if (query.region) q = q.eq('region', query.region);
+      const { data, error } = await q;
+      if (!error && data) {
+        let result = data as Tour[];
+        // client-side filters for price/days and sorting
+        if (typeof query.priceMin === 'number') result = result.filter(t => t.priceFrom >= query.priceMin!);
+        if (typeof query.priceMax === 'number') result = result.filter(t => t.priceFrom <= query.priceMax!);
+        if (typeof query.daysMin === 'number') result = result.filter(t => t.durationDays >= query.daysMin!);
+        if (typeof query.daysMax === 'number') result = result.filter(t => t.durationDays <= query.daysMax!);
+        switch (query.sort) {
+          case 'price-asc': result.sort((a, b) => a.priceFrom - b.priceFrom); break;
+          case 'price-desc': result.sort((a, b) => b.priceFrom - a.priceFrom); break;
+          case 'rating-desc': result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0)); break;
+          case 'duration-asc': result.sort((a, b) => a.durationDays - b.durationDays); break;
+        }
+        return result;
+      }
+    }
+  } catch {}
   await new Promise(r => setTimeout(r, 200));
   let result = [...mockTours];
 
