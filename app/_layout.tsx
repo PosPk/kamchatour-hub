@@ -14,15 +14,6 @@ const AIProvider = ({ children }: any) => children;
 const PhotoFeedProvider = ({ children }: any) => children;
 
 export default function RootLayout() {
-  // Bugsnag optional: guard missing dependency
-  try {
-    const apiKey = process.env.EXPO_PUBLIC_BUGSNAG_API_KEY as string | undefined;
-    if (apiKey && typeof window !== 'undefined') {
-      // Dynamic import; if package absent, ignore
-      // eslint-disable-next-line import/no-unresolved
-      import('@bugsnag/expo').then((m: any) => { try { m?.default?.start?.({ apiKey }); } catch {} }).catch(() => {});
-    }
-  } catch {}
   return (
     <ThemeProvider>
       <AuthProvider>

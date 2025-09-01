@@ -1,0 +1,17 @@
+name: Vercel Ignore Previews
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  label-ignore:
+    if: contains(github.head_ref, 'dependabot/') || contains(github.head_ref, 'cursor/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add label to indicate Vercel ignore
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: do-not-deploy
+          github_token: ${{ secrets.GITHUB_TOKEN }}

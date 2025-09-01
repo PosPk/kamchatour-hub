@@ -5,6 +5,12 @@
   ],
   "routes": [
     { "src": "/(.*)", "dest": "/index.html" }
-  ]
+  ],
+  "github": {
+    "enabled": true,
+    "autoJobCancelation": true,
+    "silent": true
+  },
+  "ignoreCommand": "bash -lc 'if [ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ] && ([[ \"$VERCEL_GIT_COMMIT_REF\" == dependabot/* ]] || [[ \"$VERCEL_GIT_COMMIT_REF\" == cursor/* ]]); then echo ignore && exit 0; else exit 1; fi'"
 }
 
