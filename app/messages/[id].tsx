@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { getThread, sendMessage, Message } from '../../lib/chat';
+import { getThread, sendMessage, Message, subscribeToThread } from '../../lib/chat';
 import { theme } from '../../lib/theme';
 
 export default function ChatView() {
@@ -18,6 +18,11 @@ export default function ChatView() {
       setTitle(res.thread?.title ?? 'Чат');
       setMessages(res.messages);
     })();
+    let unsub = () => {};
+    if (id) {
+      unsub = subscribeToThread(String(id), (msg) => setMessages(prev => [...prev, msg]));
+    }
+    return () => { unsub(); };
   }, [id]);
 
   const onSend = async () => {

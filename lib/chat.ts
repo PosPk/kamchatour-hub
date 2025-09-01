@@ -49,3 +49,33 @@ export async function sendMessage(threadId: string, text: string): Promise<Messa
   return msg;
 }
 
+export type MessageListener = (msg: Message) => void;
+
+export function subscribeToThread(threadId: string, onMessage: MessageListener): () => void {
+  try {
+    // Dynamically import to avoid bundling when not configured
+    // and keep Expo Go happy without env
+    const { supabase } = require('./supabase');
+    if (supabase) {
+      const channel = supabase.channel(`messages:${threadId}`).on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages', filter: `threadId=eq.${threadId}` },
+        (payload: any) => {
+          const row = payload.new;
+          const msg: Message = {
+            id: String(row.id ?? row.createdAt ?? Date.now()),
+            threadId: row.threadId,
+            author: row.author,
+            text: row.text,
+            createdAt: row.createdAt ? new Date(row.createdAt).getTime() : Date.now(),
+          };
+          onMessage(msg);
+        }
+      ).subscribe();
+      return () => { try { supabase.removeChannel(channel); } catch {} };
+    }
+  } catch {}
+  // Fallback: no realtime available
+  return () => {};
+}
+

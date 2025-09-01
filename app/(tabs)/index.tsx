@@ -30,7 +30,7 @@ export default function HomeScreen() {
             try {
               await sendEmergencySignal({ coordinates: location.coordinates, note: 'SOS сигнал' });
               Alert.alert('Успешно', 'SOS сигнал отправлен');
-            } catch (error) {
+            } catch (e) {
               Alert.alert('Ошибка', 'Не удалось отправить сигнал');
             }
           },
