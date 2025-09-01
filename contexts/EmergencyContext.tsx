@@ -92,10 +92,10 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     note?: string,
     type: EmergencyReport['emergencyType'] = 'other'
   ) => {
+    let report: EmergencyReport | null = null;
     try {
       setIsLoading(true);
-
-      const report: EmergencyReport = {
+      const newReport: EmergencyReport = {
         id: Date.now().toString(),
         coordinates,
         note: note || settings.sosMessage,
@@ -104,9 +104,10 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         emergencyType: type,
         severity: 'critical',
       };
+      report = newReport;
 
       // Add to local reports
-      setEmergencyReports(prev => [report, ...prev]);
+      setEmergencyReports(prev => [newReport, ...prev]);
 
       // Send to emergency services
       const result = await sendEmergencySignal({
@@ -114,13 +115,16 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         note: report.note,
         type: report.emergencyType,
         severity: report.severity,
+        timestamp: report.timestamp,
       });
 
       if (result.success) {
         // Update status to sent
-        setEmergencyReports(prev =>
-          prev.map(r => r.id === report.id ? { ...r, status: 'sent' } : r)
-        );
+        if (report) {
+          setEmergencyReports(prev =>
+            prev.map(r => r.id === report!.id ? { ...r, status: 'sent' } : r)
+          );
+        }
 
         // Show confirmation
         Alert.alert(
@@ -150,9 +154,11 @@ export const EmergencyProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       );
 
       // Update status to failed
-      setEmergencyReports(prev =>
-        prev.map(r => r.id === report?.id ? { ...r, status: 'pending' } : r)
-      );
+      if (report) {
+        setEmergencyReports(prev =>
+          prev.map(r => r.id === report!.id ? { ...r, status: 'pending' } : r)
+        );
+      }
     } finally {
       setIsLoading(false);
     }

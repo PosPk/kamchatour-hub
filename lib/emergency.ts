@@ -6,7 +6,7 @@ export interface EmergencySignal {
   note?: string;
   type?: 'medical' | 'accident' | 'weather' | 'wildlife' | 'other';
   severity?: 'low' | 'medium' | 'high' | 'critical';
-  timestamp: number;
+  timestamp?: number;
   userId?: string;
 }
 
@@ -91,7 +91,7 @@ export const sendEmergencySignal = async (signal: EmergencySignal): Promise<Emer
       note: signal.note,
       type: signal.type,
       severity: signal.severity,
-      timestamp: new Date(signal.timestamp).toLocaleString('ru-RU'),
+      timestamp: signal.timestamp ? new Date(signal.timestamp).toLocaleString('ru-RU') : new Date().toLocaleString('ru-RU'),
     });
 
     return response;

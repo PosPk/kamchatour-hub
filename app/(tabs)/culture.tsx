@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -64,6 +64,35 @@ export default function CultureScreen() {
     },
   ];
 
+  const souvenirs = [
+    {
+      slug: 'dar-severa',
+      name: 'Дар Севера',
+      website: 'https://dar-severa.ru/',
+      description: 'Авторские сувениры и изделия с северным характером',
+      categories: ['Сувениры','Украшения','Декор']
+    }
+  ];
+
+  const renderSouvenir = (item: any) => (
+    <TouchableOpacity key={item.slug} style={styles.eventCard} onPress={() => Linking.openURL(item.website)}>
+      <View style={styles.eventHeader}>
+        <Text style={styles.eventImage}>🎁</Text>
+        <View style={styles.eventInfo}>
+          <Text style={styles.eventTitle}>{item.name}</Text>
+          <Text style={styles.eventType}>{item.categories.join(' • ')}</Text>
+          <Text style={styles.eventLocation}>{item.description}</Text>
+        </View>
+      </View>
+      <View style={styles.eventFooter}>
+        <Text style={styles.eventDate}>{item.website.replace('https://','')}</Text>
+        <TouchableOpacity style={styles.detailsButton}>
+          <Text style={styles.detailsButtonText}>На сайт</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
+  );
+
   const renderMasterClass = (item: any) => (
     <TouchableOpacity key={item.id} style={styles.masterClassCard}>
       <View style={styles.masterClassHeader}>
@@ -120,7 +149,7 @@ export default function CultureScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Мастер-классы</Text>
-            <TouchableOpacity style={styles.seeAllButton}>
+            <TouchableOpacity style={styles.seeAllButton} onPress={() => {}}>
               <Text style={styles.seeAllText}>Все</Text>
               <Ionicons name="chevron-forward" size={16} color="#0891b2" />
             </TouchableOpacity>
@@ -132,12 +161,24 @@ export default function CultureScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>События</Text>
-            <TouchableOpacity style={styles.seeAllButton}>
+            <TouchableOpacity style={styles.seeAllButton} onPress={() => {}}>
               <Text style={styles.seeAllText}>Все</Text>
               <Ionicons name="chevron-forward" size={16} color="#0891b2" />
             </TouchableOpacity>
           </View>
           {events.map(renderEvent)}
+        </View>
+
+        {/* Souvenirs Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Сувениры</Text>
+            <TouchableOpacity style={styles.seeAllButton}>
+              <Text style={styles.seeAllText}>Витрина</Text>
+              <Ionicons name="chevron-forward" size={16} color="#0891b2" />
+            </TouchableOpacity>
+          </View>
+          {souvenirs.map(renderSouvenir)}
         </View>
 
         {/* Quick Actions */}
