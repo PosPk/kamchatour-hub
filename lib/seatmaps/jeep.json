@@ -1,0 +1,10 @@
+{
+  "type": "jeep",
+  "rows": [
+    { "index": 1, "seats": ["1F", "1P"], "labels": {"1F":"Front","1P":"Passenger"} },
+    { "index": 2, "seats": ["2L", "2M", "2R"] }
+  ],
+  "emergency": ["1F"],
+  "classes": { "standard": ["2L","2M","2R","1P"], "priority": ["1F"] }
+}
+

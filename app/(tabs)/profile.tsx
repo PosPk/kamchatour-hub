@@ -4,6 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
 import { useLocation } from '../../hooks/useLocation';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useRoles } from '../../contexts/RoleContext';
+import { Link } from 'expo-router';
 
 export default function ProfileScreen() {
   const { user, signOut, isLoading } = useAuth();
@@ -11,6 +14,8 @@ export default function ProfileScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [locationSharing, setLocationSharing] = useState(true);
   const [emergencyAlerts, setEmergencyAlerts] = useState(true);
+  const { theme, colorScheme, setTheme } = useTheme();
+  const { roles, hasRole } = useRoles();
 
   const handleSignOut = () => {
     Alert.alert(
@@ -65,6 +70,12 @@ export default function ProfileScreen() {
     {
       title: 'Настройки',
       items: [
+        {
+          icon: 'moon',
+          title: 'Тема',
+          value: theme === 'system' ? `Системная (${colorScheme})` : (theme === 'dark' ? 'Тёмная' : 'Светлая'),
+          action: 'navigate',
+        },
         {
           icon: 'notifications',
           title: 'Уведомления',
@@ -248,12 +259,109 @@ export default function ProfileScreen() {
           <View key={section.title} style={styles.section}>
             <Text style={styles.sectionTitle}>{section.title}</Text>
             <View style={styles.sectionContent}>
-              {section.items.map((item, itemIndex) => 
-                renderProfileItem(item, sectionIndex, itemIndex)
-              )}
+              {section.items.map((item, itemIndex) => {
+                if (item.title === 'Тема') {
+                  return (
+                    <View key={`${sectionIndex}-${itemIndex}`} style={styles.profileItem}>
+                      <View style={styles.profileItemLeft}>
+                        <View style={styles.profileItemIcon}>
+                          <Ionicons name="moon" size={20} color="#0891b2" />
+                        </View>
+                        <View style={styles.profileItemInfo}>
+                          <Text style={styles.profileItemTitle}>Тема</Text>
+                          <Text style={styles.profileItemValue}>{item.value}</Text>
+                        </View>
+                      </View>
+                      <View style={{ flexDirection: 'row', gap: 8 }}>
+                        <TouchableOpacity onPress={() => setTheme('light')}>
+                          <Text style={{ color: theme === 'light' ? '#0891b2' : '#64748b' }}>Светлая</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setTheme('dark')}>
+                          <Text style={{ color: theme === 'dark' ? '#0891b2' : '#64748b' }}>Тёмная</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setTheme('system')}>
+                          <Text style={{ color: theme === 'system' ? '#0891b2' : '#64748b' }}>Системная</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  );
+                }
+                return renderProfileItem(item, sectionIndex, itemIndex);
+              })}
             </View>
           </View>
         ))}
+
+        {/* Role-based Cabinets */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Кабинеты</Text>
+          <View style={styles.sectionContent}>
+            <Link href="/ai" asChild>
+              <TouchableOpacity style={styles.profileItem}>
+                <View style={styles.profileItemLeft}>
+                  <View style={styles.profileItemIcon}><Ionicons name="sparkles" size={20} color="#0891b2" /></View>
+                  <View style={styles.profileItemInfo}><Text style={styles.profileItemTitle}>AI помощник</Text><Text style={styles.profileItemValue}>Ответы и подсказки</Text></View>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#cbd5e1" />
+              </TouchableOpacity>
+            </Link>
+            {hasRole('operator') && (
+              <Link href="/operator" asChild>
+                <TouchableOpacity style={styles.profileItem}>
+                  <View style={styles.profileItemLeft}>
+                    <View style={styles.profileItemIcon}><Ionicons name="briefcase" size={20} color="#0891b2" /></View>
+                    <View style={styles.profileItemInfo}><Text style={styles.profileItemTitle}>Туроператор</Text><Text style={styles.profileItemValue}>Управление турами</Text></View>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#cbd5e1" />
+                </TouchableOpacity>
+              </Link>
+            )}
+            {hasRole('guide') && (
+              <Link href="/guide" asChild>
+                <TouchableOpacity style={styles.profileItem}>
+                  <View style={styles.profileItemLeft}>
+                    <View style={styles.profileItemIcon}><Ionicons name="map" size={20} color="#0891b2" /></View>
+                    <View style={styles.profileItemInfo}><Text style={styles.profileItemTitle}>Гид</Text><Text style={styles.profileItemValue}>Маршруты и группы</Text></View>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#cbd5e1" />
+                </TouchableOpacity>
+              </Link>
+            )}
+            {hasRole('transfer') && (
+              <Link href="/transfer" asChild>
+                <TouchableOpacity style={styles.profileItem}>
+                  <View style={styles.profileItemLeft}>
+                    <View style={styles.profileItemIcon}><Ionicons name="bus" size={20} color="#0891b2" /></View>
+                    <View style={styles.profileItemInfo}><Text style={styles.profileItemTitle}>Трансфер</Text><Text style={styles.profileItemValue}>Расписания и места</Text></View>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#cbd5e1" />
+                </TouchableOpacity>
+              </Link>
+            )}
+            {hasRole('agent') && (
+              <Link href="/agent" asChild>
+                <TouchableOpacity style={styles.profileItem}>
+                  <View style={styles.profileItemLeft}>
+                    <View style={styles.profileItemIcon}><Ionicons name="people" size={20} color="#0891b2" /></View>
+                    <View style={styles.profileItemInfo}><Text style={styles.profileItemTitle}>Агент</Text><Text style={styles.profileItemValue}>Группы и комиссии</Text></View>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#cbd5e1" />
+                </TouchableOpacity>
+              </Link>
+            )}
+            {hasRole('admin') && (
+              <Link href="/admin" asChild>
+                <TouchableOpacity style={styles.profileItem}>
+                  <View style={styles.profileItemLeft}>
+                    <View style={styles.profileItemIcon}><Ionicons name="settings" size={20} color="#0891b2" /></View>
+                    <View style={styles.profileItemInfo}><Text style={styles.profileItemTitle}>Админка</Text><Text style={styles.profileItemValue}>Управление системой</Text></View>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#cbd5e1" />
+                </TouchableOpacity>
+              </Link>
+            )}
+          </View>
+        </View>
 
         {/* Sign Out Button */}
         <View style={styles.signOutSection}>
