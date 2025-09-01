@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetInfo from '@react-native-community/netinfo';
+let NetInfo: any;
+try { NetInfo = require('@react-native-community/netinfo'); } catch { NetInfo = { fetch: async () => ({ isConnected: true, isInternetReachable: true }) }; }
 
 export type QueueItem = {
   id?: string;

@@ -9,6 +9,7 @@ export interface Booking {
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   documents: { name: string; url: string }[];
   cancellationPolicy?: { type: 'flexible'|'moderate'|'strict'; freeUntilHours?: number; feePercent?: number };
+  total?: number;
 }
 
 let mockBookings: Booking[] = [
