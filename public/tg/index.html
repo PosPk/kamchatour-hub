@@ -16,6 +16,8 @@
       .row{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
       .price{color:#065f46;font-weight:800}
       .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none}
+      .search{display:flex;gap:8px;margin-bottom:12px}
+      .input{flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:10px;background:#fff}
     </style>
     <script>
       function getLang(){
@@ -69,19 +71,36 @@
   <body>
     <div class="wrap">
       <h1 class="title">Туры Камчатки</h1>
+      <div class="search">
+        <input id="q" class="input" type="search" placeholder="Поиск по названию и описанию"/>
+        <a id="ai" class="btn" href="#">AI</a>
+      </div>
       <div id="list" class="grid"></div>
     </div>
     <script>
       (async()=>{
-        const tours = await loadTours();
+        const all = await loadTours();
         const el=document.getElementById('list');
-        (tours.length? tours:[]).forEach(t=>{
-          const c=document.createElement('div');c.className='card';
+        const q=document.getElementById('q');
+        function render(items){
+          el.innerHTML='';
           const lang=getLang();
-          const url=`/tg/tour.html?id=${encodeURIComponent(t.id)}&lang=${lang}`;
-          c.innerHTML=`<img class="cover" src="${t.img}"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><a class="btn" href="${url}">Подробнее</a></div></div>`;
-          el.appendChild(c);
-        });
+          (items||[]).forEach(t=>{
+            const c=document.createElement('a');
+            c.href=`/tg/tour.html?id=${encodeURIComponent(t.id)}&lang=${lang}`;
+            c.className='card';
+            c.style.textDecoration='none';
+            c.innerHTML=`<img class="cover" src="${t.img}"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><span class="btn">Подробнее</span></div></div>`;
+            el.appendChild(c);
+          });
+        }
+        function search(query){
+          const s=(query||'').trim().toLowerCase();
+          if(!s) return all;
+          return all.filter(x=> (x.title||'').toLowerCase().includes(s) || (x.meta||'').toLowerCase().includes(s));
+        }
+        q.addEventListener('input',()=>{ render(search(q.value)); });
+        render(all);
       })();
     </script>
   </body>

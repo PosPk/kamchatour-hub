@@ -13,6 +13,7 @@
       .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-top:12px}
       .price{color:#065f46;font-weight:800}
       .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none}
+      .toprow{display:flex;gap:8px;align-items:center}
     </style>
     <script>
       function getLang(){
@@ -41,7 +42,9 @@
         const price=(t.price_from? new Intl.NumberFormat('ru-RU').format(t.price_from)+' ₽' : 'по запросу');
         const meta=`${t.activity||''} • ${t.region||''} • ${t.duration_days||''} дн.`;
         const urlLead=`/tg/lead?tour_id=${encodeURIComponent(t.id)}`;
+        const backUrl=document.referrer && document.referrer.includes('/tg')? document.referrer : '/tg';
         const html=`
+          <div class="toprow"><a class="btn" href="${backUrl}">← Назад</a></div>
           <img class="cover" src="${t.image||''}"/>
           <div class="title">${title||''}</div>
           <div class="meta">${meta}</div>
