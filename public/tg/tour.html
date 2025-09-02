@@ -6,15 +6,29 @@
     <title>Тур</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-      body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:#f8fafc;color:#0f172a}
-      .wrap{padding:16px}
-      .cover{width:100%;height:220px;object-fit:cover;border-radius:12px;background:#e2e8f0}
-      .title{font-weight:800;font-size:20px;margin-top:12px}
-      .meta{color:#475569;margin-top:4px}
-      .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-top:12px}
-      .price{color:#065f46;font-weight:800}
-      .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none}
-      .toprow{display:flex;gap:8px;align-items:center}
+      :root{
+        --tg-bg: var(--tg-theme-bg-color, #0b1020);
+        --tg-text: var(--tg-theme-text-color, #e5e7eb);
+        --tg-hint: var(--tg-theme-hint-color, #94a3b8);
+        --tg-button: var(--tg-theme-button-color, #0891b2);
+        --tg-button-text: var(--tg-theme-button-text-color, #ffffff);
+        --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #0f172a);
+      }
+      body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:var(--tg-bg);color:var(--tg-text)}
+      .wrap{padding:16px;padding-bottom:92px}
+      .hero{position:relative;border-radius:14px;overflow:hidden;height:260px}
+      .hero img{width:100%;height:100%;object-fit:cover;display:block}
+      .hero .grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.0),rgba(0,0,0,.55) 55%, rgba(0,0,0,.9))}
+      .hero .txt{position:absolute;left:12px;right:12px;bottom:12px}
+      .title{font-weight:800;font-size:22px;margin:0}
+      .meta{color:var(--tg-hint);margin-top:4px}
+      .card{background:var(--tg-secondary-bg);border:1px solid rgba(148,163,184,.2);border-radius:12px;padding:12px;margin-top:12px}
+      .price{color:#86efac;font-weight:800}
+      .btn{display:inline-block;background:var(--tg-button);color:var(--tg-button-text);padding:10px 12px;border-radius:10px;text-decoration:none}
+      .toprow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+      .trust{display:flex;gap:8px;align-items:center;color:#a7f3d0}
+      .sticky-cta{position:fixed;left:16px;right:16px;bottom:76px;z-index:10}
+      .sticky-cta .sheet{display:flex;justify-content:space-between;gap:12px;align-items:center;background:rgba(15,23,42,.8);backdrop-filter:blur(8px);border:1px solid rgba(148,163,184,.25);border-radius:14px;padding:10px 12px}
     </style>
     <script>
       function initTelegram(){
@@ -37,6 +51,12 @@
     <div class="wrap">
       <div id="content"></div>
     </div>
+    <div class="sticky-cta" id="stickyCta" style="display:none">
+      <div class="sheet">
+        <div class="trust">✅ Комиссия только после успешного тура</div>
+        <a id="ctaLink" class="btn" href="#">Оставить заявку</a>
+      </div>
+    </div>
     <script>
       (async()=>{
         initTelegram();
@@ -50,13 +70,12 @@
         const backUrl=document.referrer && document.referrer.includes('/tg')? document.referrer : '/tg';
         const html=`
           <div class="toprow"><a class="btn" href="${backUrl}">← Назад</a></div>
-          <img class="cover" src="${t.image||''}"/>
-          <div class="title">${title||''}</div>
-          <div class="meta">${meta}</div>
+          <div class="hero"><img src="${t.image||''}" alt="${title||''}"/><div class="grad"></div><div class="txt"><h1 class="title">${title||''}</h1><div class="meta">${meta}</div></div></div>
           <div class="card"><div class="price">${price}</div><p>${desc||''}</p>
-            <a class="btn" href="${urlLead}">Оставить заявку</a>
+            <div class="trust">🔒 Гарантия: депозит оператора, комиссия после завершения</div>
           </div>`;
         document.getElementById('content').innerHTML=html;
+        const cta=document.getElementById('stickyCta'); const ctaLink=document.getElementById('ctaLink'); ctaLink.href=urlLead; cta.style.display='block';
         try{ var tg=window.Telegram && window.Telegram.WebApp; if(tg){ tg.MainButton.setText('Оставить заявку'); tg.MainButton.onClick(()=>{ location.href=urlLead; }); tg.MainButton.show(); } }catch(_){ }
       })();
     </script>

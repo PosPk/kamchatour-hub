@@ -6,17 +6,25 @@
     <title>Kamchatour — Витрина</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-      body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; background:#f8fafc;color:#0f172a}
+      :root{
+        --tg-bg: var(--tg-theme-bg-color, #f8fafc);
+        --tg-text: var(--tg-theme-text-color, #0f172a);
+        --tg-hint: var(--tg-theme-hint-color, #64748b);
+        --tg-button: var(--tg-theme-button-color, #0891b2);
+        --tg-button-text: var(--tg-theme-button-text-color, #ffffff);
+        --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #ffffff);
+      }
+      body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; background:var(--tg-bg);color:var(--tg-text)}
       .wrap{padding:16px;padding-bottom:92px}
       .grid{display:grid;grid-template-columns:1fr;gap:12px}
-      .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden}
+      .card{background:var(--tg-secondary-bg);border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;position:relative}
       .cover{width:100%;height:160px;object-fit:cover;background:#e2e8f0}
       .pad{padding:12px}
       .title{font-weight:800}
-      .meta{color:#475569;margin-top:4px}
+      .meta{color:var(--tg-hint);margin-top:4px}
       .row{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
       .price{color:#065f46;font-weight:800}
-      .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none}
+      .btn{display:inline-block;background:var(--tg-button);color:var(--tg-button-text);padding:10px 12px;border-radius:10px;text-decoration:none}
       .search{display:flex;gap:8px;margin-bottom:12px}
       .input{flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:10px;background:#fff}
       .empty{padding:24px;text-align:center;color:#64748b}
@@ -30,7 +38,17 @@
       .chips{display:flex;gap:8px;overflow:auto;padding-bottom:8px;margin-bottom:8px}
       .chip{display:flex;align-items:center;gap:6px;border:1px solid #e2e8f0;border-radius:999px;padding:8px 10px;background:#fff;color:#0f172a;white-space:nowrap}
       .chip svg{width:16px;height:16px}
-      .chip.active{border-color:#0891b2;background:#e0f2fe}
+      .chip.active{border-color:var(--tg-button);background:color-mix(in srgb, var(--tg-button) 15%, #fff)}
+      /* badges */
+      .badges{position:absolute;top:8px;right:8px;display:flex;gap:6px}
+      .badge{backdrop-filter:blur(4px);background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:4px 8px;font-size:12px}
+      .badge.eco{background:rgba(16,185,129,.85)}
+      .badge.rating{background:rgba(234,179,8,.9)}
+      /* skeleton */
+      .skeleton{background:linear-gradient(90deg,#e5e7eb, #f3f4f6 40%, #e5e7eb 60%);background-size:200% 100%;animation:sh 1.2s infinite}
+      @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+      .card.sk .cover{background:#e5e7eb}
+      .card.sk .title,.card.sk .meta,.card.sk .price{height:14px;border-radius:6px}
     </style>
     <script>
       function initTelegram(){
@@ -215,10 +233,19 @@
             c.href=`/tg/tour.html?id=${encodeURIComponent(t.id)}&lang=${lang}`;
             c.className='card';
             c.style.textDecoration='none';
-            c.innerHTML=`<img class="cover" src="${t.img}"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><span class="btn">Подробнее</span></div></div>`;
+            const eco = (t.eco_points||0)>0? `<span class="badge eco">♻️ Eco+${t.eco_points}</span>`:'';
+            const rating = t.rating? `<span class="badge rating">★ ${t.rating}${t.reviews? ` (${t.reviews})`:''}</span>`:'';
+            c.innerHTML=`<div class="badges">${eco}${rating}</div><img class="cover" src="${t.img}"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><span class="btn">Подробнее</span></div></div>`;
             el.appendChild(c);
           });
         }
+        // show skeletons while loading initial
+        (function showSkeleton(){
+          const skeletonGrid=document.getElementById('list'); skeletonGrid.innerHTML='';
+          for(let i=0;i<4;i++){
+            const s=document.createElement('div'); s.className='card sk'; s.innerHTML=`<div class="cover skeleton"></div><div class="pad"><div class="title skeleton" style="width:70%"></div><div class="meta skeleton" style="width:40%;margin-top:6px"></div><div class="row"><div class="price skeleton" style="width:80px"></div><span class="btn skeleton" style="width:96px;height:36px;border-radius:10px"></span></div></div>`; skeletonGrid.appendChild(s);
+          }
+        })();
         function localFilter(items){
           const min = Number(minP.value)||0; const max = Number(maxP.value)||Infinity; const a = (act.value||'').toLowerCase();
           return (items||[]).filter((x)=>{
