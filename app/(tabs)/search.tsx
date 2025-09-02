@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { activities, regions, searchTours, Tour } from '../../lib/tours';
 
@@ -65,14 +65,21 @@ export default function SearchScreen() {
         data={items}
         keyExtractor={i => i.id}
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.cardMeta}>{item.activity} • {item.region}</Text>
-            <View style={styles.cardRow}>
-              <Text style={styles.price}>{item.priceFrom.toLocaleString('ru-RU')} ₽</Text>
-              <Text style={styles.days}>{item.durationDays} дн.</Text>
+          <TouchableOpacity style={styles.card} onPress={() => {/* TODO: router.push(`/tours/${item.id}`) */}}>
+            {item.imageUrl ? <Image source={{ uri: item.imageUrl }} style={styles.cover} /> : <View style={[styles.cover,{backgroundColor:'#e2e8f0'}]} />}
+            <View style={styles.cardBody}>
+              <Text style={styles.cardTitle}>{item.title}</Text>
+              <Text style={styles.cardMeta}>{item.activity} • {item.region}</Text>
+              <View style={styles.badges}>
+                {!!item.rating && <View style={styles.badge}><Text style={styles.badgeText}>★ {item.rating.toFixed(1)}</Text></View>}
+                <View style={styles.badge}><Text style={styles.badgeText}>{item.durationDays} дн.</Text></View>
+              </View>
+              <View style={styles.cardRow}>
+                <Text style={styles.price}>{item.priceFrom.toLocaleString('ru-RU')} ₽</Text>
+                <Text style={styles.days}>от оператора</Text>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>
@@ -113,10 +120,15 @@ const styles = StyleSheet.create({
   chipText: { color: '#334155' },
   chipTextActive: { color: '#0c4a6e', fontWeight: '700' },
   card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: '#e2e8f0' },
+  cardBody: { paddingTop: 8 },
+  cover: { width: '100%', height: 160, borderRadius: 10 },
   cardTitle: { fontSize: 16, fontWeight: '700', color: '#0f172a' },
   cardMeta: { marginTop: 4, color: '#475569' },
   cardRow: { marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   price: { color: '#065f46', fontWeight: '800' },
   days: { color: '#334155' },
+  badges: { flexDirection: 'row', marginTop: 6 },
+  badge: { backgroundColor: '#e0f2fe', borderColor: '#38bdf8', borderWidth: 1, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999, marginRight: 8 },
+  badgeText: { color: '#0c4a6e', fontWeight: '700', fontSize: 12 },
 });
 

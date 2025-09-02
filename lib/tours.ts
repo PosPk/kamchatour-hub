@@ -9,13 +9,14 @@ export interface Tour {
   rating?: number;
   slots?: number;
   description?: string;
+  imageUrl?: string;
 }
 
 const mockTours: Tour[] = [
-  { id: 't1', title: 'Вулканы и гейзеры', operatorId: 'op2', activity: 'Вулканы', region: 'Мутновский', priceFrom: 45000, durationDays: 3, rating: 4.7 },
-  { id: 't2', title: 'Медвежьи места', operatorId: 'op1', activity: 'Дикая природа', region: 'Курильское озеро', priceFrom: 60000, durationDays: 2, rating: 4.8 },
-  { id: 't3', title: 'Морская прогулка', operatorId: 'op3', activity: 'Море', region: 'Авачинская бухта', priceFrom: 8000, durationDays: 1, rating: 4.5 },
-  { id: 't4', title: 'Восхождение на Авачинский', operatorId: 'op2', activity: 'Трекинг', region: 'Авачинский', priceFrom: 35000, durationDays: 2, rating: 4.6 },
+  { id: 't1', title: 'Вулканы и гейзеры', operatorId: 'op2', activity: 'Вулканы', region: 'Мутновский', priceFrom: 45000, durationDays: 3, rating: 4.7, imageUrl: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop' },
+  { id: 't2', title: 'Медвежьи места', operatorId: 'op1', activity: 'Дикая природа', region: 'Курильское озеро', priceFrom: 60000, durationDays: 2, rating: 4.8, imageUrl: 'https://images.unsplash.com/photo-1501706362039-c06b2d715385?q=80&w=1200&auto=format&fit=crop' },
+  { id: 't3', title: 'Морская прогулка', operatorId: 'op3', activity: 'Море', region: 'Авачинская бухта', priceFrom: 8000, durationDays: 1, rating: 4.5, imageUrl: 'https://images.unsplash.com/photo-1529119368496-2dfda6ec2804?q=80&w=1200&auto=format&fit=crop' },
+  { id: 't4', title: 'Восхождение на Авачинский', operatorId: 'op2', activity: 'Трекинг', region: 'Авачинский', priceFrom: 35000, durationDays: 2, rating: 4.6, imageUrl: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop' },
 ];
 
 export interface TourQuery {
