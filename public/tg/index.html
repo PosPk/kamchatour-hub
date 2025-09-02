@@ -19,6 +19,13 @@
       .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none}
       .search{display:flex;gap:8px;margin-bottom:12px}
       .input{flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:10px;background:#fff}
+      .empty{padding:24px;text-align:center;color:#64748b}
+      .bottom{position:fixed;left:0;right:0;bottom:0;display:flex;gap:8px;justify-content:space-around;padding:10px;background:#fff;border-top:1px solid #e2e8f0}
+      .link{color:#0f172a;text-decoration:none;padding:8px 12px;border-radius:10px;border:1px solid #e2e8f0;background:#fff}
+      .modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:flex-end}
+      .sheet{background:#fff;border-top-left-radius:16px;border-top-right-radius:16px;padding:16px;width:100%}
+      .row2{display:flex;gap:8px}
+      .label{font-size:12px;color:#475569;margin:4px 0}
     </style>
     <script>
       function initTelegram(){
@@ -77,9 +84,29 @@
       <h1 class="title">Туры Камчатки</h1>
       <div class="search">
         <input id="q" class="input" type="search" placeholder="Поиск по названию и описанию"/>
-        <a id="ai" class="btn" href="#">AI</a>
+        <a id="filtersBtn" class="btn" href="#">Фильтры</a>
       </div>
       <div id="list" class="grid"></div>
+    </div>
+    <div id="filters" class="modal">
+      <div class="sheet">
+        <div class="label">Цена (₽)</div>
+        <div class="row2">
+          <input id="minPrice" class="input" type="number" placeholder="от"/>
+          <input id="maxPrice" class="input" type="number" placeholder="до"/>
+        </div>
+        <div class="label">Активность</div>
+        <input id="act" class="input" type="text" placeholder="рыбалка, вулканы..."/>
+        <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+          <a id="closeFilters" class="link" href="#">Отмена</a>
+          <a id="applyFilters" class="btn" href="#">Применить</a>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <a class="link" href="/tg">Каталог</a>
+      <a class="link" href="/tg/ar.html">AR‑карта</a>
+      <a class="link" href="/tg/lead">Заявка</a>
     </div>
     <script>
       (async()=>{
@@ -87,9 +114,17 @@
         const all = await loadTours();
         const el=document.getElementById('list');
         const q=document.getElementById('q');
+        const modal=document.getElementById('filters');
+        const btn=document.getElementById('filtersBtn');
+        const close=document.getElementById('closeFilters');
+        const apply=document.getElementById('applyFilters');
+        const minP=document.getElementById('minPrice');
+        const maxP=document.getElementById('maxPrice');
+        const act=document.getElementById('act');
         function render(items){
           el.innerHTML='';
           const lang=getLang();
+          if(!items || items.length===0){ el.innerHTML = '<div class="empty">Ничего не найдено. Попробуйте изменить запрос или фильтры.</div>'; return; }
           (items||[]).forEach(t=>{
             const c=document.createElement('a');
             c.href=`/tg/tour.html?id=${encodeURIComponent(t.id)}&lang=${lang}`;
@@ -99,6 +134,15 @@
             el.appendChild(c);
           });
         }
+        function localFilter(items){
+          const min = Number(minP.value)||0; const max = Number(maxP.value)||Infinity; const a = (act.value||'').toLowerCase();
+          return (items||[]).filter((x)=>{
+            const pr = Number((x.price_from||'').toString().replace(/\D/g,''))||0;
+            const okPrice = pr>=min && pr<=max;
+            const okAct = !a || (x.meta||'').toLowerCase().includes(a);
+            return okPrice && okAct;
+          });
+        }
         async function searchRemote(query){
           const s=(query||'').trim();
           if(!s){ render(all); return; }
@@ -106,7 +150,8 @@
             const r=await fetch('/api/tg/search?q='+encodeURIComponent(s));
             if(!r.ok){ render(all); return; }
             const json=await r.json();
-            const items=Array.isArray(json?.items)? json.items: [];
+            let items=Array.isArray(json?.items)? json.items: [];
+            items = localFilter(items);
             const lang=getLang();
             render(items.map(x=>({
               id:x.id,
@@ -117,7 +162,10 @@
             })));
           }catch(_){ render(all); }
         }
-        q.addEventListener('input',()=>{ searchRemote(q.value); });
+        let tmr; q.addEventListener('input',()=>{ clearTimeout(tmr); tmr=setTimeout(()=>searchRemote(q.value),200); });
+        btn.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='flex'; });
+        close.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; });
+        apply.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; searchRemote(q.value); });
         render(all);
       })();
     </script>
