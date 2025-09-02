@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { activities, regions, searchTours, Tour } from '../../lib/tours';
+import { useRouter } from 'expo-router';
 
 export default function SearchScreen() {
   const [q, setQ] = useState('');
@@ -14,6 +15,7 @@ export default function SearchScreen() {
   const [sort, setSort] = useState<'price-asc' | 'price-desc' | 'rating-desc' | 'duration-asc' | undefined>('rating-desc');
   const [items, setItems] = useState<Tour[]>([]);
 
+  const router = useRouter();
   useEffect(() => {
     (async () => {
       const data = await searchTours({
@@ -65,7 +67,7 @@ export default function SearchScreen() {
         data={items}
         keyExtractor={i => i.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card} onPress={() => {/* TODO: router.push(`/tours/${item.id}`) */}}>
+          <TouchableOpacity style={styles.card} onPress={() => router.push(`/tours/${item.id}`)}>
             {item.imageUrl ? <Image source={{ uri: item.imageUrl }} style={styles.cover} /> : <View style={[styles.cover,{backgroundColor:'#e2e8f0'}]} />}
             <View style={styles.cardBody}>
               <Text style={styles.cardTitle}>{item.title}</Text>

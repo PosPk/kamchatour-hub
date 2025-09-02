@@ -83,3 +83,15 @@ export async function searchTours(query: TourQuery = {}): Promise<Tour[]> {
 export const activities = ['Вулканы', 'Дикая природа', 'Море', 'Трекинг'];
 export const regions = ['Мутновский', 'Курильское озеро', 'Авачинская бухта', 'Авачинский'];
 
+export async function getTourById(id: string): Promise<Tour | null> {
+  try {
+    const { supabase } = await import('./supabase');
+    if (supabase) {
+      const { data, error } = await supabase.from('tours').select('*').eq('id', id).maybeSingle<Tour>();
+      if (!error && data) return data as Tour;
+    }
+  } catch {}
+  const all = await searchTours();
+  return all.find(t => t.id === id) ?? null;
+}
+
