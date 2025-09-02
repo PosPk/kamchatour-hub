@@ -11,7 +11,8 @@
     "build:web": "npx expo export --platform web && cp dist/index.html dist/404.html && if [ -d public ]; then cp -R public/* dist/; fi",
     "build": "npm run build:web",
     "vercel-build": "npm run build:web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "apply:sql": "node ./scripts/apply-sql.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -43,7 +44,8 @@
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "13.13.5"
+    "react-native-webview": "13.13.5",
+    "pg": "^8.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
