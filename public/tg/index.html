@@ -20,6 +20,9 @@
       .input{flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:10px;background:#fff}
     </style>
     <script>
+      function initTelegram(){
+        try{ const tg=(window as any).Telegram&& (window as any).Telegram.WebApp; if(tg){ tg.expand(); tg.ready(); } }catch(_){ }
+      }
       function getLang(){
         const p=new URLSearchParams(location.search);
         const urlLang=(p.get('lang')||'').toLowerCase();
@@ -79,6 +82,7 @@
     </div>
     <script>
       (async()=>{
+        initTelegram();
         const all = await loadTours();
         const el=document.getElementById('list');
         const q=document.getElementById('q');

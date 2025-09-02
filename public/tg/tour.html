@@ -16,6 +16,9 @@
       .toprow{display:flex;gap:8px;align-items:center}
     </style>
     <script>
+      function initTelegram(){
+        try{ const tg=(window as any).Telegram&& (window as any).Telegram.WebApp; if(tg){ tg.expand(); tg.ready(); } }catch(_){ }
+      }
       function getLang(){
         const p=new URLSearchParams(location.search);
         const lang=(p.get('lang')||'ru').toLowerCase();
@@ -35,6 +38,7 @@
     </div>
     <script>
       (async()=>{
+        initTelegram();
         const lang=getLang();
         const t=await getTour(); if(!t){ document.getElementById('content').innerHTML='<div class="card">Не найдено</div>'; return; }
         const title=pickI18n(t,'title',lang);
