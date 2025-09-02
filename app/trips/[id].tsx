@@ -14,7 +14,12 @@ export default function TripDetail(){
       if (Platform.OS === 'web' && item?.voucherCode) {
         try {
           const mod = await import('qrcode.react');
-          setQrHtml(<mod.QRCode value={item.voucherCode} size={132} />);
+          const QRComp: any = (mod as any).QRCodeCanvas || (mod as any).QRCodeSVG || (mod as any).default;
+          if (QRComp) {
+            setQrHtml(React.createElement(QRComp, { value: item.voucherCode, size: 132 }));
+          } else {
+            setQrHtml(null);
+          }
         } catch { setQrHtml(null); }
       } else {
         setQrHtml(null);
