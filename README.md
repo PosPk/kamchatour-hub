@@ -169,6 +169,30 @@ npm run lint
 npm run build
 ```
 
+### Telegram витрина: объявления и лиды
+
+1) Примените SQL:
+   - `supabase/announcements.sql` — создаёт таблицы `public.announcements` (модерация: pending/approved/rejected) и `public.leads`, включает RLS и политики (публично видны только `approved`).
+
+2) Переменные окружения (Vercel → Project Settings → Environment Variables):
+   - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` — серверный доступ из API-роутов
+   - `TG_WEBHOOK_TOKEN` — аутентификация вебхука `/api/tg/post`
+   - `ADMIN_API_TOKEN` — аутентификация `/api/admin/announcements`
+
+3) API:
+   - Вебхук Telegram постов → `POST /api/tg/post` с заголовком `x-telegram-token`
+     - записывает объявление в `announcements` со статусом `pending`
+   - Модерация:
+     - `GET /api/admin/announcements?status=pending` — список на модерацию (заголовок `x-admin-token`)
+     - `POST /api/admin/announcements` — `{ id, action: "approve" | "reject" }`
+   - Лиды:
+     - `POST /api/tg/lead` — `{ name, contact, tour_id?, tg_user_id?, tg_chat_id?, payload? }`
+
+4) Витрина Telegram (статические страницы):
+   - Доступны после билда: `/tg`, `/tg/tours/t1`, `/tg/lead`
+   - Сборка кладёт `public/*` в `dist/` автоматически (скрипт `build:web`)
+   - Для темизации используйте Telegram `themeParams` (опционально)
+
 ## ⚙️ CI/CD: Деплой Expo Web на GitHub Pages
 
 1. Включите GitHub Pages в настройках репозитория: Source = GitHub Actions.
