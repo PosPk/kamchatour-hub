@@ -84,7 +84,12 @@
               title: pickI18n(x,'title',lang),
               img: x.image || 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop',
               meta: `${x.activity || ''} • ${x.region || ''}`.trim(),
-              price: (x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+ ' ₽' : 'по запросу')
+              price: (x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+ ' ₽' : 'по запросу'),
+              eco_points: x.eco_points || 0,
+              rating: x.rating || null,
+              reviews: x.reviews || null,
+              duration_days: x.duration_days || x.duration || null,
+              price_from: x.price_from || null
             }));
           }
           const res2 = await fetch('/partner-tours.json',{cache:'no-store'});
@@ -96,7 +101,12 @@
             title: pickI18n(x,'title',lang),
             img: x.image,
             meta: `${x.activity || ''} • ${x.region || ''}`.trim(),
-            price: (x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+ ' ₽' : 'по запросу')
+            price: (x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+ ' ₽' : 'по запросу'),
+            eco_points: x.eco_points || 0,
+            rating: x.rating || null,
+            reviews: x.reviews || null,
+            duration_days: x.duration_days || x.duration || null,
+            price_from: x.price_from || null
           }));
         }catch(_){ return []; }
       }
@@ -188,6 +198,11 @@
           <input id="minPrice" class="input" type="number" placeholder="от"/>
           <input id="maxPrice" class="input" type="number" placeholder="до"/>
         </div>
+        <div class="label">Длительность (дней)</div>
+        <div class="row2">
+          <input id="minDays" class="input" type="number" placeholder="от"/>
+          <input id="maxDays" class="input" type="number" placeholder="до"/>
+        </div>
         <div class="label">Активность</div>
         <input id="act" class="input" type="text" placeholder="рыбалка, вулканы..."/>
         <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
@@ -222,6 +237,8 @@
         const apply=document.getElementById('applyFilters');
         const minP=document.getElementById('minPrice');
         const maxP=document.getElementById('maxPrice');
+        const minD=document.getElementById('minDays');
+        const maxD=document.getElementById('maxDays');
         const act=document.getElementById('act');
         const chips=document.querySelectorAll('#chips .chip');
         function render(items){
@@ -248,11 +265,14 @@
         })();
         function localFilter(items){
           const min = Number(minP.value)||0; const max = Number(maxP.value)||Infinity; const a = (act.value||'').toLowerCase();
+          const dMin = Number(minD.value)||0; const dMax = Number(maxD.value)||Infinity;
           return (items||[]).filter((x)=>{
             const pr = Number((x.price_from||'').toString().replace(/\D/g,''))||0;
             const okPrice = pr>=min && pr<=max;
             const okAct = !a || (x.meta||'').toLowerCase().includes(a);
-            return okPrice && okAct;
+            const dur = Number(x.duration_days||x.duration||0) || 0;
+            const okDur = dur>=dMin && dur<=dMax;
+            return okPrice && okAct && okDur;
           });
         }
         async function searchRemote(query){
