@@ -18,8 +18,19 @@
       .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none}
     </style>
     <script>
-      async function load(){
-        const res = await fetch('/souvenirs.json'); // placeholder; replace with /api/tg/search if needed
+      async function loadTours(){
+        try{
+          const res = await fetch('/partner-tours.json',{cache:'no-store'});
+          if(!res.ok) return [];
+          const data = await res.json();
+          return data.map(x=>({
+            id: x.id,
+            title: x.title,
+            img: x.image,
+            meta: `${x.activity || ''} • ${x.region || ''}`.trim(),
+            price: (x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+ ' ₽' : 'по запросу')
+          }));
+        }catch(_){ return []; }
       }
     </script>
   </head>
@@ -29,16 +40,15 @@
       <div id="list" class="grid"></div>
     </div>
     <script>
-      const tours=[
-        {id:'t1',title:'Вулканы и гейзеры',img:'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop',meta:'Вулканы • Мутновский',price:'45 000 ₽'},
-        {id:'t2',title:'Медвежьи места',img:'https://images.unsplash.com/photo-1501706362039-c06b2d715385?q=80&w=1200&auto=format&fit=crop',meta:'Дикая природа • Курильское озеро',price:'60 000 ₽'}
-      ];
-      const el=document.getElementById('list');
-      tours.forEach(t=>{
-        const c=document.createElement('div');c.className='card';
-        c.innerHTML=`<img class="cover" src="${t.img}"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><a class="btn" href="/tg/tours/${t.id}">Подробнее</a></div></div>`;
-        el.appendChild(c);
-      });
+      (async()=>{
+        const tours = await loadTours();
+        const el=document.getElementById('list');
+        (tours.length? tours:[]).forEach(t=>{
+          const c=document.createElement('div');c.className='card';
+          c.innerHTML=`<img class="cover" src="${t.img}"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><a class="btn" href="/tg/tours/${t.id}">Подробнее</a></div></div>`;
+          el.appendChild(c);
+        });
+      })();
     </script>
   </body>
   </html>

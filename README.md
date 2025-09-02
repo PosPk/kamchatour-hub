@@ -183,6 +183,25 @@ curl -X POST https://<host>/api/booking/cancel \
   -d '{"id":"<booking-id>","reason":"change of plans"}'
 ```
 
+### Импорт туров партнёра
+
+1) Подготовьте JSON (пример: `public/partner-tours.json`)
+```json
+[
+  {"id":"t1","title":"Рыбалка на Камчатке","region":"Южная Камчатка","activity":"рыбалка","price_from":55000,"duration_days":3,"rating":4.8,"operator_id":"partner_fishing_kam"}
+]
+```
+
+2) Импорт в Supabase (админ‑токен):
+```bash
+curl -X POST https://<host>/api/import/partner-tours \
+  -H 'Content-Type: application/json' \
+  -H 'x-admin-token: $ADMIN_API_TOKEN' \
+  -d @public/partner-tours.json --data-urlencode "items=@-"
+```
+
+3) Telegram‑витрина читает `public/partner-tours.json` и рендерит список.
+
 ### Telegram витрина: объявления и лиды
 
 1) Примените SQL:
