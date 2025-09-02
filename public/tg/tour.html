@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Тур</title>
+    <style>
+      body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:#f8fafc;color:#0f172a}
+      .wrap{padding:16px}
+      .cover{width:100%;height:220px;object-fit:cover;border-radius:12px;background:#e2e8f0}
+      .title{font-weight:800;font-size:20px;margin-top:12px}
+      .meta{color:#475569;margin-top:4px}
+      .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-top:12px}
+      .price{color:#065f46;font-weight:800}
+      .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none}
+    </style>
+    <script>
+      function getLang(){
+        const p=new URLSearchParams(location.search);
+        const lang=(p.get('lang')||'ru').toLowerCase();
+        return lang;
+      }
+      function pickI18n(obj,key,lang){ const base=obj[key]; const i18n=(obj[key+"_i18n"]||{}); return (i18n&&i18n[lang])||base; }
+      async function getTour(){
+        const p=new URLSearchParams(location.search); const id=p.get('id'); if(!id) return null;
+        const res=await fetch('/partner-tours.json',{cache:'no-store'}); if(!res.ok) return null; const data=await res.json();
+        return data.find((x)=>String(x.id)===String(id));
+      }
+    </script>
+  </head>
+  <body>
+    <div class="wrap">
+      <div id="content"></div>
+    </div>
+    <script>
+      (async()=>{
+        const lang=getLang();
+        const t=await getTour(); if(!t){ document.getElementById('content').innerHTML='<div class="card">Не найдено</div>'; return; }
+        const title=pickI18n(t,'title',lang);
+        const desc=pickI18n(t,'description',lang);
+        const price=(t.price_from? new Intl.NumberFormat('ru-RU').format(t.price_from)+' ₽' : 'по запросу');
+        const meta=`${t.activity||''} • ${t.region||''} • ${t.duration_days||''} дн.`;
+        const urlLead=`/tg/lead?tour_id=${encodeURIComponent(t.id)}`;
+        const html=`
+          <img class="cover" src="${t.image||''}"/>
+          <div class="title">${title||''}</div>
+          <div class="meta">${meta}</div>
+          <div class="card"><div class="price">${price}</div><p>${desc||''}</p>
+            <a class="btn" href="${urlLead}">Оставить заявку</a>
+          </div>`;
+        document.getElementById('content').innerHTML=html;
+      })();
+    </script>
+  </body>
+  </html>
+

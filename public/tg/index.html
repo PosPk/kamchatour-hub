@@ -19,7 +19,18 @@
     </style>
     <script>
       function getLang(){
-        const p=new URLSearchParams(location.search);return (p.get('lang')||'ru').toLowerCase();
+        const p=new URLSearchParams(location.search);
+        const urlLang=(p.get('lang')||'').toLowerCase();
+        if(urlLang) return urlLang;
+        try{
+          const tg = (window as any).Telegram && (window as any).Telegram.WebApp;
+          const lc = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code;
+          if(lc){ if(lc.toLowerCase().startsWith('zh')) return 'zh'; if(lc.toLowerCase().startsWith('ru')) return 'ru'; }
+        }catch(_){ }
+        const nav=(navigator.language||'').toLowerCase();
+        if(nav.startsWith('zh')) return 'zh';
+        if(nav.startsWith('ru')) return 'ru';
+        return 'ru';
       }
       function pickI18n(obj,key,lang){
         const base=obj[key];const i18n=(obj[key+"_i18n"]||{});
@@ -53,7 +64,9 @@
         const el=document.getElementById('list');
         (tours.length? tours:[]).forEach(t=>{
           const c=document.createElement('div');c.className='card';
-          c.innerHTML=`<img class="cover" src="${t.img}"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><a class="btn" href="/tg/tours/${t.id}">Подробнее</a></div></div>`;
+          const lang=getLang();
+          const url=`/tg/tour.html?id=${encodeURIComponent(t.id)}&lang=${lang}`;
+          c.innerHTML=`<img class="cover" src="${t.img}"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><a class="btn" href="${url}">Подробнее</a></div></div>`;
           el.appendChild(c);
         });
       })();
