@@ -24,13 +24,19 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      - name: Configure connection env
+        run: |
+          if [ -n "${{ secrets.SUPABASE_DATABASE_URL }}" ]; then
+            echo "DATABASE_URL=${{ secrets.SUPABASE_DATABASE_URL }}" >> $GITHUB_ENV
+          else
+            echo "PGHOST=${{ secrets.SUPABASE_PGHOST }}" >> $GITHUB_ENV
+            echo "PGUSER=${{ secrets.SUPABASE_PGUSER }}" >> $GITHUB_ENV
+            echo "PGPASSWORD=${{ secrets.SUPABASE_PGPASSWORD }}" >> $GITHUB_ENV
+            echo "PGDATABASE=${{ secrets.SUPABASE_PGDATABASE }}" >> $GITHUB_ENV
+            echo "PGPORT=${{ secrets.SUPABASE_PGPORT }}" >> $GITHUB_ENV
+          fi
+          echo "FORCE_IPV4=1" >> $GITHUB_ENV
+
       - name: Apply SQL to Supabase
-        env:
-          PGHOST: ${{ secrets.SUPABASE_PGHOST }}
-          PGUSER: ${{ secrets.SUPABASE_PGUSER }}
-          PGPASSWORD: ${{ secrets.SUPABASE_PGPASSWORD }}
-          PGDATABASE: ${{ secrets.SUPABASE_PGDATABASE }}
-          PGPORT: ${{ secrets.SUPABASE_PGPORT }}
-          FORCE_IPV4: '1'
         run: npm run apply:sql
 
