@@ -99,12 +99,25 @@
             el.appendChild(c);
           });
         }
-        function search(query){
-          const s=(query||'').trim().toLowerCase();
-          if(!s) return all;
-          return all.filter(x=> (x.title||'').toLowerCase().includes(s) || (x.meta||'').toLowerCase().includes(s));
+        async function searchRemote(query){
+          const s=(query||'').trim();
+          if(!s){ render(all); return; }
+          try{
+            const r=await fetch('/api/tg/search?q='+encodeURIComponent(s));
+            if(!r.ok){ render(all); return; }
+            const json=await r.json();
+            const items=Array.isArray(json?.items)? json.items: [];
+            const lang=getLang();
+            render(items.map(x=>({
+              id:x.id,
+              title:pickI18n(x,'title',lang),
+              img:x.image||'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop',
+              meta:`${x.activity||''} • ${x.region||''}`.trim(),
+              price:(x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+' ₽':'по запросу')
+            })));
+          }catch(_){ render(all); }
         }
-        q.addEventListener('input',()=>{ render(search(q.value)); });
+        q.addEventListener('input',()=>{ searchRemote(q.value); });
         render(all);
       })();
     </script>
