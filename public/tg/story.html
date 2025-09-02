@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>История: Открой Камчатку</title>
+  <meta name="theme-color" content="#000000">
+  <link rel="stylesheet" href="/tg/styles.css">
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial}
+    .vh{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px}
+    .hero{position:relative;color:#fff;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.65)),url('https://images.unsplash.com/photo-1536058227421-84b0161f9ddd?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat}
+    .hero h1{font-size:40px;line-height:1.1;margin:0 0 8px}
+    .hero p{opacity:.95}
+    .section{background:#0b1020;color:#dbeafe}
+    .chapter{max-width:840px}
+    .sticky{position:sticky;top:0}
+    .grid{display:grid;grid-template-columns:1fr;gap:16px;max-width:960px;width:100%}
+    .media{border-radius:12px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+    .cta{position:fixed;inset:auto 16px 76px 16px;z-index:10}
+    .cta button{width:100%;height:48px;border:none;border-radius:12px;background:#22c55e;color:#fff;font-weight:700}
+    .caption{font-size:13px;opacity:.8;margin-top:8px}
+    .spacer{height:16px}
+    .nav-pad{height:64px}
+    @media(min-width:680px){.hero h1{font-size:56px}.grid{grid-template-columns:1.2fr .8fr;align-items:center}}
+  </style>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <section class="vh hero">
+    <div class="chapter">
+      <h1>Камчатка: от жерла вулкана до океана</h1>
+      <p>Погрузись в историю маршрута — проскроль, чтобы раскрыть главы путешествия.</p>
+    </div>
+  </section>
+
+  <section class="vh section">
+    <div class="grid">
+      <div class="media sticky">
+        <video src="https://cdn.coverr.co/videos/coverr-lava-6305/1080p.mp4" autoplay muted loop playsinline style="width:100%;height:auto"></video>
+      </div>
+      <div class="chapter">
+        <h2>Глава 1. Дыхание вулканов</h2>
+        <p>Вулканы Авачинский и Ключевской — символы энергии полуострова. Рассветы здесь — огонь и лед.</p>
+        <div class="caption">Совет: лучшее время — июль–сентябрь. Нужны треккинговые ботинки и ветрозащита.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vh section">
+    <div class="grid">
+      <div class="chapter">
+        <h2>Глава 2. Долина гейзеров</h2>
+        <p>Один из крупнейших полей гейзеров на планете. Сотни фонтанов, бирюзовые террасы и паровые клубы.</p>
+        <div class="caption">Экология: идём только по настилам. Соблюдаем тропы — сохраняем природу.</div>
+      </div>
+      <div class="media sticky">
+        <img src="https://images.unsplash.com/photo-1523419409543-9e3ea9ffad07?q=80&w=1600&auto=format&fit=crop" alt="Гейзеры" style="width:100%;height:auto">
+      </div>
+    </div>
+  </section>
+
+  <section class="vh section">
+    <div class="grid">
+      <div class="media sticky">
+        <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=1600&auto=format&fit=crop" alt="Медведи" style="width:100%;height:auto">
+      </div>
+      <div class="chapter">
+        <h2>Глава 3. Корякская тундра и медведи</h2>
+        <p>Наблюдаем бурых медведей на безопасной дистанции с гидом. Фотоохота и этика дикой природы.</p>
+        <div class="caption">Безопасность: 100+ м дистанции, без резких движений, без кормления.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vh section">
+    <div class="grid">
+      <div class="chapter">
+        <h2>Глава 4. Океан и киты</h2>
+        <p>Выход в Авачинскую бухту к мысу Столбчатый. Серые киты, косатки и птичьи базары.</p>
+        <div class="caption">С собой: непромокаемая куртка, защита для техники, бинокль.</div>
+      </div>
+      <div class="media sticky">
+        <video src="https://cdn.coverr.co/videos/coverr-waves-crashing-on-the-shore-6699/1080p.mp4" autoplay muted loop playsinline style="width:100%;height:auto"></video>
+      </div>
+    </div>
+  </section>
+
+  <div class="spacer"></div>
+  <div class="cta">
+    <button id="ctaBtn">Выбрать тур по этой истории</button>
+  </div>
+  <div class="nav-pad"></div>
+
+  <script>
+    const tg = window.Telegram?.WebApp; if (tg) { tg.ready(); tg.expand(); }
+    const btn = document.getElementById('ctaBtn');
+    btn.addEventListener('click', () => {
+      const lang = new URLSearchParams(location.search).get('lang') || 'ru';
+      location.href = `/tg/?lang=${lang}&q=${encodeURIComponent('вулканы гейзеры киты')}`;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AR/VR Камчатка</title>
+  <meta name="theme-color" content="#000000">
+  <link rel="stylesheet" href="/tg/styles.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <style>
+    body{margin:0;background:#000;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial}
+    .topbar{position:fixed;inset:0 0 auto 0;height:48px;display:flex;align-items:center;gap:8px;padding:0 12px;background:linear-gradient(180deg,rgba(0,0,0,.6),transparent);z-index:10}
+    .topbar button{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:6px 10px}
+    .panel{position:fixed;inset:auto 0 74px 0;background:rgba(6,8,15,.82);backdrop-filter:blur(8px);padding:10px 12px;display:flex;gap:8px;overflow:auto}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border-radius:999px;background:#0b1020;border:1px solid #1f2937;white-space:nowrap;color:#e5e7eb}
+    .hint{position:fixed;inset:auto 12px 130px 12px;color:#cbd5e1;font-size:13px}
+    .nav-pad{height:64px}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <button id="backBtn">Назад</button>
+    <div style="opacity:.9">AR/VR Камчатка</div>
+  </div>
+
+  <a-scene embedded vr-mode-ui="enabled: true" device-orientation-permission-ui="enabled: true">
+    <a-sky color="#000"></a-sky>
+    <a-entity position="0 1.6 -3">
+      <a-text value="Вулканы Камчатки" color="#fff" align="center"></a-text>
+    </a-entity>
+    <a-entity gltf-model="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models@master/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf" scale="1 1 1" position="0 1 -2"></a-entity>
+    <a-entity id="whale" geometry="primitive: sphere; radius: 0.2" material="color: #60a5fa" position="-1 1.2 -1.5" animation="property: position; to: 1 1.2 -1.5; dir: alternate; loop: true; dur: 3000"></a-entity>
+  </a-scene>
+
+  <div class="hint">Нажмите VR для панорамы. В AR используйте пермишны устройства.</div>
+  <div class="panel">
+    <span class="chip" data-demo="volcano">Вулкан 3D</span>
+    <span class="chip" data-demo="whale">Кит AR</span>
+    <span class="chip" data-demo="geysers">Гейзеры 360°</span>
+  </div>
+  <div class="nav-pad"></div>
+
+  <script>
+    const tg = window.Telegram?.WebApp; if (tg) { tg.ready(); tg.expand(); }
+    document.getElementById('backBtn').onclick = () => history.back();
+    document.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
+      const demo = ch.getAttribute('data-demo');
+      if (demo === 'geysers') {
+        // Swap sky to 360 panorama image
+        const sky = document.querySelector('a-sky');
+        sky.setAttribute('src', 'https://images.unsplash.com/photo-1523419409543-9e3ea9ffad07?q=80&w=1920&auto=format&fit=crop');
+      }
+      if (demo === 'volcano') {
+        const model = document.querySelector('[gltf-model]');
+        model.setAttribute('gltf-model', 'https://models.babylonjs.com/CornellBox/glTF/CornellBox.gltf');
+      }
+      if (demo === 'whale') {
+        const whale = document.getElementById('whale');
+        whale.setAttribute('material', 'color: #34d399');
+      }
+    }));
+  </script>
+</body>
+</html>
