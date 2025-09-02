@@ -1,0 +1,36 @@
+name: Apply Supabase SQL
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Run SQL apply"
+        required: true
+        default: "yes"
+
+jobs:
+  apply:
+    if: ${{ github.event.inputs.apply == 'yes' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Apply SQL to Supabase
+        env:
+          PGHOST: ${{ secrets.SUPABASE_PGHOST }}
+          PGUSER: ${{ secrets.SUPABASE_PGUSER }}
+          PGPASSWORD: ${{ secrets.SUPABASE_PGPASSWORD }}
+          PGDATABASE: ${{ secrets.SUPABASE_PGDATABASE }}
+          PGPORT: ${{ secrets.SUPABASE_PGPORT }}
+          FORCE_IPV4: '1'
+        run: npm run apply:sql
+

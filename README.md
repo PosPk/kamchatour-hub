@@ -171,6 +171,19 @@ npm run lint
 npm run build
 ```
 
+## CI: Применение SQL к Supabase из репозитория
+
+Workflow: `.github/workflows/apply-supabase-sql.yml`
+
+Секреты в GitHub → Settings → Secrets and variables → Actions:
+- `SUPABASE_PGHOST` = db.<project>.supabase.co
+- `SUPABASE_PGUSER` = postgres
+- `SUPABASE_PGPASSWORD` = пароль
+- `SUPABASE_PGDATABASE` = postgres
+- `SUPABASE_PGPORT` = 5432
+
+Запуск: Actions → Apply Supabase SQL → Run workflow → apply = yes.
+
 ### Booking (предбронь) — API
 
 ```bash
