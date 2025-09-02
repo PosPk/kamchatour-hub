@@ -141,6 +141,8 @@ WEATHER_API_KEY=your_weather_api_key
 3) `supabase/audit.sql` — создаёт `audit_log` и триггеры на ключевые таблицы
 4) `supabase/payments.sql` — таблица `payments`, idempotency key + advisory lock
 5) `supabase/rate_limit.sql` — таблица `auth_attempts` и функция `check_rate_limit`
+6) `supabase/announcements.sql` — объявления (модерация) и лиды для Telegram
+7) `supabase/booking.sql` — статусы предброни и события
 
 Проверки:
 - Аудит: выполнить INSERT/UPDATE/DELETE в `bookings` и убедиться, что запись попала в `audit_log`.
@@ -167,6 +169,18 @@ npm run lint
 
 # Сборка
 npm run build
+```
+
+### Booking (предбронь) — API
+
+```bash
+curl -X POST https://<host>/api/booking/prebook \
+  -H 'Content-Type: application/json' \
+  -d '{"tour_id":"t1","contact":"@user","party_size":2,"tg_user_id":"123"}'
+
+curl -X POST https://<host>/api/booking/cancel \
+  -H 'Content-Type: application/json' \
+  -d '{"id":"<booking-id>","reason":"change of plans"}'
 ```
 
 ### Telegram витрина: объявления и лиды
