@@ -38,9 +38,22 @@
       }
       async function loadTours(){
         try{
-          const res = await fetch('/partner-tours.json',{cache:'no-store'});
-          if(!res.ok) return [];
-          const data = await res.json();
+          const res = await fetch('/api/tg/tours',{cache:'no-store'});
+          if(res.ok){
+            const json = await res.json();
+            const items = Array.isArray(json?.items)? json.items: [];
+            const lang=getLang();
+            return items.map(x=>({
+              id: x.id,
+              title: pickI18n(x,'title',lang),
+              img: x.image || 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop',
+              meta: `${x.activity || ''} • ${x.region || ''}`.trim(),
+              price: (x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+ ' ₽' : 'по запросу')
+            }));
+          }
+          const res2 = await fetch('/partner-tours.json',{cache:'no-store'});
+          if(!res2.ok) return [];
+          const data = await res2.json();
           const lang=getLang();
           return data.map(x=>({
             id: x.id,
