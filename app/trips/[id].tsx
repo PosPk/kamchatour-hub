@@ -7,7 +7,20 @@ import { theme } from '../../lib/theme';
 export default function TripDetail(){
   const { id } = useLocalSearchParams<{ id: string }>();
   const [item, setItem] = useState<Booking | null>(null);
+  const [qrHtml, setQrHtml] = useState<React.ReactNode | null>(null);
   useEffect(()=>{ (async()=>{ if(!id) return; setItem(await getBooking(String(id))); })(); },[id]);
+  useEffect(()=>{
+    (async()=>{
+      if (Platform.OS === 'web' && item?.voucherCode) {
+        try {
+          const mod = await import('qrcode.react');
+          setQrHtml(<mod.QRCode value={item.voucherCode} size={132} />);
+        } catch { setQrHtml(null); }
+      } else {
+        setQrHtml(null);
+      }
+    })();
+  }, [item?.voucherCode]);
   if(!item) return <View style={styles.container}><Text>Загрузка…</Text></View>;
   return (
     <View style={styles.container}>
@@ -18,9 +31,7 @@ export default function TripDetail(){
         <Text style={styles.section}>Ваучер</Text>
         <View style={styles.voucherBox}>
           {Platform.OS === 'web' ? (
-            // Lazy require to avoid RN bundler issues
-            // @ts-ignore
-            (() => { const QR = require('qrcode.react'); return <QR.QRCode value={item.voucherCode} size={132} /> })()
+            qrHtml ?? <Text style={styles.voucherText}>{item.voucherCode}</Text>
           ) : (
             <Text style={styles.voucherText}>{item.voucherCode}</Text>
           )}

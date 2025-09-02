@@ -43,12 +43,24 @@ create table if not exists public.bookings (
   date_from timestamptz,
   date_to timestamptz,
   voucher_code text,
-  status text check (status in ('pending','confirmed','cancelled','completed')) default 'pending',
+  status text check (status in ('pending','confirmed','cancelled','completed','paid','payment_failed')) default 'pending',
   total int,
   currency text default 'RUB',
   policy jsonb,
+  payment_id text,
+  payment_data jsonb,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
+);
+
+-- Payments
+create table if not exists public.payments (
+  id text primary key, -- action_id / TransactionId
+  booking_id text not null references public.bookings(id) on delete cascade,
+  provider text not null,
+  status text check (status in ('initiated','paid','payment_failed','refunded')) not null,
+  payload jsonb,
+  created_at timestamptz default now()
 );
 
 -- Threads (messages envelope)

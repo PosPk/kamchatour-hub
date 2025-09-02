@@ -13,15 +13,6 @@ import { AIProvider } from '../contexts/AIContext';
 import { PhotoFeedProvider } from '../contexts/PhotoFeedContext';
 
 export default function RootLayout() {
-  try {
-    const apiKey = process.env.EXPO_PUBLIC_BUGSNAG_API_KEY as string | undefined;
-    if (apiKey && typeof window !== 'undefined') {
-      // Dynamic import to avoid SSR issues in static rendering
-      import('@bugsnag/expo').then(m => {
-        try { (m as any)?.default?.start({ apiKey }); } catch {}
-      }).catch(() => {});
-    }
-  } catch {}
   return (
     <ThemeProvider>
       <AuthProvider>

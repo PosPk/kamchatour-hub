@@ -25,7 +25,7 @@ export async function ensureBucket(): Promise<void> {
 	const svc = createServiceClient();
 	if (!svc) throw new Error('Service client not configured');
 	const { data: list } = await svc.storage.listBuckets();
-	const has = (list || []).some(b => b.name === BUCKET);
+	const has = (list || []).some((bucket: any) => (bucket as any).name === BUCKET);
 	if (!has) {
 		await svc.storage.createBucket(BUCKET, { public: true });
 	}
@@ -47,7 +47,7 @@ export async function mintNftOffchain(req: MintRequest): Promise<MintResult> {
 	if (upload.error) return { success: false, error: upload.error.message };
 
 	const { data: pub } = svc.storage.from(BUCKET).getPublicUrl(objectPath);
-	const imageUrl = pub?.publicUrl;
+	const imageUrl = (pub as any)?.publicUrl as string | undefined;
 
 	const insert = await svc
 		.from('nft_items')
