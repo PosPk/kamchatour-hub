@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Kamchatour — Витрина</title>
+    <style>
+      body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; background:#f8fafc;color:#0f172a}
+      .wrap{padding:16px}
+      .grid{display:grid;grid-template-columns:1fr;gap:12px}
+      .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden}
+      .cover{width:100%;height:160px;object-fit:cover;background:#e2e8f0}
+      .pad{padding:12px}
+      .title{font-weight:800}
+      .meta{color:#475569;margin-top:4px}
+      .row{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+      .price{color:#065f46;font-weight:800}
+      .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none}
+    </style>
+    <script>
+      async function load(){
+        const res = await fetch('/souvenirs.json'); // placeholder; replace with /api/tg/search if needed
+      }
+    </script>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1 class="title">Туры Камчатки</h1>
+      <div id="list" class="grid"></div>
+    </div>
+    <script>
+      const tours=[
+        {id:'t1',title:'Вулканы и гейзеры',img:'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop',meta:'Вулканы • Мутновский',price:'45 000 ₽'},
+        {id:'t2',title:'Медвежьи места',img:'https://images.unsplash.com/photo-1501706362039-c06b2d715385?q=80&w=1200&auto=format&fit=crop',meta:'Дикая природа • Курильское озеро',price:'60 000 ₽'}
+      ];
+      const el=document.getElementById('list');
+      tours.forEach(t=>{
+        const c=document.createElement('div');c.className='card';
+        c.innerHTML=`<img class="cover" src="${t.img}"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><a class="btn" href="/tg/tours/${t.id}">Подробнее</a></div></div>`;
+        el.appendChild(c);
+      });
+    </script>
+  </body>
+  </html>
+
