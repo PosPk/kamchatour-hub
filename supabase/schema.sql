@@ -23,12 +23,14 @@ create table if not exists public.tours (
   id text primary key,
   operator_id text references public.operators(id) on delete cascade,
   title text not null,
+  title_i18n jsonb,
   region text,
   activity text,
   price_from int,
   duration_days int,
   rating numeric,
   description text,
+  description_i18n jsonb,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );

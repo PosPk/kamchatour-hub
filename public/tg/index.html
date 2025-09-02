@@ -18,14 +18,22 @@
       .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none}
     </style>
     <script>
+      function getLang(){
+        const p=new URLSearchParams(location.search);return (p.get('lang')||'ru').toLowerCase();
+      }
+      function pickI18n(obj,key,lang){
+        const base=obj[key];const i18n=(obj[key+"_i18n"]||{});
+        return (i18n && i18n[lang]) || base;
+      }
       async function loadTours(){
         try{
           const res = await fetch('/partner-tours.json',{cache:'no-store'});
           if(!res.ok) return [];
           const data = await res.json();
+          const lang=getLang();
           return data.map(x=>({
             id: x.id,
-            title: x.title,
+            title: pickI18n(x,'title',lang),
             img: x.image,
             meta: `${x.activity || ''} • ${x.region || ''}`.trim(),
             price: (x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+ ' ₽' : 'по запросу')

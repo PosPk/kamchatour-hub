@@ -2,24 +2,28 @@
   {
     "id": "t1",
     "title": "Рыбалка на Камчатке — лосось и чавыча",
+    "title_i18n": { "zh": "堪察加半岛垂钓——鲑鱼与大鳞大马哈鱼" },
     "region": "Южная Камчатка",
     "activity": "рыбалка",
     "price_from": 55000,
     "duration_days": 3,
     "rating": 4.8,
     "description": "Трёхдневный рыболовный тур с опытными гидами. Снаряжение включено.",
+    "description_i18n": { "zh": "三天专业钓鱼之旅，资深向导，全套装备。" },
     "image": "https://images.unsplash.com/photo-1501706362039-c06b2d715385?w=1200&auto=format&fit=crop",
     "operator_id": "partner_fishing_kam"
   },
   {
     "id": "t2",
     "title": "Морская рыбалка и наблюдение за китами",
+    "title_i18n": { "zh": "海上垂钓与观鲸之旅" },
     "region": "Авачинская бухта",
     "activity": "морская рыбалка",
     "price_from": 69000,
     "duration_days": 2,
     "rating": 4.7,
     "description": "Выход в море, лов морских видов, шанс увидеть китов и касаток.",
+    "description_i18n": { "zh": "出海垂钓海鱼，有机会观赏鲸鱼与虎鲸。" },
     "image": "https://images.unsplash.com/photo-1465153690352-10c1b29577f8?w=1200&auto=format&fit=crop",
     "operator_id": "partner_fishing_kam"
   }
