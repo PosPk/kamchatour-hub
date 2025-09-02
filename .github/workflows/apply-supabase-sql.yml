@@ -1,20 +1,23 @@
-name: Apply Supabase SQL
+name: Apply Supabase SQL & Import Tours
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'supabase/**'
+      - 'public/partner-tours.json'
+      - '.github/workflows/apply-supabase-sql.yml'
+  schedule:
+    - cron: '0 3 * * *'
   workflow_dispatch:
     inputs:
       apply:
-        description: "Run SQL apply"
-        required: true
-        default: "yes"
-      import_partner:
-        description: "Import partner tours after SQL"
+        description: "Run SQL apply (manual trigger)"
         required: false
-        default: "no"
+        default: "yes"
 
 jobs:
   apply:
-    if: ${{ github.event.inputs.apply == 'yes' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
