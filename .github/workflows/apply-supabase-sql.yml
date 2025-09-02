@@ -7,6 +7,10 @@ on:
         description: "Run SQL apply"
         required: true
         default: "yes"
+      import_partner:
+        description: "Import partner tours after SQL"
+        required: false
+        default: "no"
 
 jobs:
   apply:
@@ -39,4 +43,8 @@ jobs:
 
       - name: Apply SQL to Supabase
         run: npm run apply:sql
+
+      - name: Import partner tours (optional)
+        if: ${{ success() && (github.event.inputs.import_partner || 'no') == 'yes' }}
+        run: node scripts/import-partner-tours.mjs
 
