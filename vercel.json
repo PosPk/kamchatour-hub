@@ -7,6 +7,9 @@
   "routes": [
     { "handle": "filesystem" },
     { "src": "^/api/(.*)$", "dest": "/api/$1" },
+    { "src": "^/tg$", "dest": "/tg/index.html" },
+    { "src": "^/tg/(.*)$", "dest": "/tg/$1" },
+    { "src": "^/partner-tours.json$", "dest": "/partner-tours.json" },
     { "src": "^/mini(?:/(.*))?$", "dest": "/tg/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
