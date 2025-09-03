@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Личный кабинет</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{--bg:#0b1020;--text:#e5e7eb;--muted:#94a3b8;--card:#0f172a;--primary:#0891b2}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:var(--bg);color:var(--text)}
+    .wrap{padding:16px 16px 96px}
+    .top{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    .btn{display:inline-block;background:rgba(255,255,255,.08);color:var(--text);text-decoration:none;padding:8px 12px;border-radius:10px;border:1px solid rgba(148,163,184,.25)}
+    .card{background:var(--card);border:1px solid rgba(148,163,184,.25);border-radius:12px;padding:14px;margin-bottom:14px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .role{display:flex;gap:10px;align-items:center;padding:12px;border-radius:12px;border:1px solid rgba(148,163,184,.25);background:rgba(255,255,255,.04);cursor:pointer}
+    .role.active{outline:2px solid var(--primary)}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top"><a class="btn" href="/tg">← Назад</a><h1 style="margin:0">Личный кабинет</h1></div>
+    <div id="user" class="card">Загрузка профиля…</div>
+    <div class="card">
+      <div class="muted" style="margin-bottom:8px">Роль в системе</div>
+      <div class="grid" id="roles"></div>
+    </div>
+    <div class="card" id="shortcuts" style="display:none"></div>
+  </div>
+  <script>
+    function applyTheme(){
+      try{ const tg=window.Telegram&&window.Telegram.WebApp; if(!tg) return; const p=tg.themeParams||{}; const c=(k,d)=> p[k]||d; document.documentElement.style.setProperty('--bg',c('bg_color','#0b1020')); document.documentElement.style.setProperty('--text',c('text_color','#e5e7eb')); document.documentElement.style.setProperty('--card',c('secondary_bg_color','#0f172a')); }catch(_){ }
+    }
+    applyTheme();
+
+    function renderUser(u){
+      const el=document.getElementById('user');
+      const name=u?.name||''; const username=u?.username? ('@'+u.username):''; const role=u?.role||'traveler';
+      el.innerHTML = `<div style="display:flex;align-items:center;gap:12px"><div style="width:44px;height:44px;border-radius:50%;background:#1f2937;display:flex;align-items:center;justify-content:center">👤</div><div><div style="font-weight:600">${name||'Пользователь'}</div><div class="muted" style="font-size:13px">${username} · роль: ${role}</div></div></div>`;
+    }
+
+    function roleTile(key,title,emoji){
+      const div=document.createElement('div'); div.className='role'; div.setAttribute('data-role',key);
+      div.innerHTML=`<div style="font-size:20px">${emoji}</div><div><div style="font-weight:600">${title}</div><div class="muted" style="font-size:12px">настройки и инструменты</div></div>`;
+      div.addEventListener('click', async ()=>{ await setRole(key); await loadMe(); renderShortcuts(key); });
+      return div;
+    }
+
+    async function setRole(role){
+      try{ await fetch('/api/tg/role',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({role})}); localStorage.setItem('tg_role',role);}catch(_){ }
+    }
+
+    function renderRoles(current){
+      const box=document.getElementById('roles'); box.innerHTML='';
+      const roles=[ ['operator','Туроператор','🏔️'], ['traveler','Путешественник','🧭'], ['rental','Арендатор','🏕️'], ['transfer','Трансфер','🚐'], ['agent','Агент','🤝'] ];
+      roles.forEach(([k,t,e])=>{ const item=roleTile(k,t,e); if(current===k) item.classList.add('active'); box.appendChild(item); });
+    }
+
+    function renderShortcuts(role){
+      const box=document.getElementById('shortcuts');
+      const map={
+        operator:[ ['Добавить тур','/tg'], ['Бронирования','/tg'], ['Выплаты','/tg'] ],
+        traveler:[ ['Мои бронирования','/tg'], ['Сохранённые','/tg'], ['Поддержка','/tg'] ],
+        rental:[ ['Добавить объект','/tg'], ['Заявки','/tg'], ['Календарь','/tg'] ],
+        transfer:[ ['Новый заказ','/tg'], ['Маршруты','/tg'], ['Заявки','/tg'] ],
+        agent:[ ['Рефералы','/tg'], ['Выплаты','/tg'], ['Материалы','/tg'] ],
+      };
+      const items=(map[role]||[]).map(([t,href])=>`<a class="btn" href="${href}" style="margin-right:8px">${t}</a>`).join('');
+      box.style.display='block'; box.innerHTML = `<div class="muted" style="margin-bottom:8px">Быстрые действия</div>${items}`;
+    }
+
+    async function loadMe(){
+      try{ const r=await fetch('/api/tg/me'); const j=await r.json(); if(j?.ok){ renderUser(j.user); renderRoles(j.user?.role||'traveler'); renderShortcuts(j.user?.role||'traveler'); return; } }catch(_){ }
+      const lr=localStorage.getItem('tg_role')||'traveler'; renderUser({name:'Пользователь', username:'', role:lr}); renderRoles(lr); renderShortcuts(lr);
+    }
+
+    async function authIfPossible(){
+      try{ const tg=window.Telegram&&window.Telegram.WebApp; const initData=tg?.initData||''; if(initData){ await fetch('/api/tg/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})}); } }catch(_){ }
+    }
+    authIfPossible().then(loadMe);
+  </script>
+</body>
+</html>
+

@@ -76,6 +76,9 @@
       function opt(u,w){
         try{ if(!u) return u; var noProto=u.replace(/^https?:\/\//,''); return 'https://images.weserv.nl/?url='+encodeURIComponent(noProto)+'&w='+(w||720)+'&q=70&output=webp'; }catch(_){ return u; }
       }
+      async function authIfPossible(){
+        try{ var tg=window.Telegram&&window.Telegram.WebApp; var initData=tg&&tg.initData; if(initData){ await fetch('/api/tg/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})}); } }catch(_){ }
+      }
       async function loadTours(){
         try{
           const res = await fetch('/api/tg/tours',{cache:'no-store'});
@@ -232,10 +235,14 @@
       <a class="link" href="/tg/lead.html" title="Заявка" aria-label="Заявка">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
       </a>
+      <a class="link" href="/tg/account.html" title="Аккаунт" aria-label="Аккаунт">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.3137 2.6863-6 6-6s6 2.6863 6 6"/></svg>
+      </a>
     </div></div>
     <script>
       (async()=>{
         initTelegram();
+        authIfPossible();
         const all = await loadTours();
         const el=document.getElementById('list');
         const q=document.getElementById('q');
