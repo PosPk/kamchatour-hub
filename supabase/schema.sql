@@ -104,3 +104,30 @@ create table if not exists public.feed_posts (
   created_at timestamptz default now()
 );
 
+-- Telegram users mapping (for MiniApp/Bot)
+create table if not exists public.tg_users (
+  telegram_id text primary key,
+  user_id uuid references auth.users(id) on delete set null,
+  username text,
+  first_name text,
+  lang text,
+  created_at timestamptz default now()
+);
+
+-- Telegram updates idempotency/audit
+create table if not exists public.tg_updates (
+  update_id bigint primary key,
+  payload jsonb,
+  created_at timestamptz default now()
+);
+
+-- Optional source of booking
+do $$ begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema='public' and table_name='bookings' and column_name='source'
+  ) then
+    alter table public.bookings add column source text;
+  end if;
+end $$;
+

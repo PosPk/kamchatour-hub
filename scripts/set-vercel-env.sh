@@ -50,5 +50,9 @@ ensure_var OPENAI_API_KEY     "${OPENAI_API_KEY:-}"
 # Client monitoring
 ensure_var EXPO_PUBLIC_BUGSNAG_API_KEY "${EXPO_PUBLIC_BUGSNAG_API_KEY:-}"
 
+# Telegram Bot
+ensure_var TELEGRAM_BOT_TOKEN        "${TELEGRAM_BOT_TOKEN:-}"
+ensure_var TELEGRAM_WEBHOOK_SECRET   "${TELEGRAM_WEBHOOK_SECRET:-}"
+
 echo "Done: attempted to add env vars to Vercel (prod/preview/dev)."
 
