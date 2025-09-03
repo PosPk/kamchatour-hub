@@ -72,6 +72,9 @@
         const base=obj[key];const i18n=(obj[key+"_i18n"]||{});
         return (i18n && i18n[lang]) || base;
       }
+      function opt(u,w){
+        try{ if(!u) return u; var noProto=u.replace(/^https?:\/\//,''); return 'https://images.weserv.nl/?url='+encodeURIComponent(noProto)+'&w='+(w||720)+'&q=70&output=webp'; }catch(_){ return u; }
+      }
       async function loadTours(){
         try{
           const res = await fetch('/api/tg/tours',{cache:'no-store'});
@@ -257,7 +260,9 @@
             c.style.textDecoration='none';
             const eco = (t.eco_points||0)>0? `<span class="badge eco">♻️ Eco+${t.eco_points}</span>`:'';
             const rating = t.rating? `<span class="badge rating">★ ${t.rating}${t.reviews? ` (${t.reviews})`:''}</span>`:'';
-            c.innerHTML=`<div class="badges">${eco}${rating}</div><img class="cover" src="${t.img}"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><span class="btn">Подробнее</span></div></div>`;
+            const s360=opt(t.img,360), s720=opt(t.img,720), s1080=opt(t.img,1080);
+            const srcset=`${s360} 360w, ${s720} 720w, ${s1080} 1080w`;
+            c.innerHTML=`<div class="badges">${eco}${rating}</div><img class="cover" src="${s720}" srcset="${srcset}" sizes="(max-width: 640px) 100vw, 640px" loading="lazy" decoding="async" width="640" height="160"/><div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><span class="btn">Подробнее</span></div></div>`;
             el.appendChild(c);
           });
         }

@@ -42,6 +42,7 @@
         return lang;
       }
       function pickI18n(obj,key,lang){ const base=obj[key]; const i18n=(obj[key+"_i18n"]||{}); return (i18n&&i18n[lang])||base; }
+      function opt(u,w){ try{ if(!u) return u; var noProto=u.replace(/^https?:\/\//,''); return 'https://images.weserv.nl/?url='+encodeURIComponent(noProto)+'&w='+(w||960)+'&q=70&output=webp'; }catch(_){ return u; } }
       async function getTour(){
         const p=new URLSearchParams(location.search); const id=p.get('id'); if(!id) return null;
         const res=await fetch('/partner-tours.json',{cache:'no-store'}); if(!res.ok) return null; const data=await res.json();
@@ -78,9 +79,11 @@
           arr.unshift(cur); localStorage.setItem(rvKey, JSON.stringify(arr.slice(0,8)));
         }catch(_){ }
 
+        const cover720=opt(t.image||'',720), cover1080=opt(t.image||'',1080), cover1440=opt(t.image||'',1440);
+        const coverSet=`${cover720} 720w, ${cover1080} 1080w, ${cover1440} 1440w`;
         const html=`
           <div class="toprow"><a class="btn" href="${backUrl}">← Назад</a></div>
-          <div class="hero"><img src="${t.image||''}" alt="${title||''}"/><div class="grad"></div><div class="txt"><h1 class="title">${title||''}</h1><div class="meta">${meta}</div></div></div>
+          <div class="hero"><img src="${cover1080}" srcset="${coverSet}" sizes="100vw" alt="${title||''}" loading="lazy" decoding="async"/><div class="grad"></div><div class="txt"><h1 class="title">${title||''}</h1><div class="meta">${meta}</div></div></div>
           <div class="card"><div class="price">${price}</div><p>${desc||''}</p>
             <div class="trust">🔒 Гарантия: депозит оператора, комиссия после завершения</div>
           </div>`;
