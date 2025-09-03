@@ -14,7 +14,31 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Content-Security-Policy", "value": "default-src 'self' https: blob: data:; img-src * data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://*.telegram.org; style-src 'self' 'unsafe-inline'; connect-src *; frame-ancestors 'self' https://web.telegram.org https://*.telegram.org;" }
+        { "key": "Content-Security-Policy", "value": "default-src 'self' https: blob: data:; img-src * data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://*.telegram.org https://widget.cloudpayments.ru; style-src 'self' 'unsafe-inline'; connect-src *; frame-ancestors 'self' https://web.telegram.org https://*.telegram.org;" }
+      ]
+    },
+    {
+      "source": "/tg/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/mini(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/partner-tours.json",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]
     }
   ],
