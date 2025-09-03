@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Карта Камчатки</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet"/>
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  <style>
+    :root{ --tg-bg: var(--tg-theme-bg-color, #0b1020) }
+    html,body{height:100%;margin:0}
+    #map{position:fixed;inset:0}
+    .topbar{position:fixed;inset:0 0 auto 0;height:48px;display:flex;align-items:center;gap:8px;padding:0 12px;background:linear-gradient(180deg,rgba(0,0,0,.45),transparent);z-index:10;color:#fff}
+    .chip{position:fixed;right:12px;top:56px;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:8px 10px;z-index:10}
+  </style>
+</head>
+<body>
+  <div class="topbar">Карта Камчатки</div>
+  <div id="map"></div>
+  <div id="chip" class="chip" style="display:none">Outdoors</div>
+  <script>
+    (async()=>{
+      try{ const tg=window.Telegram && window.Telegram.WebApp; if(tg){ tg.ready(); tg.expand(); } }catch(_){ }
+      const cfg=await fetch('/api/map/config').then(r=>r.json()).catch(()=>({}));
+      const key=cfg?.key||'';
+      const style=`https://api.maptiler.com/maps/outdoor/style.json?key=${encodeURIComponent(key)}`;
+      const map=new maplibregl.Map({ container:'map', style, center:[158.648,53.046], zoom:5.1, hash:false });
+      map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
+      if(key){ document.getElementById('chip').style.display='block'; }
+    })();
+  </script>
+</body>
+</html>
+
