@@ -28,8 +28,9 @@
       .search{display:flex;gap:8px;margin-bottom:12px}
       .input{flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:10px;background:#fff}
       .empty{padding:24px;text-align:center;color:#64748b}
-      .bottom{position:fixed;left:0;right:0;bottom:0;display:flex;gap:24px;justify-content:space-around;padding:10px 16px;background:#fff;border-top:1px solid #e2e8f0;z-index:999}
-      .link{color:#0f172a;text-decoration:none;padding:8px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;width:56px;height:48px;border:1px solid #e2e8f0}
+      .bottom{position:fixed;left:0;right:0;bottom:12px;display:flex;gap:16px;justify-content:center;z-index:999}
+      .bottom .dock{display:flex;gap:24px;justify-content:space-around;align-items:center;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);padding:10px 16px;border:1px solid #e2e8f0;border-radius:999px;box-shadow:0 10px 30px rgba(2,6,23,.15)}
+      .link{color:#0f172a;text-decoration:none;border-radius:12px;background:transparent;display:flex;align-items:center;justify-content:center;width:56px;height:48px}
       .link svg{width:22px;height:22px;display:block}
       .modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:flex-end}
       .sheet{background:#fff;border-top-left-radius:16px;border-top-right-radius:16px;padding:16px;width:100%}
@@ -215,7 +216,7 @@
         </div>
       </div>
     </div>
-    <div class="bottom">
+    <div class="bottom"><div class="dock">
       <a class="link" href="/tg" title="Каталог" aria-label="Каталог">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18M3 10h18M3 16h18"/></svg>
       </a>
@@ -228,7 +229,7 @@
       <a class="link" href="/tg/lead.html" title="Заявка" aria-label="Заявка">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
       </a>
-    </div>
+    </div></div>
     <script>
       (async()=>{
         initTelegram();
