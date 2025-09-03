@@ -13,7 +13,7 @@ function verifySignature(reqBody: any, secret: string): boolean {
   return (reqBody?.Signature || reqBody?.Token || '') === digest;
 }
 
-export const config = { runtime: 'edge' };
+export const config = { runtime: 'nodejs' };
 
 export default async function handler(req: Request): Promise<Response> {
   try {
