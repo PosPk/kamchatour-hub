@@ -83,7 +83,7 @@
         const desc=pickI18n(t,'description',lang);
         const price=(t.price_from? new Intl.NumberFormat('ru-RU').format(t.price_from)+' ₽' : 'по запросу');
         const meta=`${t.activity||''} • ${t.region||''} • ${t.duration_days||''} дн.`;
-        const urlLead=`/tg/lead?tour_id=${encodeURIComponent(t.id)}`;
+        const urlLead=`/tg/lead.html?tour_id=${encodeURIComponent(t.id)}`;
         const backUrl=document.referrer && document.referrer.includes('/tg')? document.referrer : '/tg';
         // recently viewed (store)
         try{
