@@ -60,11 +60,11 @@
     function renderShortcuts(role){
       const box=document.getElementById('shortcuts');
       const map={
-        operator:[ ['Добавить тур','/tg'], ['Бронирования','/tg'], ['Выплаты','/tg'] ],
-        traveler:[ ['Мои бронирования','/tg'], ['Сохранённые','/tg'], ['Поддержка','/tg'] ],
-        rental:[ ['Добавить объект','/tg'], ['Заявки','/tg'], ['Календарь','/tg'] ],
-        transfer:[ ['Новый заказ','/tg'], ['Маршруты','/tg'], ['Заявки','/tg'] ],
-        agent:[ ['Рефералы','/tg'], ['Выплаты','/tg'], ['Материалы','/tg'] ],
+        operator:[ ['Кабинет оператор','/tg/dash-operator.html'], ['Бронирования','/tg'], ['Выплаты','/tg'] ],
+        traveler:[ ['Кабинет путешественника','/tg/dash-traveler.html'], ['Сохранённые','/tg'], ['Поддержка','/tg'] ],
+        rental:[ ['Кабинет арендатора','/tg/dash-rental.html'], ['Заявки','/tg'], ['Календарь','/tg'] ],
+        transfer:[ ['Кабинет трансфера','/tg/dash-transfer.html'], ['Маршруты','/tg'], ['Заявки','/tg'] ],
+        agent:[ ['Кабинет агента','/tg/dash-agent.html'], ['Выплаты','/tg'], ['Материалы','/tg'] ],
       };
       const items=(map[role]||[]).map(([t,href])=>`<a class="btn" href="${href}" style="margin-right:8px">${t}</a>`).join('');
       box.style.display='block'; box.innerHTML = `<div class="muted" style="margin-bottom:8px">Быстрые действия</div>${items}`;
