@@ -42,7 +42,21 @@
         return lang;
       }
       function pickI18n(obj,key,lang){ const base=obj[key]; const i18n=(obj[key+"_i18n"]||{}); return (i18n&&i18n[lang])||base; }
-      function opt(u,w){ try{ if(!u) return u; var noProto=u.replace(/^https?:\/\//,''); return 'https://images.weserv.nl/?url='+encodeURIComponent(noProto)+'&w='+(w||960)+'&q=70&output=webp'; }catch(_){ return u; } }
+      function opt(u,w){
+        try{
+          if(!u) return u;
+          if(u.includes('supabase.co/storage/v1/object/public/')){
+            var url=new URL(u);
+            url.pathname=url.pathname.replace('/object/public/','/render/image/public/');
+            url.searchParams.set('width', String(w||960));
+            url.searchParams.set('quality','70');
+            url.searchParams.set('format','webp');
+            return url.toString();
+          }
+          var noProto=u.replace(/^https?:\/\//,'');
+          return 'https://images.weserv.nl/?url='+encodeURIComponent(noProto)+'&w='+(w||960)+'&q=70&output=webp';
+        }catch(_){ return u; }
+      }
       async function getTour(){
         const p=new URLSearchParams(location.search); const id=p.get('id'); if(!id) return null;
         const res=await fetch('/partner-tours.json',{cache:'no-store'}); if(!res.ok) return null; const data=await res.json();

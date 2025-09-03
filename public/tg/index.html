@@ -74,7 +74,19 @@
         return (i18n && i18n[lang]) || base;
       }
       function opt(u,w){
-        try{ if(!u) return u; var noProto=u.replace(/^https?:\/\//,''); return 'https://images.weserv.nl/?url='+encodeURIComponent(noProto)+'&w='+(w||720)+'&q=70&output=webp'; }catch(_){ return u; }
+        try{
+          if(!u) return u;
+          if(u.includes('supabase.co/storage/v1/object/public/')){
+            var url=new URL(u);
+            url.pathname=url.pathname.replace('/object/public/','/render/image/public/');
+            url.searchParams.set('width', String(w||720));
+            url.searchParams.set('quality','70');
+            url.searchParams.set('format','webp');
+            return url.toString();
+          }
+          var noProto=u.replace(/^https?:\/\//,'');
+          return 'https://images.weserv.nl/?url='+encodeURIComponent(noProto)+'&w='+(w||720)+'&q=70&output=webp';
+        }catch(_){ return u; }
       }
       async function authIfPossible(){
         try{ var tg=window.Telegram&&window.Telegram.WebApp; var initData=tg&&tg.initData; if(initData){ await fetch('/api/tg/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})}); } }catch(_){ }
