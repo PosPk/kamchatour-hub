@@ -39,28 +39,20 @@ export default function CultureScreen() {
 
   const events = [
     {
-      id: '1',
-      title: 'Фестиваль коренных народов',
-      date: '15-17 августа',
-      location: 'Петропавловск-Камчатский',
-      type: 'Фестиваль',
-      image: '🎭',
-    },
-    {
-      id: '2',
-      title: 'День рыбака',
-      date: '12 июля',
-      location: 'Усть-Камчатск',
+      id: 'alx-2025-1',
+      title: 'Алхалалалай‑2025 — День 1',
+      date: '13 сентября 2025',
+      location: 'Этноцентр Аушин, п. Раздольный',
       type: 'Праздник',
-      image: '🐟',
+      image: '🎉',
     },
     {
-      id: '3',
-      title: 'Выставка камчатских ремесел',
-      date: '20-25 сентября',
-      location: 'Елизово',
-      type: 'Выставка',
-      image: '🎨',
+      id: 'alx-2025-2',
+      title: 'Алхалалалай‑2025 — Награждение',
+      date: '14 сентября 2025, 01:00',
+      location: 'Этноцентр Аушин, п. Раздольный',
+      type: 'Награждение',
+      image: '🏆',
     },
   ];
 
@@ -127,8 +119,8 @@ export default function CultureScreen() {
       </View>
       <View style={styles.eventFooter}>
         <Text style={styles.eventDate}>{item.date}</Text>
-        <TouchableOpacity style={styles.detailsButton}>
-          <Text style={styles.detailsButtonText}>Подробнее</Text>
+        <TouchableOpacity style={styles.detailsButton} onPress={() => Linking.openURL('https://kamchatour-hub.vercel.app/tg/events.html')}>
+          <Text style={styles.detailsButtonText}>Программа</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -161,8 +153,8 @@ export default function CultureScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>События</Text>
-            <TouchableOpacity style={styles.seeAllButton} onPress={() => {}}>
-              <Text style={styles.seeAllText}>Все</Text>
+            <TouchableOpacity style={styles.seeAllButton} onPress={() => Linking.openURL('https://kamchatour-hub.vercel.app/tg/events.html')}>
+              <Text style={styles.seeAllText}>Программа</Text>
               <Ionicons name="chevron-forward" size={16} color="#0891b2" />
             </TouchableOpacity>
           </View>
@@ -389,7 +381,7 @@ const styles = StyleSheet.create({
   actionGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'space_between',
   },
   actionItem: {
     backgroundColor: '#ffffff',
