@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Тур</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
     <style>
       :root{
         --tg-bg: var(--tg-theme-bg-color, #0b1020);
@@ -29,6 +30,7 @@
       .trust{display:flex;gap:8px;align-items:center;color:#a7f3d0}
       .sticky-cta{position:fixed;left:16px;right:16px;bottom:76px;z-index:10}
       .sticky-cta .sheet{display:flex;justify-content:space-between;gap:12px;align-items:center;background:rgba(15,23,42,.8);backdrop-filter:blur(8px);border:1px solid rgba(148,163,184,.25);border-radius:14px;padding:10px 12px}
+      .btn-pay{background:#22c55e;color:#062; border:none;border-radius:10px;padding:10px 12px}
     </style>
     <script>
       function initTelegram(){
@@ -68,6 +70,14 @@
         const meta=`${t.activity||''} • ${t.region||''} • ${t.duration_days||''} дн.`;
         const urlLead=`/tg/lead?tour_id=${encodeURIComponent(t.id)}`;
         const backUrl=document.referrer && document.referrer.includes('/tg')? document.referrer : '/tg';
+        // recently viewed (store)
+        try{
+          const rvKey='kt_recent';
+          const cur={ id: (t.id||''), title:(title||''), img:(t.image||'') };
+          const arr=JSON.parse(localStorage.getItem(rvKey)||'[]').filter((x)=>x&&x.id!==cur.id);
+          arr.unshift(cur); localStorage.setItem(rvKey, JSON.stringify(arr.slice(0,8)));
+        }catch(_){ }
+
         const html=`
           <div class="toprow"><a class="btn" href="${backUrl}">← Назад</a></div>
           <div class="hero"><img src="${t.image||''}" alt="${title||''}"/><div class="grad"></div><div class="txt"><h1 class="title">${title||''}</h1><div class="meta">${meta}</div></div></div>
@@ -77,6 +87,37 @@
         document.getElementById('content').innerHTML=html;
         const cta=document.getElementById('stickyCta'); const ctaLink=document.getElementById('ctaLink'); ctaLink.href=urlLead; cta.style.display='block';
         try{ var tg=window.Telegram && window.Telegram.WebApp; if(tg){ tg.MainButton.setText('Оставить заявку'); tg.MainButton.onClick(()=>{ location.href=urlLead; }); tg.MainButton.show(); } }catch(_){ }
+
+        // CloudPayments quick pay
+        try{
+          const r=await fetch('/api/payment/config');
+          if(r.ok){
+            const cfg=await r.json();
+            if(cfg?.enabled && cfg?.publicId){
+              const payBtn=document.createElement('button');
+              payBtn.className='btn-pay'; payBtn.textContent='Оплатить онлайн';
+              document.querySelector('.sheet')?.appendChild(payBtn);
+              payBtn.addEventListener('click',()=>{
+                const amount = Number(t.price_from||0) || 1;
+                const widget = (window as any).cp && new (window as any).cp.CloudPayments();
+                if(!widget){ alert('Платёжный виджет недоступен'); return; }
+                widget.pay('charge', {
+                  publicId: cfg.publicId,
+                  description: title || 'Тур',
+                  amount, currency: 'RUB',
+                  invoiceId: String(t.id||''),
+                  accountId: 'tg_web',
+                  skin: 'mini',
+                  data: { tour_id: t.id }
+                }, {
+                  onSuccess: function(){ alert('Оплата успешно принята'); },
+                  onFail: function(){ alert('Оплата не выполнена'); },
+                  onComplete: function(){ /* webhooks обработают статус */ }
+                });
+              });
+            }
+          }
+        }catch(_){ }
       })();
     </script>
   </body>

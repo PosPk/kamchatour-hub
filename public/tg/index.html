@@ -278,6 +278,14 @@
             return okPrice && okAct && okDur;
           });
         }
+        // persist filters/search
+        const persist=()=>{
+          try{ localStorage.setItem('kt_filters', JSON.stringify({ q:q.value, minP:minP.value, maxP:maxP.value, minD:minD.value, maxD:maxD.value, act:act.value })); }catch(_){ }
+        };
+        const restore=()=>{
+          try{ const s=JSON.parse(localStorage.getItem('kt_filters')||'{}'); if(!s) return; q.value=s.q||''; minP.value=s.minP||''; maxP.value=s.maxP||''; minD.value=s.minD||''; maxD.value=s.maxD||''; act.value=s.act||''; }catch(_){ }
+        };
+        restore();
         async function searchRemote(query){
           const s=(query||'').trim();
           if(!s){ render(all); return; }
@@ -297,10 +305,10 @@
             })));
           }catch(_){ render(all); }
         }
-        let tmr; q.addEventListener('input',()=>{ clearTimeout(tmr); tmr=setTimeout(()=>searchRemote(q.value),200); });
+        let tmr; q.addEventListener('input',()=>{ persist(); clearTimeout(tmr); tmr=setTimeout(()=>searchRemote(q.value),200); });
         btn.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='flex'; });
         close.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; });
-        apply.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; searchRemote(q.value); });
+        apply.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; persist(); searchRemote(q.value); });
         chips.forEach((chip)=>{
           chip.addEventListener('click',(e)=>{
             e.preventDefault();
