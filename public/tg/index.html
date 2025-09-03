@@ -117,6 +117,7 @@
       <h1 class="title">Туры Камчатки</h1>
       <div class="search">
         <input id="q" class="input" type="search" placeholder="Поиск по названию и описанию"/>
+        <a id="searchBtn" class="btn" href="#">Поиск</a>
         <a id="filtersBtn" class="btn" href="#">Фильтры</a>
       </div>
       <div id="chips" class="chips">
@@ -233,6 +234,7 @@
         const q=document.getElementById('q');
         const modal=document.getElementById('filters');
         const btn=document.getElementById('filtersBtn');
+        const sbtn=document.getElementById('searchBtn');
         const close=document.getElementById('closeFilters');
         const apply=document.getElementById('applyFilters');
         const minP=document.getElementById('minPrice');
@@ -307,6 +309,7 @@
         }
         let tmr; q.addEventListener('input',()=>{ persist(); clearTimeout(tmr); tmr=setTimeout(()=>searchRemote(q.value),200); });
         btn.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='flex'; });
+        sbtn.addEventListener('click',(e)=>{ e.preventDefault(); persist(); searchRemote(q.value); });
         close.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; });
         apply.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; persist(); searchRemote(q.value); });
         chips.forEach((chip)=>{
