@@ -211,6 +211,16 @@
       </div>
       <div id="list" class="grid"></div>
     </div>
+    <div id="ai" class="modal">
+      <div class="sheet">
+        <div class="label">AI‑подбор</div>
+        <input id="aiq" class="input" type="text" placeholder="Например: 3 дня, вулканы, до 50 тыс"/>
+        <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+          <a id="closeAi" class="link" href="#">Отмена</a>
+          <a id="runAi" class="btn" href="#">Подобрать</a>
+        </div>
+      </div>
+    </div>
     <div id="filters" class="modal">
       <div class="sheet">
         <div class="label">Цена (₽)</div>
@@ -261,6 +271,10 @@
         const modal=document.getElementById('filters');
         const btn=document.getElementById('filtersBtn');
         const sbtn=document.getElementById('searchBtn');
+        const aiModal=document.getElementById('ai');
+        const aiq=document.getElementById('aiq');
+        const runAi=document.getElementById('runAi');
+        const closeAi=document.getElementById('closeAi');
         const close=document.getElementById('closeFilters');
         const apply=document.getElementById('applyFilters');
         const minP=document.getElementById('minPrice');
@@ -338,6 +352,23 @@
         let tmr; q.addEventListener('input',()=>{ persist(); clearTimeout(tmr); tmr=setTimeout(()=>searchRemote(q.value),200); });
         btn.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='flex'; });
         sbtn.addEventListener('click',(e)=>{ e.preventDefault(); persist(); searchRemote(q.value); });
+        // AI button in chips bar
+        const aiBtn=document.createElement('a'); aiBtn.className='chip'; aiBtn.href='#'; aiBtn.textContent='AI‑подбор';
+        document.getElementById('chips').prepend(aiBtn);
+        aiBtn.addEventListener('click',(e)=>{ e.preventDefault(); aiModal.style.display='flex'; });
+        closeAi.addEventListener('click',(e)=>{ e.preventDefault(); aiModal.style.display='none'; });
+        runAi.addEventListener('click', async (e)=>{
+          e.preventDefault();
+          try{
+            const r=await fetch('/api/ai/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:aiq.value||q.value||''})});
+            const j=await r.json();
+            const items=Array.isArray(j?.items)? j.items: [];
+            render((items||[]).map(x=>({
+              id:x.id, title:x.title, img:x.image, meta:`${x.activity||''} • ${x.region||''}`, price:(x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+' ₽':'по запросу')
+            })));
+            aiModal.style.display='none';
+          }catch(_){ aiModal.style.display='none'; }
+        });
         close.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; });
         apply.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; persist(); searchRemote(q.value); });
         chips.forEach((chip)=>{
