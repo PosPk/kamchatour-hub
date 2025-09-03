@@ -13,6 +13,14 @@ import { AIProvider } from '../contexts/AIContext';
 import { PhotoFeedProvider } from '../contexts/PhotoFeedContext';
 
 export default function RootLayout() {
+  try {
+    const apiKey = process.env.EXPO_PUBLIC_BUGSNAG_API_KEY as string | undefined;
+    if (apiKey && typeof window !== 'undefined') {
+      import('@bugsnag/expo').then((m: any) => {
+        try { m?.default?.start({ apiKey }); } catch {}
+      }).catch(() => {});
+    }
+  } catch {}
   return (
     <ThemeProvider>
       <AuthProvider>
