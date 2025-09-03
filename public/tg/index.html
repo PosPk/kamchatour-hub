@@ -288,7 +288,7 @@
         restore();
         async function searchRemote(query){
           const s=(query||'').trim();
-          if(!s){ render(all); return; }
+          if(!s){ render(localFilter(all)); return; }
           try{
             const r=await fetch('/api/tg/search?q='+encodeURIComponent(s));
             if(!r.ok){ render(all); return; }
@@ -319,7 +319,8 @@
             chip.classList.add('active'); act.value = v; searchRemote(q.value);
           });
         });
-        render(all);
+        // initial render with restored filters
+        searchRemote(q.value);
       })();
     </script>
     <script>
