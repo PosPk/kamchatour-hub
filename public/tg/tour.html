@@ -112,20 +112,23 @@
             const cfg=await r.json();
             if(cfg?.enabled && cfg?.publicId){
               const payBtn=document.createElement('button');
-              payBtn.className='btn-pay'; payBtn.textContent='Оплатить онлайн';
+              const pct = Math.round((cfg.commission||0)*100);
+              payBtn.className='btn-pay'; payBtn.textContent='Оплатить онлайн'+(pct?` (комиссия ${pct}%)`:``);
               document.querySelector('.sheet')?.appendChild(payBtn);
               payBtn.addEventListener('click',()=>{
                 const amount = Number(t.price_from||0) || 1;
+                const commissionAmount = Math.round(amount * (cfg.commission||0));
+                const total = amount; // комиссия удерживается из выплаты оператору
                 const widget = (window.cp) && new window.cp.CloudPayments();
                 if(!widget){ alert('Платёжный виджет недоступен'); return; }
                 widget.pay('charge', {
                   publicId: cfg.publicId,
                   description: title || 'Тур',
-                  amount, currency: 'RUB',
+                  amount: total, currency: 'RUB',
                   invoiceId: String(t.id||''),
                   accountId: 'tg_web',
                   skin: 'mini',
-                  data: { tour_id: t.id }
+                  data: { tour_id: t.id, op_level: cfg.level, commission_pct: pct, commission_amount: commissionAmount }
                 }, {
                   onSuccess: function(){ alert('Оплата успешно принята'); },
                   onFail: function(){ alert('Оплата не выполнена'); },

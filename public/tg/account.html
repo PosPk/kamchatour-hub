@@ -26,6 +26,22 @@
       <div class="muted" style="margin-bottom:8px">Роль в системе</div>
       <div class="grid" id="roles"></div>
     </div>
+    <div class="card" id="opLevel" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:600">Уровень оператора</div>
+          <div class="muted" id="opCommission" style="font-size:13px">Комиссия: —</div>
+        </div>
+        <div>
+          <select id="opSelect" class="btn" style="background:rgba(255,255,255,.08);border:1px solid rgba(148,163,184,.25)">
+            <option value="L1">L1 (10%)</option>
+            <option value="L2">L2 (7%)</option>
+            <option value="L3">L3 (5%)</option>
+          </select>
+          <a id="opSave" class="btn" href="#">Сохранить</a>
+        </div>
+      </div>
+    </div>
     <div class="card" id="shortcuts" style="display:none"></div>
   </div>
   <script>
@@ -38,6 +54,7 @@
       const el=document.getElementById('user');
       const name=u?.name||''; const username=u?.username? ('@'+u.username):''; const role=u?.role||'traveler';
       el.innerHTML = `<div style="display:flex;align-items:center;gap:12px"><div style="width:44px;height:44px;border-radius:50%;background:#1f2937;display:flex;align-items:center;justify-content:center">👤</div><div><div style="font-weight:600">${name||'Пользователь'}</div><div class="muted" style="font-size:13px">${username} · роль: ${role}</div></div></div>`;
+      const op=document.getElementById('opLevel'); op.style.display= role==='operator'? 'block':'none';
     }
 
     function roleTile(key,title,emoji){
@@ -70,14 +87,31 @@
       box.style.display='block'; box.innerHTML = `<div class="muted" style="margin-bottom:8px">Быстрые действия</div>${items}`;
     }
 
+    async function loadOperatorLevel(){
+      try{
+        const r=await fetch('/api/tg/operator/level'); const j=await r.json(); const level=(j?.level||'L1');
+        const sel=document.getElementById('opSelect'); sel.value=level;
+        const cm={L1:0.10,L2:0.07,L3:0.05}; const pct=Math.round((cm[level]||0.10)*100);
+        document.getElementById('opCommission').textContent='Комиссия: '+pct+'%';
+      }catch(_){ }
+    }
+
+    async function saveOperatorLevel(){
+      try{
+        const sel=document.getElementById('opSelect'); const level=sel.value; await fetch('/api/tg/operator/level',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({level})});
+        await loadOperatorLevel();
+      }catch(_){ }
+    }
+
     async function loadMe(){
-      try{ const r=await fetch('/api/tg/me'); const j=await r.json(); if(j?.ok){ renderUser(j.user); renderRoles(j.user?.role||'traveler'); renderShortcuts(j.user?.role||'traveler'); return; } }catch(_){ }
-      const lr=localStorage.getItem('tg_role')||'traveler'; renderUser({name:'Пользователь', username:'', role:lr}); renderRoles(lr); renderShortcuts(lr);
+      try{ const r=await fetch('/api/tg/me'); const j=await r.json(); if(j?.ok){ renderUser(j.user); renderRoles(j.user?.role||'traveler'); renderShortcuts(j.user?.role||'traveler'); if((j.user?.role||'')==='operator'){ await loadOperatorLevel(); } return; } }catch(_){ }
+      const lr=localStorage.getItem('tg_role')||'traveler'; renderUser({name:'Пользователь', username:'', role:lr}); renderRoles(lr); renderShortcuts(lr); if(lr==='operator'){ await loadOperatorLevel(); }
     }
 
     async function authIfPossible(){
       try{ const tg=window.Telegram&&window.Telegram.WebApp; const initData=tg?.initData||''; if(initData){ await fetch('/api/tg/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})}); } }catch(_){ }
     }
+    document.getElementById('opSave').addEventListener('click',(e)=>{ e.preventDefault(); saveOperatorLevel(); });
     authIfPossible().then(loadMe);
   </script>
 </body>
