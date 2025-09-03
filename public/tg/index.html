@@ -322,6 +322,25 @@
         render(all);
       })();
     </script>
+    <script>
+      (function(){
+        async function loadIconForChip(chip){
+          try{
+            const term=chip.getAttribute('data-act')||'';
+            if(!term) return;
+            const r=await fetch('/api/icons/noun?q='+encodeURIComponent(term));
+            if(!r.ok) return;
+            const j=await r.json();
+            const url=j?.icon?.preview || j?.icon?.svg_url; if(!url) return;
+            const svg=chip.querySelector('svg');
+            const img=document.createElement('img'); img.src=url; img.width=16; img.height=16; img.alt=term; img.style.display='block';
+            if(svg){ svg.replaceWith(img); } else { chip.prepend(img); }
+          }catch(_){ }
+        }
+        const chips=document.querySelectorAll('#chips .chip');
+        chips.forEach((c,i)=>{ if(i<10) loadIconForChip(c); });
+      })();
+    </script>
   </body>
   </html>
 
