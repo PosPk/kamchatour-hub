@@ -99,7 +99,7 @@
               document.querySelector('.sheet')?.appendChild(payBtn);
               payBtn.addEventListener('click',()=>{
                 const amount = Number(t.price_from||0) || 1;
-                const widget = (window as any).cp && new (window as any).cp.CloudPayments();
+                const widget = (window.cp) && new window.cp.CloudPayments();
                 if(!widget){ alert('Платёжный виджет недоступен'); return; }
                 widget.pay('charge', {
                   publicId: cfg.publicId,

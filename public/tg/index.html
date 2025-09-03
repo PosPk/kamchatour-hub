@@ -59,7 +59,7 @@
         const urlLang=(p.get('lang')||'').toLowerCase();
         if(urlLang) return urlLang;
         try{
-          const tg = (window as any).Telegram && (window as any).Telegram.WebApp;
+          const tg = window.Telegram && window.Telegram.WebApp;
           const lc = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code;
           if(lc){ if(lc.toLowerCase().startsWith('zh')) return 'zh'; if(lc.toLowerCase().startsWith('ru')) return 'ru'; }
         }catch(_){ }
