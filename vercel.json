@@ -15,7 +15,7 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Content-Security-Policy", "value": "default-src 'self' https: blob: data:; img-src * data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://*.telegram.org https://widget.cloudpayments.ru; style-src 'self' 'unsafe-inline'; connect-src *; frame-ancestors 'self' https://web.telegram.org https://*.telegram.org;" }
+        { "key": "Content-Security-Policy", "value": "default-src 'self' https: blob: data:; img-src * data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://*.telegram.org https://widget.cloudpayments.ru https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; connect-src * https://api.maptiler.com; frame-ancestors 'self' https://web.telegram.org https://*.telegram.org;" }
       ]
     },
     {
