@@ -396,12 +396,12 @@
             const j=await r.json();
             const url=j?.icon?.preview || j?.icon?.svg_url; if(!url) return;
             const svg=chip.querySelector('svg');
-            const img=document.createElement('img'); img.src=url; img.width=16; img.height=16; img.alt=term; img.style.display='block';
+            const img=document.createElement('img'); img.src=url; img.width=16; img.height=16; img.alt=term; img.title=term; img.style.display='block';
             if(svg){ svg.replaceWith(img); } else { chip.prepend(img); }
           }catch(_){ }
         }
         const chips=document.querySelectorAll('#chips .chip');
-        chips.forEach((c,i)=>{ if(i<10) loadIconForChip(c); });
+        chips.forEach((c,i)=>{ if(i<10) loadIconForChip(c); c.setAttribute('title', (c.getAttribute('data-act')||c.textContent||'').trim()); });
       })();
     </script>
   </body>
