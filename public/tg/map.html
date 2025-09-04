@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>Карта Камчатки</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet"/>
-  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <style>
     :root{ --tg-bg: var(--tg-theme-bg-color, #0b1020) }
     html,body{height:100%;margin:0}
@@ -18,16 +18,16 @@
 <body>
   <div class="topbar"><a href="/tg" style="color:#fff;text-decoration:none;padding:8px 10px;border:1px solid rgba(255,255,255,.3);border-radius:10px">← Назад</a><div style="font-weight:700">Карта Камчатки</div></div>
   <div id="map"></div>
-  <div id="chip" class="chip" style="display:none">Outdoors</div>
+  <div id="chip" class="chip" style="display:none">OSM</div>
   <script>
     (async()=>{
       try{ const tg=window.Telegram && window.Telegram.WebApp; if(tg){ tg.ready(); tg.expand(); } }catch(_){ }
-      const cfg=await fetch('/api/map/config').then(r=>r.json()).catch(()=>({}));
-      const key=cfg?.key||'';
-      const style=`https://api.maptiler.com/maps/outdoor/style.json?key=${encodeURIComponent(key)}`;
-      const map=new maplibregl.Map({ container:'map', style, center:[158.648,53.046], zoom:5.1, hash:false });
-      map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
-      if(key){ document.getElementById('chip').style.display='block'; }
+      const map = L.map('map', { zoomControl: true }).setView([53.046, 158.648], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+      document.getElementById('chip').style.display='block';
     })();
   </script>
 </body>
