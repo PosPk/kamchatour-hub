@@ -52,8 +52,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
-    const system = 'You are a helpful assistant recommending tours in Kamchatka. Output ONLY valid JSON array of items with fields: id, title, activity, region, duration_days, price_from, image.';
-    const user = `Preferences: ${query||''}. Use these example items as inspiration if needed (do not repeat unrelated): ${baseTours.slice(0,8).map(t=>({id:t.id,title:t.title,activity:t.activity,region:t.region,price_from:t.price_from})).map(x=>JSON.stringify(x)).join(', ')}`;
+    const schemaHint = {
+      description: 'Return ONLY a JSON array. No prose. Max 12 items.',
+      item: {
+        id: 'string (use id from provided items if relevant, else unique string)',
+        title: 'string',
+        activity: 'string',
+        region: 'string',
+        duration_days: 'number',
+        price_from: 'number',
+        image: 'string (cover image URL)',
+        images: ['string (optional additional images)'],
+        discount_pct: 'number (0..1, optional)',
+        slots: 'number (optional)'
+      }
+    };
+    const system = `You recommend Kamchatka tours. Output ONLY a valid JSON array per schema: ${JSON.stringify(schemaHint)}. No extra text.`;
+    const baseBrief = baseTours.slice(0, 20).map(t => ({ id: t.id, title: t.title, activity: t.activity, region: t.region, duration_days: t.duration_days, price_from: t.price_from, image: t.image })).map(x => JSON.stringify(x)).join(', ');
+    const user = `User preferences: ${(query||'').slice(0,300)}. Prefer items from this catalog when possible (match by activity/region/duration/price): ${baseBrief}`;
 
     const r = await fetch(`${DEEPSEEK_API_URL.replace(/\/$/,'')}/v1/chat/completions`, {
       method: 'POST',
