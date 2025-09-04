@@ -71,6 +71,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             description: t.description || null,
             description_i18n: t.description_i18n || null,
             image: t.image || t.image_url || null,
+            discount_pct: typeof t.discount_pct === 'number' ? t.discount_pct : (typeof t.discount === 'number' ? t.discount : null),
+            slots: typeof t.slots === 'number' ? t.slots : null,
             lat: coords?.lat ?? null,
             lon: coords?.lon ?? null,
           };
@@ -99,6 +101,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         description: t.description || null,
         description_i18n: t.description_i18n || null,
         image: t.image || t.image_url || null,
+        discount_pct: typeof t.discount_pct === 'number' ? t.discount_pct : (typeof t.discount === 'number' ? t.discount : null),
+        slots: typeof t.slots === 'number' ? t.slots : null,
         lat: coords?.lat ?? null,
         lon: coords?.lon ?? null,
       };
