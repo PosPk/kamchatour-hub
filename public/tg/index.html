@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
     <title>Kamchatour — Витрина</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -280,6 +283,7 @@
     <script>
       (async()=>{
         initTelegram();
+        const v = String(Date.now());
         authIfPossible();
         const all = await loadTours();
         const el=document.getElementById('list');
@@ -424,6 +428,10 @@
             chip.classList.add('active'); act.value = v; searchRemote(q.value);
           });
         });
+        // cache-busting for bottom nav
+        try{
+          document.querySelectorAll('.bottom .dock a').forEach(a=>{ const u=new URL(a.href, location.origin); u.searchParams.set('v', v); a.href=u.toString(); });
+        }catch(_){ }
         // initial render with restored filters
         searchRemote(q.value);
       })();
