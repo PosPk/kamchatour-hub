@@ -48,6 +48,7 @@
       .chips{display:flex;gap:8px;overflow:auto;padding-bottom:8px;margin-bottom:8px}
       .chip{display:flex;align-items:center;gap:6px;border:1px solid #e2e8f0;border-radius:999px;padding:8px 10px;background:#fff;color:#0f172a;white-space:nowrap}
       .chip svg{width:16px;height:16px}
+      .chip img{width:16px;height:16px;display:block}
       .chip.active{border-color:var(--tg-button);background:color-mix(in srgb, var(--tg-button) 15%, #fff)}
       .icons{display:flex;gap:8px;margin-top:6px;color:#475569;font-size:12px}
       .icons .i{display:inline-flex;align-items:center;gap:4px}
@@ -438,18 +439,24 @@
     </script>
     <script>
       (function(){
+        const fallbackEmoji = {
+          'вулканы':'🌋','долина гейзеров':'♨️','хайкинг':'🥾','медведи':'🐻','рыбалка':'🎣','морские туры':'🛥️','киты':'🐳','вертолёт':'🚁','снегоход':'🏂','дог-слидинг':'🐕','рафтинг':'🛶','сёрфинг':'🏄','термы':'♨️','каякинг':'🛶','этно':'🎭','фототур':'📷','4x4':'🚙'
+        };
         async function loadIconForChip(chip){
+          const term=(chip.getAttribute('data-act')||'').toLowerCase();
+          if(!term) return;
+          const svg=chip.querySelector('svg');
           try{
-            const term=chip.getAttribute('data-act')||'';
-            if(!term) return;
             const r=await fetch('/api/icons/noun?q='+encodeURIComponent(term));
-            if(!r.ok) return;
-            const j=await r.json();
-            const url=j?.icon?.preview || j?.icon?.svg_url; if(!url) return;
-            const svg=chip.querySelector('svg');
-            const img=document.createElement('img'); img.src=url; img.width=16; img.height=16; img.alt=term; img.title=term; img.style.display='block';
-            if(svg){ svg.replaceWith(img); } else { chip.prepend(img); }
+            if(r.ok){
+              const j=await r.json();
+              const url=j?.icon?.preview || j?.icon?.svg_url;
+              if(url){ const img=document.createElement('img'); img.src=url; img.width=16; img.height=16; img.alt=term; img.title=term; if(svg){ svg.replaceWith(img); } else { chip.prepend(img); } return; }
+            }
           }catch(_){ }
+          // Fallback: emoji
+          const emoji = fallbackEmoji[term];
+          if(emoji){ const span=document.createElement('span'); span.textContent=emoji; span.setAttribute('aria-label', term); span.style.display='block'; span.style.width='16px'; span.style.height='16px'; span.style.lineHeight='16px'; span.style.fontSize='16px'; if(svg){ svg.replaceWith(span); } else { chip.prepend(span); } }
         }
         const chips=document.querySelectorAll('#chips .chip');
         chips.forEach((c,i)=>{ if(i<10) loadIconForChip(c); c.setAttribute('title', (c.getAttribute('data-act')||c.textContent||'').trim()); });

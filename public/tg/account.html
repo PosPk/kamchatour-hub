@@ -43,6 +43,7 @@
       </div>
     </div>
     <div class="card" id="shortcuts" style="display:none"></div>
+    <div class="card" id="competencies" style="display:none"></div>
   </div>
   <script>
     function applyTheme(){
@@ -94,6 +95,19 @@
       box.style.display='block'; box.innerHTML = `<div class="muted" style="margin-bottom:8px">Быстрые действия</div>${items}`;
     }
 
+    function renderCompetencies(role){
+      const box=document.getElementById('competencies');
+      const map={
+        operator:[ 'Создание/редактирование туров', 'Просмотр лидов', 'Платежи/выплаты', 'Отчёты по бронированиям' ],
+        traveler:[ 'Просмотр каталога', 'Оставить лид', 'Оплата тура', 'Личные заказы' ],
+        rental:[ 'Добавить объект аренды', 'Календарь занятости', 'Обработка заявок' ],
+        transfer:[ 'Управление маршрутами', 'Заявки на трансфер', 'Статусы поездок' ],
+        agent:[ 'Реферальные ссылки', 'Трекинг заявок', 'Выплаты агенту' ],
+      };
+      const items=(map[role]||[]).map((t)=>`<li>${t}</li>`).join('');
+      box.style.display='block'; box.innerHTML = `<div style="font-weight:600;margin-bottom:8px">Компетенции и доступы</div><ul style="margin:0;padding-left:18px">${items}</ul>`;
+    }
+
     async function loadOperatorLevel(){
       try{
         const r=await fetch('/api/tg/operator/level'); const j=await r.json(); const level=(j?.level||'L1');
@@ -112,7 +126,7 @@
 
     async function loadMe(){
       try{ const r=await fetch('/api/tg/me'); const j=await r.json(); if(j?.ok){ renderUser(j.user); renderRoles(j.user?.role||'traveler'); renderShortcuts(j.user?.role||'traveler'); if((j.user?.role||'')==='operator'){ await loadOperatorLevel(); } return; } }catch(_){ }
-      const lr=localStorage.getItem('tg_role')||'traveler'; renderUser({name:'Пользователь', username:'', role:lr}); renderRoles(lr); renderShortcuts(lr); if(lr==='operator'){ await loadOperatorLevel(); }
+      const lr=localStorage.getItem('tg_role')||'traveler'; renderUser({name:'Пользователь', username:'', role:lr}); renderRoles(lr); renderShortcuts(lr); renderCompetencies(lr); if(lr==='operator'){ await loadOperatorLevel(); }
     }
 
     async function authIfPossible(){
