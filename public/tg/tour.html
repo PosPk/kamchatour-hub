@@ -59,6 +59,9 @@
       }
       async function getTour(){
         const p=new URLSearchParams(location.search); const id=p.get('id'); if(!id) return null;
+        try{
+          const r=await fetch('/api/tg/tours',{cache:'no-store'}); if(r.ok){ const j=await r.json(); const items=Array.isArray(j?.items)? j.items:[]; const found=items.find((x)=>String(x.id)===String(id)); if(found) return found; }
+        }catch(_){ }
         const res=await fetch('/partner-tours.json',{cache:'no-store'}); if(!res.ok) return null; const data=await res.json();
         return data.find((x)=>String(x.id)===String(id));
       }
@@ -84,6 +87,7 @@
         const price=(t.price_from? new Intl.NumberFormat('ru-RU').format(t.price_from)+' ₽' : 'по запросу');
         const meta=`${t.activity||''} • ${t.region||''} • ${t.duration_days||''} дн.`;
         const urlLead=`/tg/lead.html?tour_id=${encodeURIComponent(t.id)}`;
+        try{ await fetch('/api/tg/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'view_detail',tour_id:t.id})}); }catch(_){ }
         const backUrl=document.referrer && document.referrer.includes('/tg')? document.referrer : '/tg';
         // recently viewed (store)
         try{
@@ -103,7 +107,7 @@
           </div>`;
         document.getElementById('content').innerHTML=html;
         const cta=document.getElementById('stickyCta'); const ctaLink=document.getElementById('ctaLink'); ctaLink.href=urlLead; cta.style.display='block';
-        try{ var tg=window.Telegram && window.Telegram.WebApp; if(tg){ tg.MainButton.setText('Оставить заявку'); tg.MainButton.onClick(()=>{ location.href=urlLead; }); tg.MainButton.show(); } }catch(_){ }
+        try{ var tg=window.Telegram && window.Telegram.WebApp; if(tg){ tg.MainButton.setText('Оставить заявку'); tg.MainButton.onClick(()=>{ try{ fetch('/api/tg/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'click_lead',tour_id:t.id})}); }catch(_){ } location.href=urlLead; }); tg.MainButton.show(); } }catch(_){ }
 
         // CloudPayments quick pay
         try{

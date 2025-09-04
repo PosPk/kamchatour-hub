@@ -46,6 +46,8 @@
       .chip{display:flex;align-items:center;gap:6px;border:1px solid #e2e8f0;border-radius:999px;padding:8px 10px;background:#fff;color:#0f172a;white-space:nowrap}
       .chip svg{width:16px;height:16px}
       .chip.active{border-color:var(--tg-button);background:color-mix(in srgb, var(--tg-button) 15%, #fff)}
+      .icons{display:flex;gap:8px;margin-top:6px;color:#475569;font-size:12px}
+      .icons .i{display:inline-flex;align-items:center;gap:4px}
       /* badges */
       .badges{position:absolute;top:8px;right:8px;display:flex;gap:6px}
       .badge{backdrop-filter:blur(4px);background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:4px 8px;font-size:12px}
@@ -99,6 +101,7 @@
       async function authIfPossible(){
         try{ var tg=window.Telegram&&window.Telegram.WebApp; var initData=tg&&tg.initData; if(initData){ await fetch('/api/tg/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})}); } }catch(_){ }
       }
+      async function track(ev){ try{ await fetch('/api/tg/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ev)}); }catch(_){ } }
       async function loadTours(){
         try{
           const res = await fetch('/api/tg/tours',{cache:'no-store'});
@@ -311,6 +314,7 @@
             const eco = (t.eco_points||0)>0? `<span class="badge eco">♻️ Eco+${t.eco_points}</span>`:'';
             const rating = t.rating? `<span class="badge rating">★ ${t.rating}${t.reviews? ` (${t.reviews})`:''}</span>`:'';
             const hit = (t.rating||0) >= 4.7? `<span class="badge hit">Хит</span>`:'';
+            const discount = (t.price_from && t.price_from < 50000)? `<span class="badge discount">-10%</span>`:'';
             const slides = (Array.isArray(t.gallery) && t.gallery.length>0? t.gallery: [t.img]).slice(0,3);
             const gallery = `<div class="gallery">${slides.map((u)=>{
                 const s360=opt(u,360), s720=opt(u,720);
@@ -318,8 +322,12 @@
                 return `<div class=\"slide\"><img src=\"${s720}\" srcset=\"${srcset}\" sizes=\"(max-width: 640px) 80vw, 512px\" loading=\"lazy\" decoding=\"async\"/></div>`;
               }).join('')}</div>`;
             const mapUrl = `/tg/map.html?id=${encodeURIComponent(t.id)}`;
-            c.innerHTML=`<div class="badges">${eco}${hit}${rating}</div>${gallery}<div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div><div class="row"><div class="price">${t.price}</div><span class="btn">Подробнее</span></div><div class="row" style="margin-top:6px"><a class="link" href="${mapUrl}" style="text-decoration:none;color:#0891b2">На карте →</a></div></div>`;
+            const icons = `<div class=\"icons\"><span class=\"i\">⏱ ${t.duration_days||'-'} дн.</span><span class=\"i\">🏷 ${(t.activity||'')}</span><span class=\"i\">📍 ${(t.meta||'').split('•').pop()?.trim()||''}</span></div>`;
+            c.innerHTML=`<div class="badges">${discount}${eco}${hit}${rating}</div>${gallery}<div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div>${icons}<div class="row"><div class="price">${t.price}</div><span class="btn">Подробнее</span></div><div class="row" style="margin-top:6px"><a class="link" href="${mapUrl}" style="text-decoration:none;color:#0891b2">На карте →</a></div></div>`;
+            c.addEventListener('click',()=>{ track({ type:'click_card', tour_id:t.id }); });
             el.appendChild(c);
+            // Impression after append
+            requestIdleCallback?.(()=>track({ type:'view_card', tour_id:t.id }));
           });
         }
         // show skeletons while loading initial
