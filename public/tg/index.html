@@ -91,6 +91,8 @@
       function opt(u,w){
         try{
           if(!u) return u;
+          // In Telegram WebApp, avoid external proxy to reduce failures
+          try{ var tg=window.Telegram&&window.Telegram.WebApp; if(tg){ return u; } }catch(_){ }
           if(u.includes('supabase.co/storage/v1/object/public/')){
             var url=new URL(u);
             url.pathname=url.pathname.replace('/object/public/','/render/image/public/');
@@ -357,7 +359,7 @@
             const gallery = `<div class="gallery">${slides.map((u)=>{
                 const s360=opt(u,360), s720=opt(u,720);
                 const srcset=`${s360} 360w, ${s720} 720w`;
-                return `<div class=\"slide\"><img src=\"${s720}\" srcset=\"${srcset}\" sizes=\"(max-width: 640px) 80vw, 512px\" loading=\"lazy\" decoding=\"async\"/></div>`;
+                return `<div class=\"slide\"><img src=\"${s720}\" srcset=\"${srcset}\" sizes=\"(max-width: 640px) 80vw, 512px\" loading=\"lazy\" decoding=\"async\" onerror=\"this.onerror=null;this.src='${String(u).replace(/"/g,'&quot;')}';\"/></div>`;
               }).join('')}</div>`;
             const mapUrl = `/tg/map.html?id=${encodeURIComponent(t.id)}`;
             const icons = `<div class=\"icons\"><span class=\"i\">⏱ ${t.duration_days||'-'} дн.</span><span class=\"i\">🏷 ${(t.activity||'')}</span><span class=\"i\">📍 ${(t.meta||'').split('•').pop()?.trim()||''}</span></div>`;

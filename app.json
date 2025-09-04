@@ -24,6 +24,7 @@
     },
     "plugins": [
       "expo-router",
+      ["sentry-expo", { "project": "kamchatour", "organization": "pospks", "url": "https://sentry.io/" }],
       [
         "expo-splash-screen",
         {
