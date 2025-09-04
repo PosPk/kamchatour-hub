@@ -362,14 +362,30 @@
         runAi.addEventListener('click', async (e)=>{
           e.preventDefault();
           try{
+            // 1) Partial render (мгновенно): простой локальный подбор по введённой фразе
+            const qv=(aiq.value||q.value||'').toLowerCase().split(/[\s,]+/).filter(Boolean);
+            const draft=(all||[]).filter(it=>{
+              const hay=((it.title||'')+' '+(it.meta||'')).toLowerCase();
+              return qv.length===0? true: qv.some(t=>hay.includes(t));
+            }).slice(0,12);
+            if(draft.length){ render(draft); }
+            // Показать индикатор «идёт подбор»
+            const note=document.createElement('div'); note.id='aiNote'; note.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:92px;background:rgba(2,6,23,.85);color:#fff;padding:6px 10px;border-radius:10px;font-size:12px;z-index:1000'; note.textContent='AI‑подбор…'; document.body.appendChild(note);
+            // 2) Финальный результат от AI
             const r=await fetch('/api/ai/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:aiq.value||q.value||''})});
             const j=await r.json();
             const items=Array.isArray(j?.items)? j.items: [];
-            render((items||[]).map(x=>({
-              id:x.id, title:x.title, img:x.image, meta:`${x.activity||''} • ${x.region||''}`, price:(x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+' ₽':'по запросу')
-            })));
+            if(items.length){
+              render(items.map(x=>({
+                id:x.id, title:x.title, img:x.image, meta:`${x.activity||''} • ${x.region||''}`, price:(x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+' ₽':'по запросу')
+              })));
+            }
             aiModal.style.display='none';
-          }catch(_){ aiModal.style.display='none'; }
+            const n=document.getElementById('aiNote'); if(n) n.remove();
+          }catch(_){
+            aiModal.style.display='none';
+            const n=document.getElementById('aiNote'); if(n) n.remove();
+          }
         });
         close.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; });
         apply.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='none'; persist(); searchRemote(q.value); });
