@@ -28,6 +28,54 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
       document.getElementById('chip').style.display='block';
+
+      // Load tours and draw markers if coordinates present
+      const state = { userPos: null, userMarker: null, routeLayer: null } as any;
+      async function locateMe(){
+        return new Promise<void>((resolve)=>{
+          try{
+            navigator.geolocation.getCurrentPosition((pos)=>{
+              const lat = pos.coords.latitude; const lon = pos.coords.longitude;
+              state.userPos = { lat, lon };
+              if(state.userMarker){ map.removeLayer(state.userMarker); state.userMarker=null; }
+              state.userMarker = L.circleMarker([lat, lon], { radius: 6, color: '#0891b2' }).addTo(map).bindPopup('Вы здесь');
+              resolve();
+            },()=>resolve(),{ enableHighAccuracy:true, timeout:5000 });
+          }catch(_){ resolve(); }
+        });
+      }
+      async function routeTo(lat:number, lon:number){
+        if(!state.userPos){ await locateMe(); }
+        if(!state.userPos) return;
+        try{
+          const url = `https://router.project-osrm.org/route/v1/driving/${state.userPos.lon},${state.userPos.lat};${lon},${lat}?overview=full&geometries=geojson`;
+          const r = await fetch(url); const j = await r.json();
+          const coords = j?.routes?.[0]?.geometry?.coordinates;
+          if(Array.isArray(coords)){
+            if(state.routeLayer){ map.removeLayer(state.routeLayer); state.routeLayer=null; }
+            state.routeLayer = L.geoJSON({ type:'Feature', geometry:{ type:'LineString', coordinates: coords } } as any, { style:{ color:'#ef4444', weight:4 } }).addTo(map);
+            const b = L.latLngBounds([ [state.userPos.lat,state.userPos.lon], [lat,lon] ]);
+            map.fitBounds(b.pad(0.35));
+          }
+        }catch(_){ }
+      }
+
+      try{
+        const res = await fetch('/api/tg/tours', { cache: 'no-store' });
+        if(res.ok){
+          const { items } = await res.json();
+          const bounds = L.latLngBounds([]);
+          (items||[]).forEach((t)=>{
+            const lat = Number(t.lat); const lon = Number(t.lon);
+            if(Number.isFinite(lat) && Number.isFinite(lon)){
+              const m = L.marker([lat, lon]).addTo(map).bindPopup(`<strong>${(t.title||'')}</strong><br/>${(t.region||'')}<br/><em>Нажмите на метку для маршрута</em>`);
+              m.on('click', ()=> routeTo(lat, lon));
+              bounds.extend([lat, lon]);
+            }
+          });
+          if(bounds.isValid()) map.fitBounds(bounds.pad(0.2));
+        }
+      }catch(_){ }
     })();
   </script>
 </body>
