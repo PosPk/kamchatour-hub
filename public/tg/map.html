@@ -61,6 +61,7 @@
       }
 
       try{
+        const id = new URLSearchParams(location.search).get('id');
         const res = await fetch('/api/tg/tours', { cache: 'no-store' });
         if(res.ok){
           const { items } = await res.json();
@@ -71,6 +72,7 @@
               const m = L.marker([lat, lon]).addTo(map).bindPopup(`<strong>${(t.title||'')}</strong><br/>${(t.region||'')}<br/><em>Нажмите на метку для маршрута</em>`);
               m.on('click', ()=> routeTo(lat, lon));
               bounds.extend([lat, lon]);
+              if (id && String(t.id)===String(id)) { setTimeout(()=>{ m.openPopup(); routeTo(lat, lon); }, 300); }
             }
           });
           if(bounds.isValid()) map.fitBounds(bounds.pad(0.2));
