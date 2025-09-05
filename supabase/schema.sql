@@ -43,10 +43,13 @@ create table if not exists public.bookings (
   date_from timestamptz,
   date_to timestamptz,
   voucher_code text,
-  status text check (status in ('pending','confirmed','cancelled','completed')) default 'pending',
+  status text check (status in ('pending','confirmed','cancelled','completed','paid','payment_failed')) default 'pending',
   total int,
   currency text default 'RUB',
   policy jsonb,
+  payment_id text,
+  payment_data jsonb,
+  source text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -89,6 +92,23 @@ create table if not exists public.feed_posts (
   caption text,
   tags text[],
   likes int default 0,
+  created_at timestamptz default now()
+);
+
+-- Payments
+create table if not exists public.payments (
+  id text primary key,
+  booking_id text references public.bookings(id) on delete cascade,
+  provider text,
+  status text,
+  payload jsonb,
+  created_at timestamptz default now()
+);
+
+-- Telegram updates for idempotency
+create table if not exists public.tg_updates (
+  id text primary key,
+  payload jsonb,
   created_at timestamptz default now()
 );
 
