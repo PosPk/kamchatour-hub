@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { searchTours } from '../../lib/tours';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'GET') {
@@ -7,6 +8,11 @@ export default async function handler(req: any, res: any) {
   }
   try {
     const q = String(req.query?.q || '').toLowerCase();
+    const dbItems = await searchTours({ q });
+    if (Array.isArray(dbItems) && dbItems.length) {
+      res.status(200).json({ items: dbItems });
+      return;
+    }
     const raw = fs.readFileSync(process.cwd() + '/public/partner-tours.json', 'utf8');
     const items: any[] = JSON.parse(raw);
     const filtered = items.filter((x) => {
