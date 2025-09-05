@@ -11,7 +11,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build:web": "npx expo export --platform web && cp dist/index.html dist/404.html",
+    "build:web": "rm -rf dist && mkdir -p dist/tg && echo '<!doctype html><meta http-equiv=\"refresh\" content=\"0;url=/tg\">' > dist/index.html && cp -r public/tg dist/tg && cp public/partner-tours.json dist/partner-tours.json && cp dist/index.html dist/404.html",
     "build": "npm run build:web",
     "vercel-build": "npm run build:web",
     "lint": "expo lint",

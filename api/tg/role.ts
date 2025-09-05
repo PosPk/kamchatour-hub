@@ -1,4 +1,4 @@
-import { roleState as sharedRole } from './me';
+import { setRole } from './_state';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
@@ -11,7 +11,7 @@ export default async function handler(req: any, res: any) {
       res.status(400).json({ ok: false });
       return;
     }
-    (global as any).__roleState = role;
+    setRole(role);
     res.status(200).json({ ok: true });
   } catch {
     res.status(400).json({ ok: false });
