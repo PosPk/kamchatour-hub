@@ -58,5 +58,22 @@
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"
   },
-  "private": true
+  "private": true,
+  "description": "Многофункциональный хаб для путешественников по Камчатке с функциями безопасности, культуры, экологии, маршрутов и бронирований.",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PosPk/kamchatour-hub.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PosPk/kamchatour-hub/issues"
+  },
+  "homepage": "https://github.com/PosPk/kamchatour-hub#readme"
 }

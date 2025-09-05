@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Карта Камчатки</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <style>
+    :root{ --tg-bg: var(--tg-theme-bg-color, #0b1020) }
+    html,body{height:100%;margin:0}
+    #map{position:fixed;inset:0}
+    .topbar{position:fixed;inset:0 0 auto 0;height:48px;display:flex;align-items:center;gap:8px;padding:0 12px;background:linear-gradient(180deg,rgba(0,0,0,.45),transparent);z-index:10;color:#fff}
+    .chip{position:fixed;right:12px;top:56px;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:8px 10px;z-index:10}
+  </style>
+  <script>
+    function tgReady(){ try{ const tg=window.Telegram && window.Telegram.WebApp; if(tg){ tg.ready(); tg.expand(); } }catch(_){ } }
+  </script>
+</head>
+<body>
+  <div class="topbar"><a href="/tg" style="color:#fff;text-decoration:none;padding:8px 10px;border:1px solid rgba(255,255,255,.3);border-radius:10px">← Назад</a><div style="font-weight:700">Карта Камчатки</div></div>
+  <div id="map"></div>
+  <div id="chip" class="chip" style="display:none">OSM</div>
+  <script>
+    (async()=>{
+      tgReady();
+      const map = L.map('map', { zoomControl: true }).setView([53.046, 158.648], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }).addTo(map);
+      document.getElementById('chip').style.display='block';
+      const state = { userPos: null, userMarker: null, routeLayer: null };
+      function locateMe(){ return new Promise(function(resolve){ try{ navigator.geolocation.getCurrentPosition(function(pos){ const lat=pos.coords.latitude; const lon=pos.coords.longitude; state.userPos={lat:lat,lon:lon}; if(state.userMarker){ map.removeLayer(state.userMarker); state.userMarker=null; } state.userMarker = L.circleMarker([lat, lon], { radius: 6, color:'#0891b2' }).addTo(map).bindPopup('Вы здесь'); resolve(); }, function(){ resolve(); }, { enableHighAccuracy:true, timeout:5000 }); }catch(_){ resolve(); } }); }
+      async function routeTo(lat, lon){ if(!state.userPos){ await locateMe(); } if(!state.userPos) return; try{ const url = 'https://router.project-osrm.org/route/v1/driving/'+state.userPos.lon+','+state.userPos.lat+';'+lon+','+lat+'?overview=full&geometries=geojson'; const r = await fetch(url); const j = await r.json(); const coords = j && j.routes && j.routes[0] && j.routes[0].geometry && j.routes[0].geometry.coordinates; if(Array.isArray(coords)){ if(state.routeLayer){ map.removeLayer(state.routeLayer); state.routeLayer=null; } state.routeLayer = L.geoJSON({ type:'Feature', geometry:{ type:'LineString', coordinates: coords } }, { style:{ color:'#ef4444', weight:4 } }).addTo(map); const b = L.latLngBounds([ [state.userPos.lat,state.userPos.lon], [lat,lon] ]); map.fitBounds(b.pad(0.35)); } }catch(_){ } }
+      try{ const id = new URLSearchParams(location.search).get('id'); const res = await fetch('/api/tg/tours', { cache: 'no-store' }); if(res.ok){ const data = await res.json(); const items = Array.isArray(data && data.items)? data.items: []; const bounds = L.latLngBounds([]); (items||[]).forEach(function(t){ const lat = Number(t.lat); const lon = Number(t.lon); if(Number.isFinite(lat) && Number.isFinite(lon)){ const m = L.marker([lat, lon]).addTo(map).bindPopup('<strong>'+(t.title||'')+'</strong><br/>'+(t.region||'')+'<br/><em>Нажмите на метку для маршрута</em>'); m.on('click', function(){ routeTo(lat, lon); }); bounds.extend([lat, lon]); if (id && String(t.id)===String(id)) { setTimeout(function(){ m.openPopup(); routeTo(lat, lon); }, 300); } } }); if(bounds.isValid()) map.fitBounds(bounds.pad(0.2)); } }catch(_){ }
+    })();
+  </script>
+</body>
+</html>
+

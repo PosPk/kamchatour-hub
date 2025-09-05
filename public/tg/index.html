@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <title>Kamchatour — Витрина</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+      :root{
+        --tg-bg: var(--tg-theme-bg-color, #f8fafc);
+        --tg-text: var(--tg-theme-text-color, #0f172a);
+        --tg-hint: var(--tg-theme-hint-color, #64748b);
+        --tg-button: var(--tg-theme-button-color, #0891b2);
+        --tg-button-text: var(--tg-theme-button-text-color, #ffffff);
+        --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #ffffff);
+      }
+      body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:var(--tg-bg);color:var(--tg-text)}
+      .wrap{padding:16px;padding-bottom:92px}
+      .grid{display:grid;grid-template-columns:1fr;gap:12px}
+      .card{background:var(--tg-secondary-bg);border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;position:relative}
+      .cover{width:100%;height:160px;object-fit:cover;background:#e2e8f0}
+      .gallery{display:flex;gap:8px;overflow:auto;scroll-snap-type:x mandatory;padding:8px}
+      .slide{flex:0 0 80%;max-width:80%;height:160px;border-radius:10px;overflow:hidden;scroll-snap-align:start;border:1px solid #e2e8f0;background:#e2e8f0}
+      .slide img{width:100%;height:100%;object-fit:cover;display:block}
+      .pad{padding:12px}
+      .title{font-weight:800}
+      .meta{color:var(--tg-hint);margin-top:4px}
+      .row{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+      .price{color:#065f46;font-weight:800}
+      .btn{display:inline-block;background:var(--tg-button);color:var(--tg-button-text);padding:10px 12px;border-radius:10px;text-decoration:none}
+      .search{display:flex;gap:8px;margin-bottom:12px}
+      .input{flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:10px;background:#fff}
+      .empty{padding:24px;text-align:center;color:#64748b}
+      .bottom{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;justify-content:center;z-index:999;pointer-events:none}
+      .bottom .dock{display:flex;gap:18px;justify-content:space-around;align-items:center;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);padding:10px 12px;border:1px solid rgba(2,6,23,.08);border-radius:20px;box-shadow:0 12px 30px rgba(2,6,23,.18);pointer-events:auto}
+      .link{color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px;transition:background .2s ease,color .2s ease}
+      .link:hover{background:rgba(2,6,23,.06)}
+      .link.active{background:rgba(8,145,178,.15);color:#0891b2}
+      .link svg{width:22px;height:22px;display:block;stroke:currentColor}
+      .link .lbl{font-size:11px;line-height:12px;color:currentColor}
+      .modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:flex-end}
+      .sheet{background:#fff;border-top-left-radius:16px;border-top-right-radius:16px;padding:16px;width:100%}
+      .row2{display:flex;gap:8px}
+      .label{font-size:12px;color:#475569;margin:4px 0}
+      .chips{display:flex;gap:8px;overflow:auto;padding-bottom:8px;margin-bottom:8px}
+      .chip{display:flex;align-items:center;gap:6px;border:1px solid #e2e8f0;border-radius:999px;padding:8px 10px;background:#fff;color:#0f172a;white-space:nowrap}
+      .chip svg{width:16px;height:16px}
+      .chip.active{border-color:var(--tg-button);background:color-mix(in srgb, var(--tg-button) 15%, #fff)}
+      .icons{display:flex;gap:8px;margin-top:6px;color:#475569;font-size:12px}
+      .icons .i{display:inline-flex;align-items:center;gap:4px}
+      .badges{position:absolute;top:8px;right:8px;display:flex;gap:6px}
+      .badge{backdrop-filter:blur(4px);background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:4px 8px;font-size:12px}
+      .badge.eco{background:rgba(16,185,129,.85)}
+      .badge.rating{background:rgba(234,179,8,.9)}
+      .badge.hit{background:rgba(59,130,246,.9)}
+      .badge.discount{background:rgba(244,63,94,.9)}
+      .skeleton{background:linear-gradient(90deg,#e5e7eb, #f3f4f6 40%, #e5e7eb 60%);background-size:200% 100%;animation:sh 1.2s infinite}
+      @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+      .card.sk .cover{background:#e5e7eb}
+      .card.sk .title,.card.sk .meta,.card.sk .price{height:14px;border-radius:6px}
+      .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:92px;background:rgba(2,6,23,.85);color:#fff;padding:6px 10px;border-radius:10px;font-size:12px;z-index:1000;display:none}
+    </style>
+    <script>
+      function initTelegram(){ try{ var tg=window.Telegram && window.Telegram.WebApp; if(tg){ tg.expand(); tg.ready(); } }catch(_){ } }
+      function getLang(){ const p=new URLSearchParams(location.search); const urlLang=(p.get('lang')||'').toLowerCase(); if(urlLang) return urlLang; try{ const tg=window.Telegram&&window.Telegram.WebApp; const lc=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.language_code; if(lc){ if(lc.toLowerCase().startsWith('zh')) return 'zh'; if(lc.toLowerCase().startsWith('ru')) return 'ru'; } }catch(_){ } const nav=(navigator.language||'').toLowerCase(); if(nav.startsWith('zh')) return 'zh'; if(nav.startsWith('ru')) return 'ru'; return 'ru'; }
+      function pickI18n(obj,key,lang){ const base=obj[key]; const i18n=(obj[key+"_i18n"]||{}); return (i18n && i18n[lang]) || base; }
+      function opt(u,w){ try{ if(!u) return u; if(u.includes('supabase.co/storage/v1/object/public/')){ var url=new URL(u); url.pathname=url.pathname.replace('/object/public/','/render/image/public/'); url.searchParams.set('width', String(w||720)); url.searchParams.set('quality','70'); url.searchParams.set('format','webp'); return url.toString(); } var noProto=u.replace(/^https?:\/\//,''); return 'https://images.weserv.nl/?url='+encodeURIComponent(noProto)+'&w='+(w||720)+'&q=70&output=webp'; }catch(_){ return u; } }
+      async function authIfPossible(){ try{ var tg=window.Telegram&&window.Telegram.WebApp; var initData=tg&&tg.initData; if(initData){ await fetch('/api/tg/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})}); } }catch(_){ } }
+      async function track(ev){ try{ await fetch('/api/tg/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ev)}); }catch(_){ } }
+      function showToast(msg){ try{ var el=document.getElementById('toast'); el.textContent=msg; el.style.display='block'; setTimeout(()=>{ el.style.display='none'; }, 2500); }catch(_){ alert(msg); } }
+      async function loadTours(){ try{ const res = await fetch('/api/tg/tours',{cache:'no-store'}); if(res.ok){ const json = await res.json(); const items = Array.isArray(json?.items)? json.items: []; const lang=getLang(); return items.map(x=>({ id: x.id, title: pickI18n(x,'title',lang), img: x.image || 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop', gallery: Array.isArray(x.images)? x.images : (Array.isArray(x.gallery)? x.gallery : (Array.isArray(x.photos)? x.photos : (x.image?[x.image]:[]))), meta: `${x.activity || ''} • ${x.region || ''}`.trim(), activity: x.activity || '', price: (x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+ ' ₽' : 'по запросу'), eco_points: x.eco_points || 0, rating: x.rating || null, reviews: x.reviews || null, duration_days: x.duration_days || x.duration || null, price_from: x.price_from || null })); } const res2 = await fetch('/partner-tours.json',{cache:'no-store'}); if(!res2.ok) return []; const data = await res2.json(); const lang=getLang(); return data.map(x=>({ id: x.id, title: pickI18n(x,'title',lang), img: x.image, gallery: Array.isArray(x.images)? x.images : (Array.isArray(x.gallery)? x.gallery : (Array.isArray(x.photos)? x.photos : (x.image?[x.image]:[]))), meta: `${x.activity || ''} • ${x.region || ''}`.trim(), activity: x.activity || '', price: (x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+ ' ₽' : 'по запросу'), eco_points: x.eco_points || 0, rating: x.rating || null, reviews: x.reviews || null, duration_days: x.duration_days || x.duration || null, price_from: x.price_from || null })); }catch(_){ showToast('Ошибка загрузки туров'); return []; } }
+    </script>
+  </head>
+  <body>
+    <div id="toast" class="toast"></div>
+    <div class="wrap">
+      <h1 class="title">Туры Камчатки</h1>
+      <div class="search">
+        <input id="q" class="input" type="search" placeholder="Поиск по названию и описанию"/>
+        <a id="searchBtn" class="btn" href="#">Поиск</a>
+        <a id="filtersBtn" class="btn" href="#">Фильтры</a>
+      </div>
+      <div id="chips" class="chips">
+        <a class="chip" data-act="вулканы" href="#" title="Вулканы" aria-label="Вулканы"><span>Вулканы</span></a>
+        <a class="chip" data-act="долина гейзеров" href="#" title="Гейзеры" aria-label="Гейзеры"><span>Гейзеры</span></a>
+        <a class="chip" data-act="хайкинг" href="#" title="Хайкинг" aria-label="Хайкинг"><span>Хайкинг</span></a>
+        <a class="chip" data-act="медведи" href="#" title="Медведи" aria-label="Медведи"><span>Медведи</span></a>
+        <a class="chip" data-act="рыбалка" href="#" title="Рыбалка" aria-label="Рыбалка"><span>Рыбалка</span></a>
+      </div>
+      <div id="list" class="grid"></div>
+    </div>
+    <script>
+      (async()=>{
+        initTelegram();
+        const v = String(Date.now());
+        authIfPossible();
+        const all = await loadTours();
+        const el=document.getElementById('list');
+        const q=document.getElementById('q');
+        function rir(cb){ if(window.requestIdleCallback){ requestIdleCallback(cb); } else { setTimeout(cb, 1); } }
+        function render(items){
+          el.innerHTML='';
+          const lang=getLang();
+          if(!items || items.length===0){ el.innerHTML = '<div class="empty">🐻 Нет результатов.<br/>Попробуйте изменить поиск или выбрать другую активность.</div>'; return; }
+          (items||[]).forEach(t=>{
+            const c=document.createElement('a'); c.href=`/tg/tour.html?id=${encodeURIComponent(t.id)}&lang=${lang}`; c.className='card'; c.style.textDecoration='none';
+            const eco = (t.eco_points||0)>0? `<span class="badge eco">♻️ Eco+${t.eco_points}</span>`:'';
+            const rating = t.rating? `<span class="badge rating">★ ${t.rating}${t.reviews? ` (${t.reviews})`:''}</span>`:'';
+            const hit = (t.rating||0) >= 4.7? `<span class="badge hit">Хит</span>`:'';
+            const discount = (t.price_from && t.price_from < 50000)? `<span class="badge discount">-10%</span>`:'';
+            const slides = (Array.isArray(t.gallery) && t.gallery.length>0? t.gallery: [t.img]).slice(0,3);
+            const gallery = `<div class="gallery">${slides.map((u)=>{ const s360=opt(u,360), s720=opt(u,720); const srcset=`${s360} 360w, ${s720} 720w`; return `<div class=\"slide\"><img src=\"${s720}\" srcset=\"${srcset}\" sizes=\"(max-width: 640px) 80vw, 512px\" loading=\"lazy\" decoding=\"async\"/></div>`; }).join('')}</div>`;
+            const mapUrl = `/tg/map.html?id=${encodeURIComponent(t.id)}`;
+            const icons = `<div class=\"icons\"><span class=\"i\">⏱ ${t.duration_days||'-'} дн.</span><span class=\"i\">🏷 ${(t.activity||'')}</span><span class=\"i\">📍 ${(t.meta||'').split('•').pop()?.trim()||''}</span></div>`;
+            c.innerHTML=`<div class="badges">${discount}${eco}${hit}${rating}</div>${gallery}<div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div>${icons}<div class="row"><div class="price">${t.price}</div><span class="btn">Подробнее</span></div><div class="row" style="margin-top:6px"><a class="link" href="${mapUrl}" style="text-decoration:none;color:#0891b2">На карте →</a></div></div>`;
+            c.addEventListener('click',()=>{ track({ type:'click_card', tour_id:t.id }); });
+            el.appendChild(c);
+            rir(()=>track({ type:'view_card', tour_id:t.id }));
+          });
+        }
+        (function showSkeleton(){ const skeletonGrid=document.getElementById('list'); skeletonGrid.innerHTML=''; for(let i=0;i<4;i++){ const s=document.createElement('div'); s.className='card sk'; s.innerHTML=`<div class="cover skeleton"></div><div class="pad"><div class="title skeleton" style="width:70%"></div><div class="meta skeleton" style="width:40%;margin-top:6px"></div><div class="row"><div class="price skeleton" style="width:80px"></div><span class="btn skeleton" style="width:96px;height:36px;border-radius:10px"></span></div></div>`; skeletonGrid.appendChild(s); } })();
+        async function searchRemote(query){ const s=(query||'').trim(); if(!s){ render(all); return; } try{ const r=await fetch('/api/tg/search?q='+encodeURIComponent(s)); if(!r.ok){ render(all); return; } const json=await r.json(); let items=Array.isArray(json?.items)? json.items: []; const lang=getLang(); render(items.map(x=>({ id:x.id, title:pickI18n(x,'title',lang), img:x.image||'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop', meta:`${x.activity||''} • ${x.region||''}`.trim(), activity: x.activity||'', price:(x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+' ₽':'по запросу') }))); }catch(_){ showToast('Ошибка поиска'); render(all); } }
+        let tmr; q.addEventListener('input',()=>{ clearTimeout(tmr); tmr=setTimeout(()=>searchRemote(q.value),200); });
+        render(all);
+      })();
+    </script>
+  </body>
+  </html>
+
