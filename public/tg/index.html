@@ -317,8 +317,13 @@
         const maxD=document.getElementById('maxDays');
         const act=document.getElementById('act');
         const chips=document.querySelectorAll('#chips .chip');
+        function getSortValue(){
+          var el = document.getElementById('sort');
+          // @ts-ignore
+          return (el && el.value) ? el.value : 'benefit';
+        }
         function applySort(items){
-          const v=(document.getElementById('sort') as HTMLSelectElement).value;
+          const v = getSortValue();
           const arr=[...(items||[])];
           const getPrice=(x)=> Number((x.price_from||'').toString().replace(/\D/g,''))||0;
           const getDur=(x)=> Number(x.duration_days||0)||0;
@@ -391,10 +396,11 @@
         }
         // persist filters/search
         const persist=()=>{
-          try{ localStorage.setItem('kt_filters', JSON.stringify({ q:q.value, sort:(document.getElementById('sort') as HTMLSelectElement).value, minP:minP.value, maxP:maxP.value, minD:minD.value, maxD:maxD.value, act:act.value })); }catch(_){ }
+          try{ localStorage.setItem('kt_filters', JSON.stringify({ q:q.value, sort:getSortValue(), minP:minP.value, maxP:maxP.value, minD:minD.value, maxD:maxD.value, act:act.value })); }catch(_){ }
         };
         const restore=()=>{
-          try{ const s=JSON.parse(localStorage.getItem('kt_filters')||'{}'); if(!s) return; q.value=s.q||''; (document.getElementById('sort') as HTMLSelectElement).value=s.sort||'benefit'; minP.value=s.minP||''; maxP.value=s.maxP||''; minD.value=s.minD||''; maxD.value=s.maxD||''; act.value=s.act||''; }catch(_){ }
+          try{ const s=JSON.parse(localStorage.getItem('kt_filters')||'{}'); if(!s) return; q.value=s.q||''; var sortEl=document.getElementById('sort'); if(sortEl){ // @ts-ignore
+            sortEl.value=s.sort||'benefit'; } minP.value=s.minP||''; maxP.value=s.maxP||''; minD.value=s.minD||''; maxD.value=s.maxD||''; act.value=s.act||''; }catch(_){ }
         };
         restore();
         async function searchRemote(query){
@@ -419,7 +425,7 @@
         let tmr; q.addEventListener('input',()=>{ persist(); clearTimeout(tmr); tmr=setTimeout(()=>searchRemote(q.value),200); });
         btn.addEventListener('click',(e)=>{ e.preventDefault(); modal.style.display='flex'; });
         sbtn.addEventListener('click',(e)=>{ e.preventDefault(); persist(); searchRemote(q.value); });
-        (document.getElementById('sort') as HTMLSelectElement).addEventListener('change',()=>{ persist(); searchRemote(q.value); });
+        var sortEl=document.getElementById('sort'); if(sortEl){ sortEl.addEventListener('change',()=>{ persist(); searchRemote(q.value); }); }
         // AI button in chips bar
         const aiBtn=document.createElement('a'); aiBtn.className='chip'; aiBtn.href='#'; aiBtn.textContent='AI‑подбор';
         document.getElementById('chips').prepend(aiBtn);
