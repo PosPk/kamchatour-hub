@@ -41,7 +41,9 @@ export default async function handler(req: any, res: any) {
         res.status(200).json({ ok: true, duplicate: true });
         return;
       }
-      await supabase.from('tg_updates').insert({ id: String(updateId), payload: body }).select().single().catch(() => ({} as any));
+      try {
+        await supabase.from('tg_updates').insert({ id: String(updateId), payload: body }).select().single();
+      } catch {}
     }
 
     // Minimal echo handler for smoke
