@@ -94,9 +94,9 @@
     </div>
     <div class="bottom" style="position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;justify-content:center;z-index:999;pointer-events:none">
       <div class="dock" style="display:flex;gap:18px;justify-content:space-around;align-items:center;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);padding:10px 12px;border:1px solid rgba(2,6,23,.08);border-radius:20px;box-shadow:0 12px 30px rgba(2,6,23,.18);pointer-events:auto">
-        <a class="link" href="/tg" style="color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px">🏷<span class="lbl" style="font-size:11px;line-height:12px;color:currentColor">Каталог</span></a>
-        <a class="link" href="/tg/map.html" style="color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px">🗺<span class="lbl" style="font-size:11px;line-height:12px;color:currentColor">Карта</span></a>
-        <a class="link" href="/tg/account.html" style="color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px">👤<span class="lbl" style="font-size:11px;line-height:12px;color:currentColor">Аккаунт</span></a>
+        <a id="navCatalog" class="link" href="/tg" style="color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px">🏷<span class="lbl" style="font-size:11px;line-height:12px;color:currentColor">Каталог</span></a>
+        <a id="navMap" class="link" href="/tg/map.html" style="color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px">🗺<span class="lbl" style="font-size:11px;line-height:12px;color:currentColor">Карта</span></a>
+        <a id="navAccount" class="link" href="/tg/account.html" style="color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px">👤<span class="lbl" style="font-size:11px;line-height:12px;color:currentColor">Аккаунт</span></a>
       </div>
     </div>
     <script>
@@ -132,6 +132,16 @@
         async function searchRemote(query){ const s=(query||'').trim(); if(!s){ render(all); return; } try{ const r=await fetch('/api/tg/search?q='+encodeURIComponent(s)); if(!r.ok){ render(all); return; } const json=await r.json(); let items=Array.isArray(json?.items)? json.items: []; const lang=getLang(); render(items.map(x=>({ id:x.id, title:pickI18n(x,'title',lang), img:x.image||'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop', meta:`${x.activity||''} • ${x.region||''}`.trim(), activity: x.activity||'', price:(x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+' ₽':'по запросу') }))); }catch(_){ showToast('Ошибка поиска'); render(all); } }
         let tmr; q.addEventListener('input',()=>{ clearTimeout(tmr); tmr=setTimeout(()=>searchRemote(q.value),200); });
         render(all);
+      })();
+    </script>
+    <script>
+      (function(){
+        try{
+          var v='6';
+          var l1=document.getElementById('navCatalog'); var u1=new URL(l1.href, location.origin); u1.searchParams.set('v', v); l1.href=u1.toString();
+          var l2=document.getElementById('navMap'); var u2=new URL(l2.href, location.origin); u2.searchParams.set('v', v); l2.href=u2.toString();
+          var l3=document.getElementById('navAccount'); var u3=new URL(l3.href, location.origin); u3.searchParams.set('v', v); l3.href=u3.toString();
+        }catch(_){ }
       })();
     </script>
   </body>
