@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "engines": {
-    "node": "22.x"
+    "node": "20.x"
   },
   "scripts": {
     "start": "expo start",
@@ -11,7 +11,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build:web": "npx expo export --platform web && cp dist/index.html dist/404.html",
+    "build:web": "rm -rf dist && mkdir -p dist/tg && echo '<!doctype html><meta http-equiv=\"refresh\" content=\"0;url=/tg\">' > dist/index.html && cp -r public/tg dist/tg && cp public/partner-tours.json dist/partner-tours.json && cp dist/index.html dist/404.html",
     "build": "npm run build:web",
     "vercel-build": "npm run build:web",
     "lint": "expo lint",
@@ -58,5 +58,22 @@
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"
   },
-  "private": true
+  "private": true,
+  "description": "Многофункциональный хаб для путешественников по Камчатке с функциями безопасности, культуры, экологии, маршрутов и бронирований.",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PosPk/kamchatour-hub.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PosPk/kamchatour-hub/issues"
+  },
+  "homepage": "https://github.com/PosPk/kamchatour-hub#readme"
 }

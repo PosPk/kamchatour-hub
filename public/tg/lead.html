@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Заявка на тур</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:#0b1020;color:#e5e7eb}
+    .wrap{padding:16px}
+    .card{background:#0f172a;border:1px solid rgba(148,163,184,.25);border-radius:12px;padding:14px}
+    .row{display:flex;gap:8px;margin-bottom:8px}
+    .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none;border:none}
+    .input{flex:1;padding:10px;border:1px solid #334155;border-radius:10px;background:#0b1020;color:#e5e7eb}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a href="/tg" style="display:inline-block;margin-bottom:12px;color:#e5e7eb;text-decoration:none;border:1px solid rgba(148,163,184,.25);padding:8px 10px;border-radius:10px">← Назад</a>
+    <div class="card">
+      <h1 style="margin:0 0 8px">Оставить заявку</h1>
+      <div id="meta" style="color:#94a3b8;font-size:14px;margin-bottom:8px"></div>
+      <div class="row"><input id="name" class="input" placeholder="Ваше имя"/></div>
+      <div class="row"><input id="phone" class="input" placeholder="Телефон"/></div>
+      <div class="row"><input id="note" class="input" placeholder="Комментарий (необязательно)"/></div>
+      <div class="row" style="justify-content:flex-end"><button id="send" class="btn">Отправить</button></div>
+      <div id="status" style="margin-top:8px;color:#a7f3d0;display:none"></div>
+    </div>
+  </div>
+  <script>
+    (function(){ try{ var tg=window.Telegram&&window.Telegram.WebApp; if(tg){ tg.ready(); tg.expand(); } }catch(_){ } })();
+    (function(){
+      const p=new URLSearchParams(location.search); const tourId=p.get('tour_id')||'';
+      document.getElementById('meta').textContent = tourId? ('Тур: '+tourId) : '';
+      document.getElementById('send').addEventListener('click', async function(){
+        const name=document.getElementById('name').value.trim();
+        const phone=document.getElementById('phone').value.trim();
+        const note=document.getElementById('note').value.trim();
+        if(!name||!phone){ alert('Укажите имя и телефон'); return; }
+        try{
+          const r=await fetch('/api/tg/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tour_id:tourId,name,phone,note})});
+          const j=await r.json();
+          if(j&&j.ok){ var s=document.getElementById('status'); s.textContent='Заявка отправлена. Мы свяжемся с вами.'; s.style.display='block'; }
+          else { alert('Не удалось отправить заявку'); }
+        }catch(_){ alert('Ошибка сети'); }
+      });
+    })();
+  </script>
+</body>
+</html>
+

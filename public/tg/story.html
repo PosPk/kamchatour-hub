@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ру">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>История: Открой Камчатку</title>
+  <meta name="theme-color" content="#000000">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{ --tg-bg:#0b1020; --tg-text:#e5e7eb; --tg-hint:#94a3b8; --tg-secondary-bg:#0f172a }
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial;background:var(--tg-bg);color:var(--tg-text)}
+    .vh{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px}
+    .hero{position:relative;color:#fff;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.65)),url('https://images.unsplash.com/photo-1536058227421-84b0161f9ddd?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat}
+    .hero h1{font-size:40px;line-height:1.1;margin:0 0 8px}
+    .section{background:var(--tg-secondary-bg);color:var(--tg-text)}
+    .chapter{max-width:840px}
+    .grid{display:grid;grid-template-columns:1fr;gap:16px;max-width:960px;width:100%}
+    .media{border-radius:12px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+    .cta{position:fixed;inset:auto 16px 76px 16px;z-index:10}
+    .cta button{width:100%;height:48px;border:none;border-radius:12px;background:#22c55e;color:#062;font-weight:700}
+    .caption{font-size:13px;color:var(--tg-hint);margin-top:8px}
+    .spacer{height:16px}
+    .nav-pad{height:64px}
+  </style>
+</head>
+<body>
+  <div style="position:fixed;top:10px;left:10px;z-index:20"><a href="/tg" style="display:inline-block;background:rgba(0,0,0,.5);color:#fff;text-decoration:none;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.25)">← Назад</a></div>
+  <section class="vh hero"><div class="chapter"><h1>Камчатка: от жерла вулкана до океана</h1><p>Проскроль, чтобы раскрыть главы путешествия.</p></div></section>
+  <section class="vh section"><div class="grid"><div class="media"><video src="https://cdn.coverr.co/videos/coverr-lava-6305/1080p.mp4" autoplay muted loop playsinline style="width:100%;height:auto"></video></div><div class="chapter"><h2>Дыхание вулканов</h2><div class="caption">Июль–сентябрь · ботинки и ветрозащита</div></div></div></section>
+  <section class="vh section"><div class="grid"><div class="chapter"><h2>Долина гейзеров</h2><div class="caption">По настилам, сохраняем природу</div></div><div class="media"><img src="https://images.unsplash.com/photo-1523419409543-9e3ea9ffad07?q=80&w=1600&auto=format&fit=crop" style="width:100%;height:auto" loading="lazy"></div></div></section>
+  <section class="vh section"><div class="grid"><div class="media"><img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=1600&auto=format&fit=crop" style="width:100%;height:auto" loading="lazy"></div><div class="chapter"><h2>Тундра и медведи</h2><div class="caption">100+ м дистанции, без кормления</div></div></div></section>
+  <section class="vh section"><div class="grid"><div class="chapter"><h2>Океан и киты</h2><div class="caption">Непромокаемая куртка и бинокль</div></div><div class="media"><video src="https://cdn.coverr.co/videos/coverr-waves-crashing-on-the-shore-6699/1080p.mp4" autoplay muted loop playsinline style="width:100%;height:auto"></video></div></div></section>
+  <div class="spacer"></div>
+  <div class="cta"><button id="ctaBtn">Выбрать тур по этой истории</button></div>
+  <div class="nav-pad"></div>
+  <script>
+    (function(){ try{ var tg=window.Telegram&&window.Telegram.WebApp; if(tg){ tg.ready(); tg.expand(); } }catch(_){ }
+      document.getElementById('ctaBtn').addEventListener('click', function(){ const lang=new URLSearchParams(location.search).get('lang')||'ru'; location.href='/tg/?lang='+lang+'&q='+encodeURIComponent('вулканы гейзеры киты'); });
+    })();
+  </script>
+</body>
+</html>
+
