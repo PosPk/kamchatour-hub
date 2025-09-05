@@ -9,7 +9,11 @@ export default async function handler(req: any, res: any) {
   }
 
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET as string | undefined;
-  const header = (req.headers['x-telegram-secret'] || req.headers['x-telegram-signature']) as string | undefined;
+  const header = (
+    req.headers['x-telegram-bot-api-secret-token'] ||
+    req.headers['x-telegram-secret'] ||
+    req.headers['x-telegram-signature']
+  ) as string | undefined;
   const raw = typeof req.rawBody === 'string' ? req.rawBody : typeof req.body === 'string' ? req.body : JSON.stringify(req.body || {});
 
   try {
