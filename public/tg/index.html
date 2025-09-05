@@ -109,6 +109,15 @@
         try{ var tg=window.Telegram&&window.Telegram.WebApp; var initData=tg&&tg.initData; if(initData){ await fetch('/api/tg/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})}); } }catch(_){ }
       }
       async function track(ev){ try{ await fetch('/api/tg/analytics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ev)}); }catch(_){ } }
+      function maybeTriggerTestError(){
+        try{
+          const p=new URLSearchParams(location.search);
+          if(p.get('testError')==='1'){
+            // Force an error to verify Sentry
+            throw new Error('Sentry test error: /tg');
+          }
+        }catch(e){ try{ console.error(e); }catch(_){} }
+      }
       async function loadTours(){
         try{
           const res = await fetch('/api/tg/tours',{cache:'no-store'});
@@ -297,6 +306,7 @@
     <script>
       (async()=>{
         initTelegram();
+        maybeTriggerTestError();
         const v = String(Date.now());
         authIfPossible();
         const all = await loadTours();
