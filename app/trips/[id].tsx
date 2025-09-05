@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+// keep imports at top; QRWeb is defined below without re-importing React
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { getBooking, Booking } from '../../lib/bookings';
@@ -18,9 +18,7 @@ export default function TripDetail(){
         <Text style={styles.section}>Ваучер</Text>
         <View style={styles.voucherBox}>
           {Platform.OS === 'web' ? (
-            // Lazy require to avoid RN bundler issues
-            // @ts-ignore
-            (() => { const QR = require('qrcode.react'); return <QR.QRCode value={item.voucherCode} size={132} /> })()
+            <QRWeb value={item.voucherCode} />
           ) : (
             <Text style={styles.voucherText}>{item.voucherCode}</Text>
           )}
@@ -56,4 +54,23 @@ const styles = StyleSheet.create({
   meta: { color: theme.colors.text },
   link: { color: '#2563eb', marginTop: 4, textDecorationLine: 'underline' },
 });
+
+function QRWeb({ value }: { value: string }) {
+  const [Comp, setComp] = useState<any>(null);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const mod: any = await import('qrcode.react');
+        const QRCode = mod?.QRCode || mod?.default?.QRCode || mod?.default;
+        if (mounted) setComp(() => QRCode || null);
+      } catch {
+        if (mounted) setComp(null);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+  if (!Comp) return <Text style={styles.voucherText}>{value}</Text>;
+  return <Comp value={value} size={132} />;
+}
 

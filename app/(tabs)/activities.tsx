@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityCard } from '../../components/ui/ActivityCard';
 
@@ -11,7 +11,7 @@ export default function ActivitiesScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true); setError(undefined);
     try {
       const r = await fetch(`/api/activities/list?q=${encodeURIComponent(q)}`);
@@ -23,9 +23,9 @@ export default function ActivitiesScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [q]);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   return (
     <SafeAreaView style={styles.container}>

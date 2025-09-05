@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,7 +12,7 @@ export default function HomeScreen() {
   const { user } = useAuth();
   const { location } = useLocation();
 
-  const handleEmergency = async () => {
+  const handleEmergency = useCallback(async () => {
     if (!location) {
       Alert.alert('Ошибка', 'Не удалось определить местоположение');
       return;
@@ -30,14 +30,14 @@ export default function HomeScreen() {
             try {
               await sendEmergencySignal({ coordinates: location.coordinates, note: 'SOS сигнал' });
               Alert.alert('Успешно', 'SOS сигнал отправлен');
-            } catch (e) {
+            } catch {
               Alert.alert('Ошибка', 'Не удалось отправить сигнал');
             }
           },
         },
       ]
     );
-  };
+  }, [location]);
 
   return (
     <SafeAreaView style={styles.container}>

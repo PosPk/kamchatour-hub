@@ -15,7 +15,7 @@ export default function ProfileScreen() {
   const [locationSharing, setLocationSharing] = useState(true);
   const [emergencyAlerts, setEmergencyAlerts] = useState(true);
   const { theme, colorScheme, setTheme } = useTheme();
-  const { roles, hasRole } = useRoles();
+  const { hasRole } = useRoles();
 
   const handleSignOut = () => {
     Alert.alert(
