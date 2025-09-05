@@ -104,14 +104,23 @@
         initTelegram();
         const v = String(Date.now());
         authIfPossible();
+        const dict={
+          ru:{ search:'Поиск', filters:'Фильтры', ai:'AI‑подбор', empty:'🐻 Нет результатов.\nПопробуйте изменить поиск или выбрать другую активность.', more:'Подробнее', onMap:'На карте →', catalog:'Каталог', map:'Карта', account:'Аккаунт' },
+          zh:{ search:'搜索', filters:'筛选', ai:'AI 推荐', empty:'🐻 没有结果。请更改搜索或选择其他活动。', more:'了解更多', onMap:'在地图上 →', catalog:'目录', map:'地图', account:'账户' }
+        };
+        const lang=getLang();
+        try{ document.getElementById('searchBtn').textContent=dict[lang]?.search||dict.ru.search; document.getElementById('filtersBtn').textContent=dict[lang]?.filters||dict.ru.filters; }catch(_){ }
         const all = await loadTours();
         const el=document.getElementById('list');
         const q=document.getElementById('q');
         function rir(cb){ if(window.requestIdleCallback){ requestIdleCallback(cb); } else { setTimeout(cb, 1); } }
+        // Lazy image loader
+        const io = ('IntersectionObserver' in window)? new IntersectionObserver((entries)=>{
+          entries.forEach(e=>{ if(e.isIntersecting){ const img=e.target; const s=img.getAttribute('data-src'); const ss=img.getAttribute('data-srcset'); if(s) img.setAttribute('src', s); if(ss) img.setAttribute('srcset', ss); io.unobserve(img); } });
+        },{ rootMargin:'200px' }): null;
         function render(items){
           el.innerHTML='';
-          const lang=getLang();
-          if(!items || items.length===0){ el.innerHTML = '<div class="empty">🐻 Нет результатов.<br/>Попробуйте изменить поиск или выбрать другую активность.</div>'; return; }
+          if(!items || items.length===0){ el.innerHTML = `<div class="empty">${(dict[lang]?.empty||dict.ru.empty).replace('\n','<br/>')}</div>`; return; }
           (items||[]).forEach(t=>{
             const c=document.createElement('a'); c.href=`/tg/tour.html?id=${encodeURIComponent(t.id)}&lang=${lang}`; c.className='card'; c.style.textDecoration='none';
             const eco = (t.eco_points||0)>0? `<span class="badge eco">♻️ Eco+${t.eco_points}</span>`:'';
@@ -119,12 +128,14 @@
             const hit = (t.rating||0) >= 4.7? `<span class="badge hit">Хит</span>`:'';
             const discount = (t.price_from && t.price_from < 50000)? `<span class="badge discount">-10%</span>`:'';
             const slides = (Array.isArray(t.gallery) && t.gallery.length>0? t.gallery: [t.img]).slice(0,3);
-            const gallery = `<div class="gallery">${slides.map((u)=>{ const s360=opt(u,360), s720=opt(u,720); const srcset=`${s360} 360w, ${s720} 720w`; return `<div class=\"slide\"><img src=\"${s720}\" srcset=\"${srcset}\" sizes=\"(max-width: 640px) 80vw, 512px\" loading=\"lazy\" decoding=\"async\"/></div>`; }).join('')}</div>`;
+            const gallery = `<div class=\"gallery\">${slides.map((u)=>{ const s360=opt(u,360), s720=opt(u,720); const srcset=`${s360} 360w, ${s720} 720w`; return `<div class=\\\"slide\\\"><img data-src=\\\"${s720}\\\" data-srcset=\\\"${srcset}\\\" sizes=\\\"(max-width: 640px) 80vw, 512px\\\" loading=\\\"lazy\\\" decoding=\\\"async\\\"/></div>`; }).join('')}</div>`;
             const mapUrl = `/tg/map.html?id=${encodeURIComponent(t.id)}`;
             const icons = `<div class=\"icons\"><span class=\"i\">⏱ ${t.duration_days||'-'} дн.</span><span class=\"i\">🏷 ${(t.activity||'')}</span><span class=\"i\">📍 ${(t.meta||'').split('•').pop()?.trim()||''}</span></div>`;
-            c.innerHTML=`<div class="badges">${discount}${eco}${hit}${rating}</div>${gallery}<div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div>${icons}<div class="row"><div class="price">${t.price}</div><span class="btn">Подробнее</span></div><div class="row" style="margin-top:6px"><a class="link" href="${mapUrl}" style="text-decoration:none;color:#0891b2">На карте →</a></div></div>`;
+            c.innerHTML=`<div class="badges">${discount}${eco}${hit}${rating}</div>${gallery}<div class="pad"><div class="title">${t.title}</div><div class="meta">${t.meta}</div>${icons}<div class="row"><div class="price">${t.price}</div><span class="btn">${dict[lang]?.more||dict.ru.more}</span></div><div class="row" style="margin-top:6px"><a class="link" href="${mapUrl}" style="text-decoration:none;color:#0891b2">${dict[lang]?.onMap||dict.ru.onMap}</a></div></div>`;
             c.addEventListener('click',()=>{ track({ type:'click_card', tour_id:t.id }); });
             el.appendChild(c);
+            // observe images
+            try{ if(io){ c.querySelectorAll('img[data-src]').forEach(img=> io.observe(img)); } }catch(_){ }
             rir(()=>track({ type:'view_card', tour_id:t.id }));
           });
         }
