@@ -6,8 +6,9 @@
   ],
   "routes": [
     { "src": "^/api/(.*)", "dest": "/api/$1" },
-    { "src": "^/tg(?:/(.*))?$", "dest": "/tg/$1" },
-    { "src": "^/tg(?:/.*)?$", "headers": { "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org https://unpkg.com https://widget.cloudpayments.ru; connect-src 'self' https://router.project-osrm.org https://telegram.org; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://unpkg.com; frame-src https://widget.cloudpayments.ru;", "Referrer-Policy": "no-referrer", "Permissions-Policy": "geolocation=(self)" } },
+    { "src": "^/mini(?:/(.*))?$", "dest": "/mini/$1" },
+    { "src": "^/tg(?:/(.*))?$", "status": 308, "headers": { "Location": "/mini/$1" } },
+    { "src": "^/mini(?:/.*)?$", "headers": { "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org https://unpkg.com https://widget.cloudpayments.ru; connect-src 'self' https://router.project-osrm.org https://telegram.org; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://unpkg.com; frame-src https://widget.cloudpayments.ru;", "Referrer-Policy": "no-referrer", "Permissions-Policy": "geolocation=(self)" } },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
