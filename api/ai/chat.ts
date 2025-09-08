@@ -5,7 +5,9 @@ export default async function handler(req: any, res: any) {
     return;
   }
   try {
-    const provider = (process.env.AI_PROVIDER || 'openai').toLowerCase();
+    const override = String(req.body?.provider || '').toLowerCase();
+    const base = (process.env.AI_PROVIDER || 'openai').toLowerCase();
+    const provider = (override || base);
     const { messages, model = provider === 'groq' ? 'llama-3.1-8b-instant' : provider === 'deepseek' ? 'deepseek-chat' : provider === 'anthropic' ? 'claude-3-5-sonnet-20241022' : provider === 'gemini' ? 'gemini-1.5-flash' : 'gpt-4o-mini', temperature = 0.5 } = req.body || {};
     if (!Array.isArray(messages)) {
       res.status(400).json({ error: 'messages array required' });
