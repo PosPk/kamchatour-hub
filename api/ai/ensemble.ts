@@ -80,6 +80,28 @@ export default async function handler(req: any, res: any) {
       calls.push(callProvider('https://api.groq.com/openai/v1/chat/completions', process.env.GROQ_API_KEY, 'llama-3.1-8b-instant', messages));
       sources.push('groq');
     }
+    if (process.env.ANTHROPIC_API_KEY) {
+      // anthropic has different API; simple adapter
+      const anthropicMessages = messages.map((m:any)=>m.role==='assistant'? { role:'assistant', content: m.content }: m.role==='system'? m: { role:'user', content: m.content });
+      const p = (async()=>{
+        const r = await fetch('https://api.anthropic.com/v1/messages', { method:'POST', headers:{ 'Content-Type':'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY as string, 'anthropic-version':'2023-06-01' }, body: JSON.stringify({ model:'claude-3-5-sonnet-20241022', max_tokens:800, temperature:0.3, system: (messages.find((m:any)=>m.role==='system')?.content)||undefined, messages: anthropicMessages.filter((m:any)=>m.role!=='system') }) });
+        if(!r.ok) return null; const data=await r.json(); const content = data?.content?.[0]?.text || '';
+        try{ return JSON.parse(content); }catch{ const m=content.match(/\{[\s\S]*\}/); return m? JSON.parse(m[0]) : null; }
+      })();
+      calls.push(p);
+      sources.push('anthropic');
+    }
+    if (process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY) {
+      const key = (process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY) as string;
+      const conv = messages.filter((m:any)=>m.role==='user' || m.role==='assistant').map((m:any)=>({ role: m.role==='assistant'?'model':'user', parts:[{ text:String(m.content||'')}] }));
+      const p = (async()=>{
+        const sys = messages.find((m:any)=>m.role==='system');
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(key)}`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ systemInstruction: sys? { role:'system', parts:[{ text: String(sys.content||'') }]}: undefined, contents: conv, generationConfig:{ temperature:0.3 } }) });
+        if(!r.ok) return null; const data=await r.json(); const parts=data?.candidates?.[0]?.content?.parts||[]; const text=parts.map((p:any)=>p?.text).filter(Boolean).join('\n')||''; try{ return JSON.parse(text);}catch{ const m=text.match(/\{[\s\S]*\}/); return m? JSON.parse(m[0]):null; }
+      })();
+      calls.push(p);
+      sources.push('gemini');
+    }
 
     const results = await Promise.allSettled(calls);
     const lists: Item[][] = results.map((r) => {
