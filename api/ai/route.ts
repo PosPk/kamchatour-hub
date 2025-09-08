@@ -16,14 +16,17 @@ export default async function handler(req: any, res: any) {
     if (!text || /<script|drop\s+table/i.test(text)) { res.status(400).json({ error: 'invalid_payload' }); return; }
 
     if (task === 'recommend') {
+      // Safety check: user query
+      const base0 = req.headers['x-forwarded-host'] ? `https://${req.headers['x-forwarded-host']}` : (process.env.NEXT_PUBLIC_BASE_URL || '');
+      try { const s = await fetch(`${base0}/api/ai/safety`, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ text: String(payload.query||'') }) }); const sj = s.ok? await s.json():{ safe:true }; if (sj && sj.safe === false) { res.status(400).json({ error: 'unsafe' }); return; } } catch(_) {}
       if (shouldUseEnsemble(task, payload)) {
-        const u = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/ai/ensemble?query=${encodeURIComponent(String(payload.query || ''))}&n=${n}`;
+        const u = `${base0}/api/ai/ensemble?query=${encodeURIComponent(String(payload.query || ''))}&n=${n}`;
         const r = await fetch(u);
         const j = r.ok ? await r.json() : { items: [] };
         res.status(200).json(j);
         return;
       } else {
-        const r = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/ai/recommend`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: String(payload.query || ''), n }) });
+        const r = await fetch(`${base0}/api/ai/recommend`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: String(payload.query || ''), n }) });
         const j = r.ok ? await r.json() : { items: [] };
         res.status(200).json(j);
         return;
@@ -31,7 +34,10 @@ export default async function handler(req: any, res: any) {
     }
     if (task === 'chat') {
       const provider = selectProvider(task, payload);
-      const r = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/ai/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider, messages: payload.messages || [], model: payload.model, temperature: payload.temperature ?? 0.3 }) });
+      const base0 = req.headers['x-forwarded-host'] ? `https://${req.headers['x-forwarded-host']}` : (process.env.NEXT_PUBLIC_BASE_URL || '');
+      // Safety on last assistant output is handled by Anthropic in chat.ts if needed; here we check user content quickly
+      try { const s = await fetch(`${base0}/api/ai/safety`, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ text: String((payload.messages||[]).map((m:any)=>m?.content||'').join('\n').slice(0,4000)) }) }); const sj = s.ok? await s.json():{ safe:true }; if (sj && sj.safe === false) { res.status(400).json({ error: 'unsafe' }); return; } } catch(_) {}
+      const r = await fetch(`${base0}/api/ai/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider, messages: payload.messages || [], model: payload.model, temperature: payload.temperature ?? 0.3 }) });
       const j = r.ok ? await r.json() : { content: '' };
       res.status(200).json(j);
       return;
