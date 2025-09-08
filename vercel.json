@@ -2,7 +2,8 @@
   "version": 3,
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/tg(/.*)?", "dest": "/tg/index.html" },
+    { "src": "/tg$", "dest": "/public/tg/index.html" },
+    { "src": "/tg/(.*)", "dest": "/public/tg/$1" },
     { "src": "/$", "headers": { "Location": "/tg" }, "status": 308 }
   ]
 }
