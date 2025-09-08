@@ -82,6 +82,7 @@
         <input id="q" class="input" type="search" placeholder="Поиск по названию и описанию"/>
         <a id="searchBtn" class="btn" href="#">Поиск</a>
         <a id="filtersBtn" class="btn" href="#">Фильтры</a>
+        <a id="runAi" class="btn" href="#">AI‑подбор</a>
       </div>
       <div id="chips" class="chips">
         <a class="chip" data-act="вулканы" href="#" title="Вулканы" aria-label="Вулканы"><span>Вулканы</span></a>
@@ -141,8 +142,10 @@
         }
         (function showSkeleton(){ const skeletonGrid=document.getElementById('list'); skeletonGrid.innerHTML=''; for(let i=0;i<4;i++){ const s=document.createElement('div'); s.className='card sk'; s.innerHTML=`<div class="cover skeleton"></div><div class="pad"><div class="title skeleton" style="width:70%"></div><div class="meta skeleton" style="width:40%;margin-top:6px"></div><div class="row"><div class="price skeleton" style="width:80px"></div><span class="btn skeleton" style="width:96px;height:36px;border-radius:10px"></span></div></div>`; skeletonGrid.appendChild(s); } })();
         async function searchRemote(query){ const s=(query||'').trim(); if(!s){ render(all); return; } try{ const r=await fetch('/api/tg/search?q='+encodeURIComponent(s)); if(!r.ok){ render(all); return; } const json=await r.json(); let items=Array.isArray(json?.items)? json.items: []; const lang=getLang(); render(items.map(x=>({ id:x.id, title:pickI18n(x,'title',lang), img:x.image||'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop', meta:`${x.activity||''} • ${x.region||''}`.trim(), activity: x.activity||'', price:(x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+' ₽':'по запросу') }))); }catch(_){ showToast('Ошибка поиска'); render(all); } }
+        async function aiRecommend(query){ try{ const s=(query||'').trim(); const url='/api/ai/recommend?query='+encodeURIComponent(s); const r=await fetch(url,{ method:'GET', headers:{ 'Accept':'application/json' }, cache:'no-store' }); if(!r.ok){ showToast('AI ошибка'); return; } const json=await r.json(); const items=Array.isArray(json?.items)? json.items: []; const lang=getLang(); render(items.map(x=>({ id:x.id, title:pickI18n(x,'title',lang), img:x.image||'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop', meta:`${x.activity||''} • ${x.region||''}`.trim(), activity:x.activity||'', price:(x.price_from? new Intl.NumberFormat('ru-RU').format(x.price_from)+' ₽':'по запросу') }))); try{ track({ type:'ai_recommend_success', count: items.length }); }catch(_){ } }catch(_){ showToast('AI ошибка'); }
+        }
         // AI modal telemetry
-        (function(){ try{ var btn=document.getElementById('runAi'); if(!btn) return; btn.addEventListener('click', function(){ try{ fetch('/api/tg/analytics',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'ai_recommend_start' }) }); }catch(_){ } }); }catch(_){ } })();
+        (function(){ try{ var btn=document.getElementById('runAi'); if(!btn) return; btn.textContent = dict[lang]?.ai || dict.ru.ai; btn.addEventListener('click', function(e){ e.preventDefault(); try{ fetch('/api/tg/analytics',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'ai_recommend_start' }) }); }catch(_){ } aiRecommend(q.value); }); }catch(_){ } })();
         let tmr; q.addEventListener('input',()=>{ clearTimeout(tmr); tmr=setTimeout(()=>searchRemote(q.value),200); });
         render(all);
       })();
