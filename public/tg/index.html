@@ -98,6 +98,7 @@
         <a id="navCatalog" class="link" href="/tg" style="color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px">🏷<span class="lbl" style="font-size:11px;line-height:12px;color:currentColor">Каталог</span></a>
         <a id="navMap" class="link" href="/tg/map.html" style="color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px">🗺<span class="lbl" style="font-size:11px;line-height:12px;color:currentColor">Карта</span></a>
         <a id="navAccount" class="link" href="/tg/account.html" style="color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px">👤<span class="lbl" style="font-size:11px;line-height:12px;color:currentColor">Аккаунт</span></a>
+        <a id="navAI" class="link" href="/tg/ai.html" style="color:#0f172a;text-decoration:none;border-radius:14px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;gap:4px">🤖<span class="lbl" style="font-size:11px;line-height:12px;color:currentColor">AI</span></a>
       </div>
     </div>
     <script>
@@ -157,6 +158,7 @@
           var l1=document.getElementById('navCatalog'); var u1=new URL(l1.href, location.origin); u1.searchParams.set('v', v); l1.href=u1.toString();
           var l2=document.getElementById('navMap'); var u2=new URL(l2.href, location.origin); u2.searchParams.set('v', v); l2.href=u2.toString();
           var l3=document.getElementById('navAccount'); var u3=new URL(l3.href, location.origin); u3.searchParams.set('v', v); l3.href=u3.toString();
+          var l4=document.getElementById('navAI'); var u4=new URL(l4.href, location.origin); u4.searchParams.set('v', v); l4.href=u4.toString();
         }catch(_){ }
       })();
     </script>
