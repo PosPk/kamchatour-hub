@@ -11,7 +11,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build:web": "rm -rf dist && mkdir -p dist/mini dist/tg && echo '<!doctype html><meta http-equiv=\"refresh\" content=\"0;url=/mini\">' > dist/index.html && cp -r public/tg dist/mini && cp -r public/tg dist/tg && cp public/partner-tours.json dist/partner-tours.json && cp dist/index.html dist/404.html",
+    "build:web": "rm -rf dist && mkdir -p dist/tg1 && echo '<!doctype html><meta http-equiv=\"refresh\" content=\"0;url=/tg1\">' > dist/index.html && cp -r public/tg dist/tg1 && cp public/partner-tours.json dist/partner-tours.json && cp dist/index.html dist/404.html",
     "build": "npm run build:web",
     "vercel-build": "npm run build:web",
     "lint": "expo lint",
