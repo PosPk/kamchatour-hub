@@ -8,8 +8,18 @@ export default async function handler(req: any, res: any) {
   }
   try {
     const q = String(req.query?.q || '').toLowerCase();
+    const etag = `W/"q:${Buffer.from(q).toString('base64')}"`;
+    const inm = String(req.headers['if-none-match'] || '');
+    if (inm && inm === etag) {
+      res.statusCode = 304;
+      res.setHeader('ETag', etag);
+      res.end();
+      return;
+    }
     const dbItems = await searchTours({ q });
     if (Array.isArray(dbItems) && dbItems.length) {
+      res.setHeader('Cache-Control', 'public, max-age=60');
+      res.setHeader('ETag', etag);
       res.status(200).json({ items: dbItems });
       return;
     }
@@ -19,6 +29,8 @@ export default async function handler(req: any, res: any) {
       const hay = `${x.title || ''} ${x.description || ''} ${x.activity || ''} ${x.region || ''}`.toLowerCase();
       return !q || hay.includes(q);
     });
+    res.setHeader('Cache-Control', 'public, max-age=60');
+    res.setHeader('ETag', etag);
     res.status(200).json({ items: filtered });
   } catch (e: any) {
     res.status(200).json({ items: [] });
