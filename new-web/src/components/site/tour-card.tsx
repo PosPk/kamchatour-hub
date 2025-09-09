@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 
 export type TourCardProps = {
   title: string;
@@ -16,10 +16,31 @@ export type TourCardProps = {
 export function TourCard({ title, days, price, image, badges = [] }: TourCardProps) {
   const ref = useRef<HTMLDivElement>(null);
 
+  const handleMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width; // 0..1
+    const py = (e.clientY - rect.top) / rect.height; // 0..1
+    const rotX = (0.5 - py) * 6; // max 6deg
+    const rotY = (px - 0.5) * 6;
+    el.style.setProperty("--tilt-rot-x", `${rotX}deg`);
+    el.style.setProperty("--tilt-rot-y", `${rotY}deg`);
+  }, []);
+
+  const handleLeave = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.setProperty("--tilt-rot-x", `0deg`);
+    el.style.setProperty("--tilt-rot-y", `0deg`);
+  }, []);
+
   return (
     <Card
       ref={ref}
-      className="group overflow-hidden border-border/60 transition-transform will-change-transform hover:-translate-y-0.5"
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      className="group overflow-hidden border-border/60 transition-transform will-change-transform hover:-translate-y-0.5 [transform:perspective(800px)_rotateX(var(--tilt-rot-x,0))_rotateY(var(--tilt-rot-y,0))]"
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image src={image} alt={title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
