@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ai": "npm run lint && npx tsc --noEmit && npm run build"
   },
   "dependencies": {
     "@radix-ui/react-navigation-menu": "^1.2.14",
