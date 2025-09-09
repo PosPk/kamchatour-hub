@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur border-b border-slate-200">
+    <header className="sticky top-0 z-40 w-full glass">
       <div className="container mx-auto px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="font-extrabold tracking-tight text-slate-900">Kamchatka Hub</Link>
+        <Link href="/" className="font-extrabold tracking-tight text-slate-900 dark:text-white">Kamchatka Hub</Link>
         <nav className="hidden md:flex items-center gap-6 text-sm text-slate-600">
           <Link href="/tours" className="hover:text-slate-900">Туры</Link>
           <Link href="/operators" className="hover:text-slate-900">Операторы</Link>

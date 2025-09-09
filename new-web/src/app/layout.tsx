@@ -20,10 +20,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru">
-      <body className={inter.className}>
+    <html lang="ru" className="h-full">
+      <body className={`${inter.className} min-h-screen bg-radial`}>
         <Navbar />
-        {children}
+        <div className="relative">{children}</div>
         <Footer />
       </body>
     </html>
