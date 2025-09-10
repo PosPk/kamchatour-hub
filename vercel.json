@@ -5,6 +5,7 @@
     { "src": "public/**", "use": "@vercel/static" }
   ],
   "routes": [
+    { "src": "/api/webhooks/cloudpays", "dest": "/api/webhooks/cloudpays.ts" },
     { "src": "/api/health", "dest": "/api/health.ts" },
     { "src": "/api/env", "dest": "/api/env.ts" },
     { "src": "/api/(.*)", "dest": "/api/$1" },
