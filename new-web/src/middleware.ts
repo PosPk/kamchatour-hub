@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-const BYPASS_PATHS = ["/api/health", "/api/env", "/_next", "/favicon.ico"];
+const BYPASS_PATHS = ["/api/health", "/api/env", "/api/auth", "/_next", "/favicon.ico"];
 
 export const config = {
   matcher: "/:path*",
