@@ -1,11 +1,18 @@
 import React, { useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
 import { useLocation } from '../../hooks/useLocation';
 import { sendEmergencySignal } from '../../lib/emergency';
+
+const featuredTours = [
+  { id: 'v1', title: 'Вулканы и кратеры', price: 35000, days: 3, image: 'https://images.unsplash.com/photo-1583130205156-8ab07afd9bba?q=80&w=1200&auto=format&fit=crop' },
+  { id: 'b1', title: 'Медведи на нересте', price: 42000, days: 4, image: 'https://images.unsplash.com/photo-1501706362039-c06b2d715385?q=80&w=1200&auto=format&fit=crop' },
+  { id: 'f1', title: 'Сёрф и океан', price: 39000, days: 2, image: 'https://images.unsplash.com/photo-1466096115517-bceecbfb6fde?q=80&w=1200&auto=format&fit=crop' },
+  { id: 'h1', title: 'Вертолёт к Толбачику', price: 120000, days: 1, image: 'https://images.unsplash.com/photo-1465447142348-e9952c393450?q=80&w=1200&auto=format&fit=crop' },
+];
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -91,6 +98,23 @@ export default function HomeScreen() {
               <Text style={styles.actionText}>Убежища</Text>
             </View>
           </View>
+        </View>
+
+        {/* Featured Tours */}
+        <View style={styles.featuredSection}>
+          <Text style={styles.sectionTitle}>Популярные туры</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20 }}>
+            {featuredTours.map(t => (
+              <View key={t.id} style={styles.card}>
+                <Image source={{ uri: t.image }} resizeMode="cover" style={styles.cardImage} />
+                <View style={styles.cardBadge}><Text style={styles.cardBadgeText}>{t.days} дн.</Text></View>
+                <View style={styles.cardInfo}>
+                  <Text style={styles.cardTitle} numberOfLines={1}>{t.title}</Text>
+                  <Text style={styles.cardPrice}>{t.price.toLocaleString('ru-RU')} ₽</Text>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
         </View>
 
         {/* Weather Info */}
