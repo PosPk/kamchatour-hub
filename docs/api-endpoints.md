@@ -1,7 +1,7 @@
 ## API endpoints (current repository)
 
 - Base: root project served via Vercel with `vercel.json` (static + serverless)
-- Note: Deployment currently misconfigured; endpoints exist in code but 404 in prod until Root Directory is fixed.
+- Note: plan-b `/api/health` = 200 (prod). new-web protected. plan-b-api WIP.
 
 ### Core
 - GET `/api/health`
