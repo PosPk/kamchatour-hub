@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Yandex from "next-auth/providers/yandex";
+import type { NextRequest } from "next/server";
 
 export const authOptions = {
   providers: [
@@ -14,5 +15,6 @@ export const authOptions = {
 };
 
 const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
+export const GET = (req: NextRequest, ctx: any) => handler(req as any, ctx as any);
+export const POST = (req: NextRequest, ctx: any) => handler(req as any, ctx as any);
 
