@@ -6,6 +6,8 @@ export default async function handler(req: any, res: any) {
     return;
   }
   try {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
     let version = '0.0.0';
     try {
       const pkg = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));

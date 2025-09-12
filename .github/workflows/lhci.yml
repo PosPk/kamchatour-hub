@@ -1,0 +1,27 @@
+name: Lighthouse CI
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '7 4 * * *'
+
+jobs:
+  lhci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run Lighthouse (new-web)
+        run: |
+          npm i -g @lhci/cli@0.13.x
+          lhci collect --url=https://new-web.vercel.app/ --numberOfRuns=1 || true
+      - name: Run Lighthouse (plan-b-api /api/health)
+        run: |
+          lhci collect --url=https://plan-b-api.vercel.app/api/health --numberOfRuns=1 || true
+      - name: Run Lighthouse (plan-b /api/health)
+        run: |
+          lhci collect --url=https://plan-b.vercel.app/api/health --numberOfRuns=1 || true
