@@ -1,0 +1,25 @@
+name: Mirror to SourceCraft
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push all branches and tags to SourceCraft
+        env:
+          TOKEN: ${{ secrets.SOURCECRAFT_PAT }}
+          TARGET_URL: https://sourcecraft.dev/organization-swindler0312/tourhab
+        run: |
+          git config --global user.email "ci@kamchatour.hub"
+          git config --global user.name "CI Mirror"
+          git remote add sourcecraft "https://${TOKEN}@${TARGET_URL#https://}"
+          git push sourcecraft --prune --tags +refs/heads/*:refs/heads/*
