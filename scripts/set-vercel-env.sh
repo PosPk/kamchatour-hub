@@ -7,7 +7,7 @@ set -euo pipefail
 #   export EXPO_PUBLIC_BUGSNAG_API_KEY=...
 #   bash scripts/set-vercel-env.sh
 
-required=(VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID)
+required=(VERCEL_TOKEN VERCEL_PROJECT_ID)
 for k in "${required[@]}"; do
   if [ -z "${!k:-}" ]; then
     echo "Missing required env: $k" >&2
@@ -22,9 +22,13 @@ ensure_var() {
     echo "Skip $name: empty value"
     return 0
   fi
-  echo "$value" | vercel env add "$name" production --yes --token="$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" || true
-  echo "$value" | vercel env add "$name" preview    --yes --token="$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" || true
-  echo "$value" | vercel env add "$name" development --yes --token="$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" || true
+  SCOPE_ARGS=()
+  if [ -n "${VERCEL_ORG_ID:-}" ]; then
+    SCOPE_ARGS=(--scope "$VERCEL_ORG_ID")
+  fi
+  echo "$value" | vercel env add "$name" production --yes --token="$VERCEL_TOKEN" "${SCOPE_ARGS[@]}" --project "$VERCEL_PROJECT_ID" || true
+  echo "$value" | vercel env add "$name" preview    --yes --token="$VERCEL_TOKEN" "${SCOPE_ARGS[@]}" --project "$VERCEL_PROJECT_ID" || true
+  echo "$value" | vercel env add "$name" development --yes --token="$VERCEL_TOKEN" "${SCOPE_ARGS[@]}" --project "$VERCEL_PROJECT_ID" || true
 }
 
 # Axiom (serverless logs)
