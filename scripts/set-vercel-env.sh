@@ -22,13 +22,14 @@ ensure_var() {
     echo "Skip $name: empty value"
     return 0
   fi
-  SCOPE_ARGS=()
+  local scope_args=()
   if [ -n "${VERCEL_ORG_ID:-}" ]; then
-    SCOPE_ARGS=(--scope "$VERCEL_ORG_ID")
+    scope_args=(--scope "$VERCEL_ORG_ID")
   fi
-  echo "$value" | vercel env add "$name" production --yes --token="$VERCEL_TOKEN" "${SCOPE_ARGS[@]}" --project "$VERCEL_PROJECT_ID" || true
-  echo "$value" | vercel env add "$name" preview    --yes --token="$VERCEL_TOKEN" "${SCOPE_ARGS[@]}" --project "$VERCEL_PROJECT_ID" || true
-  echo "$value" | vercel env add "$name" development --yes --token="$VERCEL_TOKEN" "${SCOPE_ARGS[@]}" --project "$VERCEL_PROJECT_ID" || true
+  # Pass project as positional arg; pipe value into interactive add
+  echo "$value" | vercel env add "$name" production "$VERCEL_PROJECT_ID" --token="$VERCEL_TOKEN" "${scope_args[@]}" || true
+  echo "$value" | vercel env add "$name" preview    "$VERCEL_PROJECT_ID" --token="$VERCEL_TOKEN" "${scope_args[@]}" || true
+  echo "$value" | vercel env add "$name" development "$VERCEL_PROJECT_ID" --token="$VERCEL_TOKEN" "${scope_args[@]}" || true
 }
 
 # Axiom (serverless logs)
