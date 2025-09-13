@@ -2,8 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+type YMaps = {
+  ready: (cb: () => void) => void
+  Map: new (el: HTMLElement | null, opts: { center: [number, number]; zoom: number }) => unknown
+  control: { SearchControl: new (opts: Record<string, unknown>) => unknown }
+}
+
 declare global {
-  interface Window { ymaps: any }
+  interface Window { ymaps: YMaps }
 }
 
 export default function MapsPage() {
@@ -24,11 +30,13 @@ export default function MapsPage() {
       if (!window.ymaps) { setError('ymaps failed to load'); return }
       window.ymaps.ready(() => {
         try {
-          const map = new window.ymaps.Map(mapRef.current, { center: [53.01, 158.65], zoom: 9 })
-          const control = new window.ymaps.control.SearchControl({ provider: 'yandex#search' })
+          const map = new window.ymaps.Map(mapRef.current, { center: [53.01, 158.65], zoom: 9 }) as any
+          const control = new window.ymaps.control.SearchControl({ provider: 'yandex#search' }) as any
+          // @ts-expect-error Yandex Maps typings are not available in this project
           map.controls.add(control)
-        } catch (e: any) {
-          setError(e?.message || 'map init failed')
+        } catch (e: unknown) {
+          const message = e instanceof Error ? e.message : 'map init failed'
+          setError(message)
         }
       })
     }

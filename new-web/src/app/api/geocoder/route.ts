@@ -28,8 +28,9 @@ export async function GET(req: NextRequest) {
     const res = NextResponse.json(data, { status: 200 });
     res.headers.set('Cache-Control', 'public, max-age=60, s-maxage=600, stale-while-revalidate=300');
     return res;
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || 'geocode failed' }, { status: 500 });
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : 'geocode failed';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

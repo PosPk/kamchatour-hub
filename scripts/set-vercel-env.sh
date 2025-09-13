@@ -54,5 +54,20 @@ ensure_var EXPO_PUBLIC_BUGSNAG_API_KEY "${EXPO_PUBLIC_BUGSNAG_API_KEY:-}"
 ensure_var TELEGRAM_BOT_TOKEN        "${TELEGRAM_BOT_TOKEN:-}"
 ensure_var TELEGRAM_WEBHOOK_SECRET   "${TELEGRAM_WEBHOOK_SECRET:-}"
 
+# NextAuth (Yandex OAuth)
+ensure_var NEXTAUTH_URL            "${NEXTAUTH_URL:-}"
+ensure_var NEXTAUTH_SECRET         "${NEXTAUTH_SECRET:-}"
+ensure_var YANDEX_CLIENT_ID        "${YANDEX_CLIENT_ID:-}"
+ensure_var YANDEX_CLIENT_SECRET    "${YANDEX_CLIENT_SECRET:-}"
+
+# Yandex Maps (client/server)
+ensure_var NEXT_PUBLIC_YANDEX_MAPS_API_KEY "${NEXT_PUBLIC_YANDEX_MAPS_API_KEY:-}"
+ensure_var YANDEX_MAPS_API_KEY            "${YANDEX_MAPS_API_KEY:-}"
+
+# Supabase anon key for client usage if needed
+ensure_var SUPABASE_ANON_KEY "${SUPABASE_ANON_KEY:-}"
+
+echo "Done: attempted to add env vars to Vercel (prod/preview/dev)."
+
 echo "Done: attempted to add env vars to Vercel (prod/preview/dev)."
 
