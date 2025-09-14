@@ -10,6 +10,7 @@
 
 - Yandex Maps
   - Static API ID: 9813d05f-8365-4c7d-8a00-e5bfb6633905
+  - Маршрутизация (Календарное): ba99f009-d7fd-46c5-9e16-0edc2a5aedc7
 
 - Supabase
   - URL: https://zohfnqqtytsrrurgiati.supabase.co
