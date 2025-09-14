@@ -15,7 +15,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link href="/" className="font-semibold tracking-tight text-lg">
-          PlanB
+          TourHab
         </Link>
 
         <NavigationMenu>

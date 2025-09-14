@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PlanB",
-  description: "Маршруты, которые хочется повторять",
+  title: "TourHab",
+  description: "CRM и тур‑менеджмент: Камчатка и не только",
 };
 
 export default function RootLayout({
