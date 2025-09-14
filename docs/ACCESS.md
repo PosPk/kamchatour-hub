@@ -11,12 +11,11 @@
   - Extra ID: bpf1ho6g9hnuv6ojhf39
   - Cloud Account: aje06gc7v7mq2rntfujh
 
-- Yandex Maps
-  - Static API ID: 9813d05f-8365-4c7d-8a00-e5bfb6633905
-  - Маршрутизация (Календарное): ba99f009-d7fd-46c5-9e16-0edc2a5aedc7
-  - JavaScript API и HTTP Геокодер: e5c02a43-3805-4b6e-9870-56ad9db712c9
-
 - Supabase
   - URL: https://zohfnqqtytsrrurgiati.supabase.co
+
+- v0 API
+  - Key: V0_API_KEY (в Vercel env)
+  - URL: V0_API_URL (опц., по умолчанию https://api.v0.dev/generate)
 
 Примечание: секретные ключи и токены хранятся в `.env` (локально) и в переменных окружения Vercel (production/preview).
