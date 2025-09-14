@@ -10,6 +10,7 @@
   - Developer Cabinet ID: 59b60647-b7be-49f4-a4bc-8f8c4c576a4b
   - Extra ID: bpf1ho6g9hnuv6ojhf39
   - Cloud Account: aje06gc7v7mq2rntfujh
+  - Cloud ID: b1gvmvlp0dmj7018l7fj
 
 - Supabase
   - URL: https://zohfnqqtytsrrurgiati.supabase.co
