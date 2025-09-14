@@ -11,6 +11,7 @@
   - Extra ID: bpf1ho6g9hnuv6ojhf39
   - Cloud Account: aje06gc7v7mq2rntfujh
   - Cloud ID: b1gvmvlp0dmj7018l7fj
+  - Folder ID: b1gvmvlp0dmj7018l7fj
 
 - Supabase
   - URL: https://zohfnqqtytsrrurgiati.supabase.co
