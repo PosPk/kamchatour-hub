@@ -13,6 +13,7 @@
 
 - Supabase
   - URL: https://zohfnqqtytsrrurgiati.supabase.co
+  - Studio access: Editor (admin@tourhab.dev) — активен
 
 - v0 API
   - Key: V0_API_KEY (в Vercel env)
