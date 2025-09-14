@@ -3,6 +3,7 @@
 - Vercel
   - Team: pospks-projects
   - Project `new-web`: prj_7IsGks2Kk8TfpfFMQFxgqf86vePk
+  - Org slug: drhtzqrggtayvahbhhxl
 
 - Yandex Cloud
   - Billing Account ID: dn2qj4hloo98b6taaita
