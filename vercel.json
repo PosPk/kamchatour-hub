@@ -11,8 +11,7 @@
     { "src": "/api/env", "dest": "/api/env.ts" },
     { "src": "^/tg$", "dest": "/public/tg/index.html" },
     { "src": "^/tg/(.*)$", "dest": "/public/tg/$1" },
-    { "handle": "filesystem" },
-    { "src": "^/$", "status": 308, "headers": { "Location": "/tg" } }
+    { "handle": "filesystem" }
   ]
 }
 
