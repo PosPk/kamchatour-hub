@@ -19,6 +19,7 @@ Server (Vercel env: production, preview, development)
 - OPENAI_API_KEY [optional]
 - GROQ_API_KEY [optional]
 - DEEPSEEK_API_KEY [optional]
+- XAI_API_KEY [optional]
 - AXIOM_TOKEN [optional]
 - AXIOM_DATASET [optional]
 - OP_LEVEL_DEFAULT (L1|L2|L3) [optional]

@@ -51,6 +51,7 @@ ensure_var AI_PROVIDER        "${AI_PROVIDER:-}"
 ensure_var DEEPSEEK_API_KEY   "${DEEPSEEK_API_KEY:-}"
 ensure_var GROQ_API_KEY       "${GROQ_API_KEY:-}"
 ensure_var OPENAI_API_KEY     "${OPENAI_API_KEY:-}"
+ensure_var XAI_API_KEY        "${XAI_API_KEY:-}"
 
 # Client monitoring
 ensure_var EXPO_PUBLIC_BUGSNAG_API_KEY "${EXPO_PUBLIC_BUGSNAG_API_KEY:-}"
