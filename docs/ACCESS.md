@@ -8,6 +8,7 @@
   - Billing Account ID: dn2qj4hloo98b6taaita
   - Developer Cabinet ID: 59b60647-b7be-49f4-a4bc-8f8c4c576a4b
   - Extra ID: bpf1ho6g9hnuv6ojhf39
+  - Cloud Account: aje06gc7v7mq2rntfujh
 
 - Yandex Maps
   - Static API ID: 9813d05f-8365-4c7d-8a00-e5bfb6633905
