@@ -38,6 +38,32 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, sent: Boolean(token) })
     }
 
+    if (text.startsWith('/todo') && chatId) {
+      const token = process.env.TELEGRAM_BOT_TOKEN
+      const reply = 'Задача зафиксирована. (демо)'
+      if (token) {
+        fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ chat_id: String(chatId), text: reply })
+        }).catch(() => {})
+      }
+      return NextResponse.json({ ok: true })
+    }
+
+    if (text.startsWith('/assign') && chatId) {
+      const token = process.env.TELEGRAM_BOT_TOKEN
+      const reply = 'Назначение выполнено. (демо)'
+      if (token) {
+        fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ chat_id: String(chatId), text: reply })
+        }).catch(() => {})
+      }
+      return NextResponse.json({ ok: true })
+    }
+
     return NextResponse.json({ ok: true, received: true, ignored: true })
   } catch (e) {
     return NextResponse.json({ ok: false, error: 'webhook failed' }, { status: 500 })
