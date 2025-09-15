@@ -78,3 +78,25 @@
 - CI/Runtime: добавлен `.nvmrc` (Node 18) для выравнивания локально/CI
 - Payments: укреплён вебхук CloudPayments — проверка `TransactionId`, ранняя идемпотентность, примечание по raw body для HMAC
 - Документы для инвестора: `docs/DEMO.md`, `docs/SLIDES.md`, в README добавлена ценность и ссылки
+
+## 2025-09-15 (P0, 5 часов)
+- Сводка:
+  - Миграции 0008–0013 применены (CRM: contacts/leads/deals, триггеры, RLS, pg_cron)
+  - Веб: внедрён брендинг TourHab, реализована `/tours`, исправлены типы/линт, разрешены домены Tilda/Я.Диск
+  - TG: маршрут вебхука готов, команды опубликованы, включены авто‑отчёты
+  - ИИ: DeepSeek/x.ai активны; Groq — ключ получен, включаю в env и модули
+  - Инфра: канонический проект Vercel `workspace`; готов к прод‑выкату (главная + /tours)
+- Проценты:
+  - Миграции: 100% | CRM API: 60% | Дизайн: 55% | /tours: 90% | Telegram: 70% | ИИ: 70% | Инфра: 90%
+- Сделано:
+  - Убран блокирующий any в `/tours`, чистая сборка
+  - next.config.ts: добавлены `images.unsplash.com`, `static.tildacdn.com`, `s3.tildacdn.com`, `downloader.disk.yandex.ru`, `yastatic.net`
+  - Обновлены `docs/ACCESS.md` (Cloud/Folder/Invite ID), `docs/ENV_KEYS.md` (XAI_API_KEY)
+  - Команды бота опубликованы (setMyCommands) и отправлены в канал
+- В работе (ETA):
+  - Прод‑выкат новой главной и `/tours` + инвалидация CDN (20–30 мин)
+  - TG webhook на прод (секрет) + тест message_id (10–15 мин)
+  - Включение Groq в env + смоук `/api/ai/chat` (15–20 мин)
+  - `/partners/kr` (Tilda) и `/partners/shatun` (Я.Диск) — MVP (45–90 мин)
+  - Поиск (instant + чипсы + URL), /help (после выката)
+ - Риски/блокеры: CDN‑кэш (1–3 мин, решается), Tilda/Диск задержки (есть плейсхолдеры)
