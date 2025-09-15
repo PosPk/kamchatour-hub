@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     const res = NextResponse.json(data, { status: 200 });
     res.headers.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=300');
     return res;
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'routes failed' }, { status: 500 });
   }
 }

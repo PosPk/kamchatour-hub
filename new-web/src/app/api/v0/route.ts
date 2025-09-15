@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     res.headers.set('content-type', upstream.headers.get('content-type') || 'application/json')
     res.headers.set('Cache-Control', 'no-store')
     return res
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'v0 proxy failed' }, { status: 500 })
   }
 }
