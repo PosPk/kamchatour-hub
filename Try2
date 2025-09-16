@@ -265,6 +265,19 @@ AI Keys — расположение и политика (зафиксирова
   - Ф8 10% → 10%
   - Ф9–12 0–10% → 0–10%
 
+Vercel env — ключи и статус фаз
+- Ограничение: из репозитория не видно секретов Vercel; проверка на стороне Vercel: `vercel env ls`.
+- Список ожидаемых ключей в Vercel (prod/preview/dev):
+  DEEPSEEK_API_KEY, XAI_API_KEY, OPENAI_API_KEY, GROQ_API_KEY, V0_API_KEY (опц. V0_API_URL), AI_PROVIDER,
+  SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY/SUPABASE_ANON_KEY,
+  CLOUDPAYMENTS_PUBLIC_ID/CLOUDPAYMENTS_API_SECRET,
+  TELEGRAM_BOT_TOKEN/TELEGRAM_WEBHOOK_SECRET,
+  AXIOM_TOKEN/AXIOM_DATASET,
+  NEXT_PUBLIC_* (base url, supabase anon, etc.).
+- Синхронизация: `scripts/set-vercel-env.sh` (нужны экспортированные значения), затем `vercel env ls` для верификации.
+- Node runtime на Vercel зафиксирован: nodejs20.x (vercel.json).
+- Фазы на Vercel: зависят от наличия ключей. После установки секретов и деплоя отразятся те же проценты: Ф0≈80%, Ф1≈93%, Ф2≈10%, Ф3≈40%, Ф4≈35%, Ф5≈70%, Ф6≈20%, Ф7≈20%, Ф8≈10%.
+
 Назначения/замены ИИ (оптимизация команды)
 - Замена: AI-DBA → Senior AI-DBA (экспресс‑консолидация 0006/enums/uuid/RLS).
 - Замена: AI-QA → AI-QA‑Playwright (e2e checkout/transfer + CI).
