@@ -206,6 +206,37 @@ AI Keys — расположение и политика (зафиксирова
 - Локально: .env.local (через scripts/sync-local-env.sh) — только для разработчиков, без коммита в репо.
 - Примечание: значения переменных не пишем в Try2/репозиторий, только в защищённые окружения.
 
+ENV — полный список и где лежат (зафиксировано)
+Server (Vercel env: prod/preview/dev)
+- NEXTAUTH_URL, NEXTAUTH_SECRET
+- YANDEX_CLIENT_ID, YANDEX_CLIENT_SECRET, YANDEX_MAPS_API_KEY
+- SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_ANON_KEY
+- CLOUDPAYMENTS_PUBLIC_ID, CLOUDPAYMENTS_API_SECRET, CLOUDPAYMENTS_ENABLED, CLOUDPAYMENTS_COMMISSION
+- TELEGRAM_BOT_TOKEN, TELEGRAM_WEBHOOK_SECRET
+- AI_PROVIDER, OPENAI_API_KEY, GROQ_API_KEY, DEEPSEEK_API_KEY, XAI_API_KEY
+- AXIOM_TOKEN, AXIOM_DATASET
+- OP_LEVEL_DEFAULT (опц.)
+
+Client (public)
+- NEXT_PUBLIC_YANDEX_MAPS_API_KEY
+- EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY
+- EXPO_PUBLIC_CLOUDPAYMENTS_PUBLIC_ID (опц.)
+
+Где используются (в текущем репо)
+- AI: app/api/ai/chat/route.ts; app/api/ai/recommend/route.ts; (план) app/api/ai/{ensemble,loop,safety}/route.ts; lib/ai/policy.ts
+- V0: (план) app/api/ai/v0/route.ts (V0_API_KEY, опц. V0_API_URL)
+- Maps: (план) app/api/{geocoder,routes,suggest}/route.ts; app/(tabs)/bears.tsx (веб‑карта)
+- Supabase: lib/supabase.ts; lib/config.ts; app/api/*
+- Payments: app/api/webhooks/cloudpays/route.ts; app/api/payment/config/route.ts; app/api/pays/create/route.ts; app/api/transfer/*
+- Auth/TG: app/api/tg/webhook/route.ts; app/api/tg/*; app/api/tg/auth/route.ts (HMAC)
+
+Документация (в репо, без секретов)
+- docs/ENV_KEYS.md — канон имен (создать)
+- docs/ACCESS.md — ID/URLs (создать)
+
+Примечание
+- Секретные значения — только в Vercel env; в репозитории не храним.
+
 Анализ документа `try` (TourHab — Экосистема) — плюсы/минусы и выводы
 Плюсы (за)
 - Видение и ценности: чётко сформулированы (LCP<2.5s, mobile‑first, прозрачность, ИИ‑поддержка) — согласуются с нашими NFR и целями UX/перформанса.
