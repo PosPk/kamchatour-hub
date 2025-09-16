@@ -1,0 +1,99 @@
+TourHab — Экосистема: идея, архитектура, процессы, дизайн
+
+Видение
+— Единая экосистема турбизнеса: сайт/каталог, партнёрский портал, CRM (лиды/сделки/ресурсы), оплаты/бронь, Telegram Mini App, карты и поиск.
+— Ценности: скорость (LCP<2.5s), удобство (mobile‑first), прозрачность (статусы/уведомления), ИИ‑помощь операторам и клиентам.
+
+Архитектура (высокоуровнево)
+— Front: Next.js (Vercel), Telegram Mini App; поисковый слой, UI‑кит, темы OKLCH, motion, a11y.
+— Back: Next.js app routes (serverless/edge), Supabase (Postgres + RLS + Realtime + pg_cron), CloudPayments, Yandex Maps APIs (Geocoder/Suggest/Routes).
+— Интеграции: Tilda (ingest), Я.Диск (медиа), U‑ON (миграция с dual‑run), 2ГИС (карта/виджеты), WhatsApp каталоги.
+— Наблюдаемость: Axiom (логи) + Telegram отчёты; Web Vitals/CTR, алерты.
+— ИИ‑слой: AI.Loop/AI.Safety/AI.Chat/AI.Recommend/AI.Ensemble/AI.Observer (DeepSeek + x.ai + Groq; fallback: Ollama Qwen2.5 локально).
+
+Данные и модель
+— crm_contacts(id, phone/email uniq, meta)
+— crm_leads(id, contact_id, status: new→qualified→offer→won/lost, source, partner, meta)
+— crm_deals(id, lead_id, total, stage, payouts, meta)
+— tours(id, title, activity, region, price_from, duration_days), schedules(id, tour_id, date, seats), media[]
+— transfer_* (trips, seats, holds, pricing_rules) — брони трансферов
+— payments(id, booking_id, status: initiated/authorized/captured/refunded/voided/failed)
+— RLS по ролям: operator, partner, admin; аудит изменений
+
+Бизнес‑процессы (сквозные)
+1) Интейк лида: сайт (/tours/карточка/поиск) → форма/WA/TG → CRM.lead (дедуп по телефону/email) → уведомление в TG (lead.created)
+2) Квалификация: присвоение партнёра/оператора → AI.Ensemble скоринг (приоритеты) → шаблоны AI.Recommend для ответа
+3) Оффер: подбор даты/ресурса (календарь/матчинг), отправка предложения (почта/ТГ), SLA напоминания (AI.Loop)
+4) Бронь/оплата: CloudPayments виджет + 3DS → hold (authorize) → confirm (capture) → обновление booking/payment; TG‑уведомление клиенту/оператору
+5) Завершение: trip выполнен → закрытие сделки → отчёты (воронка, загрузка, выручка, выплаты)
+6) Поддержка: /help, TG Mini App, статусы и история взаимодействий
+
+Экраны и UX (ключевые)
+— Главная: hero (вау‑фото/видео), быстрый поиск (инпут + чипсы), категории, топ‑туры, мини‑карта, CTA “Подобрать тур”
+— /tours: грид карточек (фото, цена “от…”, длительность, бейджи), фильтры (цена/дни/регион/тип), сорт, карта/лист
+— Карточка тура: галерея (WebP/AVIF), программа/цены/что включено/FAQ, календарь дат, CTA (форма/WA/TG)
+— /partners/kr и /partners/shatun: hero, «о партнёре», галерея, лучшие туры, отзывы, CTA → лид (hidden field partner=kr|shatun)
+— Поиск (/search): instant results, подсветка совпадений, чипсы, URL‑фильтры (shareable), мини‑карта
+— Кабинеты: клиент (заказы/статусы/эко‑баллы), партнёр (лиды/статусы/экспорт), оператор (канбан/календарь/матчинг/отчёты)
+— /help: короткие сценарии (поиск/бронь/оплата/кабинеты), ссылки, FAQ
+
+ИИ‑модули (роль → польза)
+— AI.Recommend (x.ai + Groq): тексты hero/CTA/карточек, шаблоны писем/ответов, нотификации
+— AI.Chat (x.ai): быстрые правки/суммаризация диалогов, подсказки оператору
+— AI.Ensemble (DeepSeek + Groq): скоринг лидов, приоритезация, базовый матчинг 
+— AI.Loop: SLA таймеры, авто‑отчёты в ТГ (каждые 2ч), чек‑пойнты релизов
+— AI.Observer: Web Vitals/CTR/ошибки → дайджест в ТГ; аномалии
+— AI.Safety: тональность/UGC/политики, анти‑спам, PII guard
+
+Нефункциональные требования
+— Перфоманс: LCP<2.5s, TTFB<0.5s, CLS≈0; кэширование/edge‑прокси; изображения AVIF/WebP/srcset
+— A11y: контраст/фокус/aria, клавиатурная навигация, prefers‑reduced‑motion
+— Безопасность: RLS, HMAC вебхуков, секреты в Vercel Env/Lockbox (YC), rate limits
+— CI/CD: GitHub Actions (lint/type/build), Dependabot, prev/prod среды
+
+Интеграции партнёров (важное)
+— U‑ON: ingest (API/CSV) + dual‑run (временная синхронизация) → миграция в CRM TourHab; карта соответствия статусов
+— Tilda/Я.Диск: контент/медиа → нормализованный JSON + CDN ссылки (домен‑allowlist настроен)
+— 2ГИС/WhatsApp: виджеты/DEEP‑links с карточек и контактов
+
+Дорожная карта (P0 → P1)
+P0 (24 часа)
+— Прод‑выкат: новая главная и /tours (инвалидация CDN)
+— Партнёрские страницы: /partners/{kr,shatun} MVP (hero, галерея, цены, CTA→лид)
+— Поиск: instant + чипсы + URL‑фильтры
+— TG: webhook на прод (секрет), команды, авто‑отчёты, message_id тест
+— ИИ: включить Groq (env), смоук AI.Chat/Ensemble; AI.Loop/Observer отчёты
+— CRM: смоук (leads/deals, RLS), уведомления lead.created/assigned
+
+P1 (1–2 недели)
+— Партнёрский кабинет, отчёты (воронка/загрузка/выплаты)
+— Платежи/бронь: CloudPayments prod, негативные сценарии, idempotency
+— Axiom: логи + алерты; SEO витрина (статические страницы), i18n EN
+— Поиск (углубление): сорт по качеству/рейтингу, карта‑лист синхронизированы
+
+Стандарты и конфигурации
+— Node: 20 LTS (local/CI/Vercel)
+— ENV: 
+  Client: NEXT_PUBLIC_* (пример: NEXT_PUBLIC_YANDEX_MAPS_API_KEY), EXPO_PUBLIC_*
+  Server: SUPABASE_URL/SERVICE_ROLE_KEY/ANON_KEY, TELEGRAM_BOT_TOKEN/WEBHOOK_SECRET, CLOUDPAYMENTS_PUBLIC_ID/API_SECRET, YANDEX_MAPS_API_KEY, DEEPSEEK_API_KEY, XAI_API_KEY, GROQ_API_KEY, AI_PROVIDER, V0_API_KEY, AXIOM_TOKEN/AXIOM_DATASET
+— База: UUID везде; статусы
+  bookings: new→hold→paid→confirmed→canceled
+  payments: initiated→authorized→captured→refunded|voided|failed
+
+Критерии «готово» (Go‑Live)
+— Свежий прод (новая главная+/tours), партнёрские страницы с CTA → лид в CRM
+— Поиск работает (instant + чипсы), TG‑вебхук отвечает, отчёты в канал
+— Ноль ошибок сборки/консоли; Web Vitals в норме; a11y базовые пройдены
+
+Риски и обходные пути
+— CDN‑кэш: cache‑buster (?v=2) + принудительная инвалидация
+— Источники контента (Tilda/Диск) тормозят: плейсхолдеры, догрузка фоном
+— Несовпадение статусов U‑ON: карта соответствий + временная таблица переводов
+
+Ссылки (актуальные окружения)
+— Прод (Vercel/workspace): https://workspace-tau-eight.vercel.app
+— Превью (Vercel/workspace): https://workspace-clowd7t7k-pospks-projects.vercel.app
+— Mini App: /tg, Карта: /maps, Каталог: /tours
+
+Примечание
+— Документ агрегирует договорённости из чатов; приоритет — P0 (24ч) с фокусом на демонстрацию ценности для партнёров (iamkamchatka: KR/ШАТУН), затем углубление CRM/оплат/кабинетов.
