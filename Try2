@@ -195,6 +195,7 @@
 - API: архив legacy `api/*` через тонкие прокси на `app/api/*` — в процессе.
 - Docs/ENV: обновление README под ENV-конвенцию, добавлен `.env.example` (ранее), начата синхронизация переменных в Vercel.
 - DB (Фаза 2): готовлю черновик миграций — enum `booking_status(payment_status)` + UUID PK выравнивание, скелет функций переходов и обновлённые RLS.
+- DB (Фаза 2): добавлена миграция `supabase/migrations/0011_status_enums_and_transitions.sql` — enum типов и функции защищённых переходов booking/payment.
 - Домен: учтён `tourhab.ru` — план к обновлению base URLs, HSTS/CSP, robots/sitemap/canonical.
 - Безопасность: проверка отсутствия секретов в Try2 и коде; токены — только в секретах окружений.
 
