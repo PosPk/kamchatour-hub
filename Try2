@@ -144,6 +144,19 @@
 - .env.example добавлен по согласованной конвенции (NEXT_PUBLIC_*, SUPABASE_*, CLOUDPAYMENTS_*, TELEGRAM_*, AI провайдеры, AXIOM_*).
 - vercel.json: зафиксирован runtime nodejs20.x для serverless Node функций.
 
+Отчёт (часовой)
+- Сделано:
+  - Перенос критичных API в `app/api/*` (tg/auth HMAC, webhooks/cloudpays, config/env/health, activities/feed, transfer search/hold/book, pays/create).
+  - GROQ интеграция: `app/api/ai/chat` (GROQ_API_KEY, модель по умолчанию).
+  - Структурные правки: локальный tsconfig base, .env.example, Node 20 в vercel.json.
+- В работе (до следующего часа):
+  - Архив `api/*` через прокси, обновление README.
+  - Закрепление Node 20 в CI, required checks.
+  - Старт миграций Supabase (enum/uuid + функции переходов + RLS).
+- Риски/заметки:
+  - Консолидация миграций (`schema.sql` vs `0006_*`) требует аккуратности.
+  - Нужны серверные ключи (GROQ/DeepSeek/xAI/Axiom) в окружениях для интеграционных проверок.
+
 Назначения/замены ИИ (оптимизация команды)
 - Замена: AI-DBA → Senior AI-DBA (экспресс‑консолидация 0006/enums/uuid/RLS).
 - Замена: AI-QA → AI-QA‑Playwright (e2e checkout/transfer + CI).
