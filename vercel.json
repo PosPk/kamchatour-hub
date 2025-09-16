@@ -6,6 +6,8 @@
     { "src": "new-web/package.json", "use": "@vercel/next" }
   ],
   "routes": [
+    { "src": "/api/tg/send", "dest": "/api/tg/send.ts" },
+    { "src": "/api/tg/webhook", "dest": "/api/tg/webhook.ts" },
     { "src": "/api/webhooks/cloudpays", "dest": "/api/webhooks/cloudpays.ts" },
     { "src": "/api/health", "dest": "/api/health.ts" },
     { "src": "/api/env", "dest": "/api/env.ts" },
