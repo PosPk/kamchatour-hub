@@ -157,6 +157,36 @@
   - Консолидация миграций (`schema.sql` vs `0006_*`) требует аккуратности.
   - Нужны серверные ключи (GROQ/DeepSeek/xAI/Axiom) в окружениях для интеграционных проверок.
 
+Сводка (% прогресса)
+- По фазам:
+  - Фаза 0 (окружения): 40%
+  - Фаза 1 (архитектура/API): 90%
+  - Фаза 2 (БД/схема): 0%
+  - Фаза 3 (платежи): 40%
+  - Фаза 4 (трансфер): 35%
+  - Фаза 5 (Telegram): 70%
+  - Фаза 6 (AI-оркестрация): 20%
+  - Фаза 7 (наблюдаемость): 20%
+  - Фаза 8 (Frontend качество/a11y/perf): 10%
+  - Фазы 9–12 (ingest/SEO/CI/Docs/Cleanup): 0–10%
+- По ИИ-ролям:
+  - AI-Architect: 90%
+  - AI-DevOps: 35%
+  - AI-DBA: 0%
+  - AI-Payments: 40%
+  - AI-Transfer: 35%
+  - AI-Telegram: 70%
+  - AI-Observability: 20%
+  - AI-QA: 0%
+  - AI-Orchestrator: 20%
+  - AI-GROQ: 60%
+  - AI-DeepSeek: 0%
+  - AI-Grok (xAI): 0%
+  - AI-Security: 15%
+  - AI-Frontend: 10%
+  - AI-i18n / Data / GIS / ContentSEO / Growth / PartnerOps / Support / Legal / FinOps / DesignSystem / Release / Secrets / BackupDR: 0%
+  - AI-CodeQuality: 20%
+
 Назначения/замены ИИ (оптимизация команды)
 - Замена: AI-DBA → Senior AI-DBA (экспресс‑консолидация 0006/enums/uuid/RLS).
 - Замена: AI-QA → AI-QA‑Playwright (e2e checkout/transfer + CI).
