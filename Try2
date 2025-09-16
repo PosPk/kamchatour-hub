@@ -1,0 +1,88 @@
+Изменения (Фаза 1) — перенос на Next app/api, безопасность вебхуков, унификация ENV
+
+Дата: 2025-09-15
+
+Основные цели фазы:
+- Консолидация API в Next.js `app/api/*` (архивация `api/*`, кроме нужных прокси)
+- Node 20 LTS локально/CI/Vercel (начато — обновлён `.nvmrc`)
+- Безопасные вебхуки CloudPayments (raw body + HMAC) и Telegram (HMAC initData)
+- Стандартизация ENV для платежей
+
+Список изменений по файлам
+
+Изменено
+- /.nvmrc
+  - 22 → 20 (Node 20 LTS)
+
+- app/api/tg/auth/route.ts
+  - Удалена заглушка; добавлена полноценная валидация Telegram `initData` по HMAC
+  - TTL 10 минут, коды ошибок 400/401/500
+
+- app/api/payment/config/route.ts
+  - Переход на переменные окружения `CLOUDPAYMENTS_PUBLIC_ID`, `CLOUDPAYMENTS_COMMISSION`
+
+- app/api/activities/list/route.ts
+  - Новый Next route (перенос логики из `api/activities/list.ts`)
+  - Интеграция с Tilda (если заданы ключи), иначе демо-данные
+  - Фильтрация по `q` (indexOf) для совместимости таргета
+
+Добавлено (новые Next `app/api/*` маршруты)
+- app/api/webhooks/cloudpays/route.ts
+  - Вебхук CloudPayments: чтение `req.text()` (raw body), HMAC SHA256 по `X-Signature`
+  - Идемпотентность по `TransactionId`; обновление `payments`/`bookings`
+
+- app/api/feed/list/route.ts
+  - Список постов фида из Supabase (fallback — пустой список)
+
+- app/api/feed/post/route.ts
+  - Создание поста фида; возврат id
+
+- app/api/feed/like/route.ts
+  - RPC `feed_like` по id поста
+
+- app/api/feed/comment/route.ts
+  - Добавление комментария к посту
+
+- app/api/transfer/hold/route.ts
+  - Создание hold на места с TTL; перевод мест в статус `hold`
+
+- app/api/transfer/book/route.ts
+  - Бронирование по `hold_id`; перевод мест в `booked`
+
+- app/api/transfer/search/route.ts
+  - Поиск рейсов по дате/маршруту (Supabase)
+
+- app/api/pays/create/route.ts
+  - Инициация платежа (перенос из `api/pays/create.ts`), формирование payload для виджета
+
+- app/api/tg/webhook/route.ts
+  - Вебхук Telegram: секретный заголовок, идемпотентность по `update_id`, upsert `tg_users`
+
+- app/api/config/route.ts
+  - Конфигурация для клиента: провайдер AI, флаги фич (payments, supabase)
+
+- app/api/env/route.ts
+  - Здоровье ENV: наличие ключевых переменных (Supabase, Payments, Telegram, AI, Bugsnag, Axiom)
+
+- app/api/health/route.ts
+  - Health-check: версия/uptime/флаги окружения/время
+
+Технические служебные изменения
+- /types/shims.d.ts
+  - Временные шимы деклараций для `next/server`, `crypto`, `process` (для тип-чека в текущем окружении)
+
+- /tsconfig.json
+  - Добавлен `"lib": ["ES2019", "DOM"]` для возможностей Promise/DOM
+  - Примечание: при использовании Expo base в чистом Next окружении убедиться в доступности `expo/tsconfig.base` или изменить `extends`
+
+Примечания и следующие шаги (Фаза 1 → завершение)
+- Заархивировать/проксировать `api/*` под `app/api/*` (сохранить обратную совместимость при необходимости)
+- Обновить README и `.env.example` под согласованную ENV-конвенцию
+- Настроить Vercel на Node 20 (runtime), проверить edge/serverless
+- Подготовить OpenAPI для `app/api/*` (будет выполнено в фазе документации)
+
+Влияние
+- Единый рантайм Next `app/api/*`; устранены дубли/заглушки
+- Повышена безопасность вебхуков (raw HMAC), унифицированы переменные CloudPayments
+- Подготовлена база для Фазы 2 (схема БД + двухстадийные платежи + трансфер)
+
