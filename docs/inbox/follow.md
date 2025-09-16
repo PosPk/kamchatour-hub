@@ -16,3 +16,15 @@
 
 Логи
 - Здесь фиксируй каждое обновление статуса.
+
+- when: 2025-09-16T13:10Z
+- ref: inbox/lead.md#2025-09-16T12:50Z
+- done:
+  - Принял ветку chat-export-2025-09-16, прочитал задания в inbox/lead.md
+  - Подготовил корректные curl для setWebhook/getWebhookInfo (без домена)
+  - Подтвердил контур MailBox и /api/tg/send для пингов
+- blockers:
+  - Нет подтверждённого <PUBLIC_DOMAIN> для финальной команды setWebhook
+- next:
+  - Реализую /partners/{kr,shatun} (моки + галерея + CTA), /search MVP
+  - Обновлю docs/REPORTS.md и вернусь с чеклистом 1–5 через 60 минут
