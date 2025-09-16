@@ -151,7 +151,7 @@
   - Структурные правки: локальный tsconfig base, .env.example, Node 20 в vercel.json.
 - В работе (до следующего часа):
   - Архив `api/*` через прокси, обновление README.
-  - Закрепление Node 20 в CI, required checks.
+  - Закрепление Node 20 в CI, required checks. (Node 20 обновлён в .github/workflows/ci.yml)
   - Старт миграций Supabase (enum/uuid + функции переходов + RLS).
 - Риски/заметки:
   - Консолидация миграций (`schema.sql` vs `0006_*`) требует аккуратности.
