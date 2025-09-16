@@ -3,19 +3,10 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-    commit-message:
-      prefix: "deps"
-    reviewers:
-      - "PosPk"
+      interval: "weekly"
+    open-pull-requests-limit: 5
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-    commit-message:
-      prefix: "deps"
-    reviewers:
-      - "PosPk"
+      interval: "weekly"
 

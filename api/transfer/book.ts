@@ -15,10 +15,10 @@ export default async function handler(req: any, res: any) {
 			.single();
 		if (hErr || !hold) { res.status(404).json({ error: 'Hold not found' }); return; }
 		if (new Date(hold.expires_at).getTime() < Date.now()) { res.status(410).json({ error: 'Hold expired' }); return; }
-		// Create booking (reserved)
+		// Create generic booking and link to transfer seats
 		const { data: booking, error: bErr } = await supabase
-			.from('transfer_bookings')
-			.insert({ trip_id: hold.trip_id, user_id: hold.user_id ?? null, seats: hold.seat_ids, status: 'reserved' })
+			.from('bookings')
+			.insert({ kind: 'transfer', title: 'Transfer booking', user_id: hold.user_id ?? null, status: 'created', total: null })
 			.select('id')
 			.single();
 		if (bErr) throw bErr;
@@ -28,6 +28,8 @@ export default async function handler(req: any, res: any) {
 			.update({ status: 'booked' })
 			.eq('trip_id', hold.trip_id)
 			.in('seat_id', hold.seat_ids);
+		// Cleanup hold
+		await supabase.from('transfer_holds').delete().eq('id', hold_id);
 		res.status(200).json({ booking_id: booking.id });
 	} catch (e: any) {
 		res.status(500).json({ error: e?.message || 'Booking failed' });

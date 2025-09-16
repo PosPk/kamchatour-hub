@@ -7,7 +7,7 @@ set -euo pipefail
 #   export EXPO_PUBLIC_BUGSNAG_API_KEY=...
 #   bash scripts/set-vercel-env.sh
 
-required=(VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID)
+required=(VERCEL_TOKEN VERCEL_PROJECT_ID)
 for k in "${required[@]}"; do
   if [ -z "${!k:-}" ]; then
     echo "Missing required env: $k" >&2
@@ -22,9 +22,14 @@ ensure_var() {
     echo "Skip $name: empty value"
     return 0
   fi
-  echo "$value" | vercel env add "$name" production --yes --token="$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" || true
-  echo "$value" | vercel env add "$name" preview    --yes --token="$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" || true
-  echo "$value" | vercel env add "$name" development --yes --token="$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" || true
+  local scope_args=()
+  if [ -n "${VERCEL_ORG_ID:-}" ]; then
+    scope_args=(--scope "$VERCEL_ORG_ID")
+  fi
+  # Pass project as positional arg; pipe value into interactive add
+  echo "$value" | vercel env add "$name" production "$VERCEL_PROJECT_ID" --token="$VERCEL_TOKEN" "${scope_args[@]}" || true
+  echo "$value" | vercel env add "$name" preview    "$VERCEL_PROJECT_ID" --token="$VERCEL_TOKEN" "${scope_args[@]}" || true
+  echo "$value" | vercel env add "$name" development "$VERCEL_PROJECT_ID" --token="$VERCEL_TOKEN" "${scope_args[@]}" || true
 }
 
 # Axiom (serverless logs)
@@ -46,6 +51,7 @@ ensure_var AI_PROVIDER        "${AI_PROVIDER:-}"
 ensure_var DEEPSEEK_API_KEY   "${DEEPSEEK_API_KEY:-}"
 ensure_var GROQ_API_KEY       "${GROQ_API_KEY:-}"
 ensure_var OPENAI_API_KEY     "${OPENAI_API_KEY:-}"
+ensure_var XAI_API_KEY        "${XAI_API_KEY:-}"
 
 # Client monitoring
 ensure_var EXPO_PUBLIC_BUGSNAG_API_KEY "${EXPO_PUBLIC_BUGSNAG_API_KEY:-}"
@@ -53,6 +59,21 @@ ensure_var EXPO_PUBLIC_BUGSNAG_API_KEY "${EXPO_PUBLIC_BUGSNAG_API_KEY:-}"
 # Telegram Bot
 ensure_var TELEGRAM_BOT_TOKEN        "${TELEGRAM_BOT_TOKEN:-}"
 ensure_var TELEGRAM_WEBHOOK_SECRET   "${TELEGRAM_WEBHOOK_SECRET:-}"
+
+# NextAuth (Yandex OAuth)
+ensure_var NEXTAUTH_URL            "${NEXTAUTH_URL:-}"
+ensure_var NEXTAUTH_SECRET         "${NEXTAUTH_SECRET:-}"
+ensure_var YANDEX_CLIENT_ID        "${YANDEX_CLIENT_ID:-}"
+ensure_var YANDEX_CLIENT_SECRET    "${YANDEX_CLIENT_SECRET:-}"
+
+# Yandex Maps (client/server)
+ensure_var NEXT_PUBLIC_YANDEX_MAPS_API_KEY "${NEXT_PUBLIC_YANDEX_MAPS_API_KEY:-}"
+ensure_var YANDEX_MAPS_API_KEY            "${YANDEX_MAPS_API_KEY:-}"
+
+# Supabase anon key for client usage if needed
+ensure_var SUPABASE_ANON_KEY "${SUPABASE_ANON_KEY:-}"
+
+echo "Done: attempted to add env vars to Vercel (prod/preview/dev)."
 
 echo "Done: attempted to add env vars to Vercel (prod/preview/dev)."
 
