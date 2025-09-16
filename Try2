@@ -188,6 +188,16 @@
   - AI-i18n / Data / GIS / ContentSEO / Growth / PartnerOps / Support / Legal / FinOps / DesignSystem / Release / Secrets / BackupDR: 0%
   - AI-CodeQuality: 20%
 
+Лог (продолжение)
+- DevSecOps: включаю required checks в CI (lint/typecheck/build), готовлю branch protection для main.
+- Code quality: подготавливаю конфиги Prettier и усиленные правила ESLint (import/order, no-explicit-any, consistent-type-imports), единый error/log wrapper для app/api/*.
+- Types: план удаления временных shim типов (types/shims.d.ts) после подключения корректных типов Node/Next.
+- API: архив legacy `api/*` через тонкие прокси на `app/api/*` — в процессе.
+- Docs/ENV: обновление README под ENV-конвенцию, добавлен `.env.example` (ранее), начата синхронизация переменных в Vercel.
+- DB (Фаза 2): готовлю черновик миграций — enum `booking_status(payment_status)` + UUID PK выравнивание, скелет функций переходов и обновлённые RLS.
+- Домен: учтён `tourhab.ru` — план к обновлению base URLs, HSTS/CSP, robots/sitemap/canonical.
+- Безопасность: проверка отсутствия секретов в Try2 и коде; токены — только в секретах окружений.
+
 Назначения/замены ИИ (оптимизация команды)
 - Замена: AI-DBA → Senior AI-DBA (экспресс‑консолидация 0006/enums/uuid/RLS).
 - Замена: AI-QA → AI-QA‑Playwright (e2e checkout/transfer + CI).
