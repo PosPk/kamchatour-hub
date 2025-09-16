@@ -2,24 +2,24 @@ name: Vercel Env Dump
 
 on:
   workflow_dispatch:
+    inputs:
+      vercel_org_id:
+        description: Vercel team/org slug or ID (e.g., pospks-projects)
+        required: true
+        default: pospks-projects
+      vercel_project_id:
+        description: Vercel project ID (e.g., prj_7IsGks2Kk8TfpfFMQFxgqf86vePk)
+        required: true
+        default: prj_7IsGks2Kk8TfpfFMQFxgqf86vePk
 
 jobs:
   dump:
     runs-on: ubuntu-latest
-    env:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verify secrets
-        run: |
-          if [ -z "${VERCEL_TOKEN}" ] || [ -z "${VERCEL_ORG_ID}" ] || [ -z "${VERCEL_PROJECT_ID}" ]; then
-            echo "::error::Missing Vercel secrets. Set VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID in repo/team secrets."; exit 1; fi
-
-      - name: Setup Node
+      - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -27,22 +27,38 @@ jobs:
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
 
-      - name: Dump production env
-        run: vercel env ls --project "$VERCEL_PROJECT_ID" --environment production --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" | tee vercel-env-production.txt
+      - name: Dump env (production)
+        id: prod
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          ORG: ${{ inputs.vercel_org_id }}
+          PROJECT: ${{ inputs.vercel_project_id }}
+        run: |
+          vercel env ls --project "$PROJECT" --environment production --token "$VERCEL_TOKEN" --scope "$ORG" | tee prod.txt | cat
 
-      - name: Dump preview env
-        run: vercel env ls --project "$VERCEL_PROJECT_ID" --environment preview --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" | tee vercel-env-preview.txt
+      - name: Dump env (preview)
+        id: prev
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          ORG: ${{ inputs.vercel_org_id }}
+          PROJECT: ${{ inputs.vercel_project_id }}
+        run: |
+          vercel env ls --project "$PROJECT" --environment preview --token "$VERCEL_TOKEN" --scope "$ORG" | tee preview.txt | cat
 
-      - name: Dump development env
-        run: vercel env ls --project "$VERCEL_PROJECT_ID" --environment development --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" | tee vercel-env-development.txt
+      - name: Dump env (development)
+        id: dev
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          ORG: ${{ inputs.vercel_org_id }}
+          PROJECT: ${{ inputs.vercel_project_id }}
+        run: |
+          vercel env ls --project "$PROJECT" --environment development --token "$VERCEL_TOKEN" --scope "$ORG" | tee development.txt | cat
 
-      - name: Upload artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vercel-env-dump
+          name: vercel-envs
           path: |
-            vercel-env-production.txt
-            vercel-env-preview.txt
-            vercel-env-development.txt
-          retention-days: 7
-
+            prod.txt
+            preview.txt
+            development.txt
