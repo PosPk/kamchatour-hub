@@ -41,3 +41,11 @@
   - Ответить в docs/inbox/follow.md по шаблону (чеклист 1–5, % прогресса)
   - При блокере — ping через POST /api/tg/send
 - due: 10m (первый ping при блокере)
+
+- when: 2025-09-16T12:55Z
+- task: Доступы Vercel — оформить
+- details:
+  - Прислать свой EMAIL для инвайта в команду pospks-projects и проект workspace
+  - После приглашения: vercel login → принять инвайт → vercel whoami
+  - Альтернатива: создать личный Vercel Token и прислать его временно (лучше EMAIL)
+- due: asap
