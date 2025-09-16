@@ -199,6 +199,13 @@
 - Домен: учтён `tourhab.ru` — план к обновлению base URLs, HSTS/CSP, robots/sitemap/canonical.
 - Безопасность: проверка отсутствия секретов в Try2 и коде; токены — только в секретах окружений.
 
+AI Keys — расположение и политика (зафиксировано)
+- Vercel env (workspace): DEEPSEEK_API_KEY, XAI_API_KEY, OPENAI_API_KEY, V0_API_KEY (опц. V0_API_URL), AI_PROVIDER — значения храним ТОЛЬКО в Vercel/CI.
+- Репозиторий (docs, без секретов): docs/ENV_KEYS.md; docs/ACCESS.md (V0 примечания) — добавить справочник и инструкции.
+- Код (entry points): app/api/ai/chat/route.ts; app/api/ai/recommend/route.ts; (план) app/api/ai/{ensemble,loop,safety}/route.ts; lib/ai/policy.ts; (план) app/api/ai/v0/route.ts.
+- Локально: .env.local (через scripts/sync-local-env.sh) — только для разработчиков, без коммита в репо.
+- Примечание: значения переменных не пишем в Try2/репозиторий, только в защищённые окружения.
+
 Анализ документа `try` (TourHab — Экосистема) — плюсы/минусы и выводы
 Плюсы (за)
 - Видение и ценности: чётко сформулированы (LCP<2.5s, mobile‑first, прозрачность, ИИ‑поддержка) — согласуются с нашими NFR и целями UX/перформанса.
