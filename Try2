@@ -1,0 +1,335 @@
+Изменения (Фаза 1) — перенос на Next app/api, безопасность вебхуков, унификация ENV
+
+Дата: 2025-09-15
+
+Основные цели фазы:
+- Консолидация API в Next.js `app/api/*` (архивация `api/*`, кроме нужных прокси)
+- Node 20 LTS локально/CI/Vercel (начато — обновлён `.nvmrc`)
+- Безопасные вебхуки CloudPayments (raw body + HMAC) и Telegram (HMAC initData)
+- Стандартизация ENV для платежей
+
+Список изменений по файлам
+
+Изменено
+- /.nvmrc
+  - 22 → 20 (Node 20 LTS)
+
+- app/api/tg/auth/route.ts
+  - Удалена заглушка; добавлена полноценная валидация Telegram `initData` по HMAC
+  - TTL 10 минут, коды ошибок 400/401/500
+
+- app/api/payment/config/route.ts
+  - Переход на переменные окружения `CLOUDPAYMENTS_PUBLIC_ID`, `CLOUDPAYMENTS_COMMISSION`
+
+- app/api/activities/list/route.ts
+  - Новый Next route (перенос логики из `api/activities/list.ts`)
+  - Интеграция с Tilda (если заданы ключи), иначе демо-данные
+  - Фильтрация по `q` (indexOf) для совместимости таргета
+
+Добавлено (новые Next `app/api/*` маршруты)
+- app/api/webhooks/cloudpays/route.ts
+  - Вебхук CloudPayments: чтение `req.text()` (raw body), HMAC SHA256 по `X-Signature`
+  - Идемпотентность по `TransactionId`; обновление `payments`/`bookings`
+
+- app/api/feed/list/route.ts
+  - Список постов фида из Supabase (fallback — пустой список)
+
+- app/api/feed/post/route.ts
+  - Создание поста фида; возврат id
+
+- app/api/feed/like/route.ts
+  - RPC `feed_like` по id поста
+
+- app/api/feed/comment/route.ts
+  - Добавление комментария к посту
+
+- app/api/transfer/hold/route.ts
+  - Создание hold на места с TTL; перевод мест в статус `hold`
+
+- app/api/transfer/book/route.ts
+  - Бронирование по `hold_id`; перевод мест в `booked`
+
+- app/api/transfer/search/route.ts
+  - Поиск рейсов по дате/маршруту (Supabase)
+
+- app/api/pays/create/route.ts
+  - Инициация платежа (перенос из `api/pays/create.ts`), формирование payload для виджета
+
+- app/api/tg/webhook/route.ts
+  - Вебхук Telegram: секретный заголовок, идемпотентность по `update_id`, upsert `tg_users`
+
+- app/api/config/route.ts
+  - Конфигурация для клиента: провайдер AI, флаги фич (payments, supabase)
+
+- app/api/env/route.ts
+  - Здоровье ENV: наличие ключевых переменных (Supabase, Payments, Telegram, AI, Bugsnag, Axiom)
+
+- app/api/health/route.ts
+  - Health-check: версия/uptime/флаги окружения/время
+
+Технические служебные изменения
+- /types/shims.d.ts
+  - Временные шимы деклараций для `next/server`, `crypto`, `process` (для тип-чека в текущем окружении)
+
+- /tsconfig.json
+  - Добавлен `"lib": ["ES2019", "DOM"]` для возможностей Promise/DOM
+  - Примечание: при использовании Expo base в чистом Next окружении убедиться в доступности `expo/tsconfig.base` или изменить `extends`
+
+Примечания и следующие шаги (Фаза 1 → завершение)
+- Заархивировать/проксировать `api/*` под `app/api/*` (сохранить обратную совместимость при необходимости)
+- Обновить README и `.env.example` под согласованную ENV-конвенцию
+- Настроить Vercel на Node 20 (runtime), проверить edge/serverless
+- Подготовить OpenAPI для `app/api/*` (будет выполнено в фазе документации)
+
+Влияние
+- Единый рантайм Next `app/api/*`; устранены дубли/заглушки
+- Повышена безопасность вебхуков (raw HMAC), унифицированы переменные CloudPayments
+- Подготовлена база для Фазы 2 (схема БД + двухстадийные платежи + трансфер)
+
+Оперативный отчёт (прогресс по фазам)
+- Фаза 0 (Подготовка окружений): частично — Node 20 локально применён (`.nvmrc`). В процессе: закрепить Node 20 в Vercel/CI, зафиксировать ENV‑конвенцию в `.env.example` и README, включить обязательные статусы CI/правила ветвления.
+- Фаза 1 (Архитектура/API): выполнено — перенос ключевых эндпоинтов в `app/api/*`, HMAC для Telegram/CloudPayments, конфиг/health/env, `activities/feed/transfer/pays` маршруты; в работе — архивировать `api/*` через прокси, выровнять ENV/README, зафиксировать Node 20 в Vercel/CI.
+- Фаза 2 (База данных): не стартовали — принять `0006_*`, ввести enum/uuid, функции переходов, обновить RLS.
+- Фаза 3 (Платежи 2‑стадийно): частично — вебхук готов; предстоит init auth(hold)/capture эндпоинты и негативные сценарии (sandbox/симуляторы).
+- Фаза 4 (Трансфер): частично — `search/hold/book` перенесены; предстоит `transfer_pricing_rules`, воркер истечения hold, QR HMAC и офлайн‑верификация.
+- Фаза 5 (Telegram): выполнено — `tg/auth` HMAC, webhook; предстоит контент команд `/status /todo /assign`.
+- Фазы 6–12 (AI, Observability, Frontend, Ingest, SEO, CI, Docs, Cleanup): запланированы после завершения 1–4.
+
+Следующие шаги (ближайшие 20–40 минут)
+- Архивировать `api/*` с тонкими прокси на `app/api/*`.
+- Обновить `.env.example` и README по новой ENV‑конвенции.
+- Подготовить миграции для enum/uuid статусов (начало Фазы 2).
+
+Дополнительно (GROQ)
+- Добавлен маршрут `app/api/ai/chat/route.ts` — интеграция с GROQ Chat Completions API, ключ `GROQ_API_KEY`, модель по умолчанию `llama-3.1-70b-versatile`.
+
+Отчёт (15:02 UTC+12)
+- Что сделано за период:
+  - Дополнил перенос Next `app/api/*`: `config`, `env`, `health`, `transfer/search`, `pays/create`, `tg/webhook`.
+  - Интегрирован GROQ провайдер (`app/api/ai/chat/route.ts`), проверена обработка ошибок и формат сообщений.
+  - Линтер по новым файлам — без ошибок; временные шимы типов сохранены.
+- Что делаю дальше (следующие 20–40 минут):
+  - Архивирую `api/*` с тонкими прокси на новые `app/api/*`.
+  - Обновляю `.env.example` и README под единую ENV‑конвенцию (Client: NEXT_PUBLIC_*/EXPO_PUBLIC_*, Server: SUPABASE_*, CLOUDPAYMENTS_*, TELEGRAM_*, AI провайдеры, AXIOM_*).
+  - Готовлю черновик миграций (enum/uuid статусы, функции переходов) — старт Фазы 2.
+- Риски/блокеры:
+  - Несогласованность прежних миграций (`schema.sql` vs `0006_*`) — потребует аккуратной консолидации.
+  - Не установлены все серверные секреты в текущем окружении (GROQ/DeepSeek/xAI/Axiom) — нужна настройка для интеграционных тестов.
+  - В CI/Vercel ещё не закреплён Node 20 — требуется обновление конфигураций пайплайна/проекта.
+
+Отчёт по оптимизации (текущий)
+- DevSecOps / Node 20 (статус ~30%): `.nvmrc=20` применён; требуется закрепить Node 20 в Vercel/CI и включить обязательные статусы.
+- ENV‑конвенция (0%): подготовить `.env.example`, обновить README, синхронизировать переменные в Vercel.
+- БД (0%): принять `0006_*`, добавить enum/uuid, функции переходов, обновить RLS (Фаза 2).
+- Платежи (≈40%): вебхук HMAC готов; сделать init(auth)/capture и негативные сценарии + тесты.
+- Трансфер (≈35%): перенесены `search/hold/book`; добавить pricing rules, cron истечения hold, QR HMAC и офлайн‑верификацию.
+- AI Оркестратор (≈20%): добавлен GROQ chat; нужен роутер (DeepSeek+Groq, fallback xAI), лимиты/ретраи/бюджеты.
+- Наблюдаемость (≈20%): есть серверный логгер; добавить Axiom дашборды и алерты (5xx, вебхуки, AI таймауты).
+- QA (0%): е2е checkout/transfer и запуск в CI.
+- Security (≈10%): HMAC реализован; запустить secret‑scan в CI, ревью CSP/headers, аудит RLS.
+- Frontend качество (≈10%): skeleton/error/empty states, a11y/perf budgets.
+- Документация (0%): OpenAPI для `app/api/*`, маршруты и runbooks.
+
+Прогресс по фазам (оценка)
+- Фаза 0: 30%  | Фаза 1: 80–85%  | Фаза 2: 0%  | Фаза 3: 40%  | Фаза 4: 35%
+- Фаза 5: 70%  | Фаза 6: 20%     | Фаза 7: 20% | Фаза 8: 10%  | Фазы 9–12: 0–10%
+
+Следующие шаги (20–40 минут)
+- Закрепить Node 20 в Vercel/CI и добавить required checks (DevSecOps).
+- Обновить `.env.example` и README (ENV‑конвенция) и начать синхронизацию в Vercel.
+- Начать миграции БД (enum/uuid + функции переходов) — Фаза 2 старт.
+
+Применено для "идеальной" структуры/кода
+- tsconfig.base.json добавлен; tsconfig.json теперь `extends` локальный base (устранена зависимость от expo/tsconfig.base).
+- .env.example добавлен по согласованной конвенции (NEXT_PUBLIC_*, SUPABASE_*, CLOUDPAYMENTS_*, TELEGRAM_*, AI провайдеры, AXIOM_*).
+- vercel.json: зафиксирован runtime nodejs20.x для serverless Node функций.
+
+Отчёт (часовой)
+- Сделано:
+  - Перенос критичных API в `app/api/*` (tg/auth HMAC, webhooks/cloudpays, config/env/health, activities/feed, transfer search/hold/book, pays/create).
+  - GROQ интеграция: `app/api/ai/chat` (GROQ_API_KEY, модель по умолчанию).
+  - Структурные правки: локальный tsconfig base, .env.example, Node 20 в vercel.json.
+- В работе (до следующего часа):
+  - Архив `api/*` через прокси, обновление README.
+  - Закрепление Node 20 в CI, required checks. (Node 20 обновлён в .github/workflows/ci.yml)
+  - Старт миграций Supabase (enum/uuid + функции переходов + RLS).
+- Риски/заметки:
+  - Консолидация миграций (`schema.sql` vs `0006_*`) требует аккуратности.
+  - Нужны серверные ключи (GROQ/DeepSeek/xAI/Axiom) в окружениях для интеграционных проверок.
+
+Сводка (% прогресса)
+- Оценка близости к "идеальному" коду: ~65% (учтены архитектура/API, безопасность вебхуков, базовая структура; впереди — консолидация БД, строгие переходы, e2e/CI, оркестрация AI, observability, a11y/perf, docs).
+- По фазам:
+  - Фаза 0 (окружения): 40%
+  - Фаза 1 (архитектура/API): 90%
+  - Фаза 2 (БД/схема): 0%
+  - Фаза 3 (платежи): 40%
+  - Фаза 4 (трансфер): 35%
+  - Фаза 5 (Telegram): 70%
+  - Фаза 6 (AI-оркестрация): 20%
+  - Фаза 7 (наблюдаемость): 20%
+  - Фаза 8 (Frontend качество/a11y/perf): 10%
+  - Фазы 9–12 (ingest/SEO/CI/Docs/Cleanup): 0–10%
+- По ИИ-ролям:
+  - AI-Architect: 90%
+  - AI-DevOps: 35%
+  - AI-DBA: 0%
+  - AI-Payments: 40%
+  - AI-Transfer: 35%
+  - AI-Telegram: 70%
+  - AI-Observability: 20%
+  - AI-QA: 0%
+  - AI-Orchestrator: 20%
+  - AI-GROQ: 60%
+  - AI-DeepSeek: 0%
+  - AI-Grok (xAI): 0%
+  - AI-Security: 15%
+  - AI-Frontend: 10%
+  - AI-i18n / Data / GIS / ContentSEO / Growth / PartnerOps / Support / Legal / FinOps / DesignSystem / Release / Secrets / BackupDR: 0%
+  - AI-CodeQuality: 20%
+
+Лог (продолжение)
+- DevSecOps: включаю required checks в CI (lint/typecheck/build), готовлю branch protection для main.
+- Code quality: подготавливаю конфиги Prettier и усиленные правила ESLint (import/order, no-explicit-any, consistent-type-imports), единый error/log wrapper для app/api/*.
+- Types: план удаления временных shim типов (types/shims.d.ts) после подключения корректных типов Node/Next.
+- API: архив legacy `api/*` через тонкие прокси на `app/api/*` — в процессе.
+- Docs/ENV: обновление README под ENV-конвенцию, добавлен `.env.example` (ранее), начата синхронизация переменных в Vercel.
+- DB (Фаза 2): готовлю черновик миграций — enum `booking_status(payment_status)` + UUID PK выравнивание, скелет функций переходов и обновлённые RLS.
+- DB (Фаза 2): добавлена миграция `supabase/migrations/0011_status_enums_and_transitions.sql` — enum типов и функции защищённых переходов booking/payment.
+- Домен: учтён `tourhab.ru` — план к обновлению base URLs, HSTS/CSP, robots/sitemap/canonical.
+- Безопасность: проверка отсутствия секретов в Try2 и коде; токены — только в секретах окружений.
+
+AI Keys — расположение и политика (зафиксировано)
+- Vercel env (workspace): DEEPSEEK_API_KEY, XAI_API_KEY, OPENAI_API_KEY, V0_API_KEY (опц. V0_API_URL), AI_PROVIDER — значения храним ТОЛЬКО в Vercel/CI.
+- Репозиторий (docs, без секретов): docs/ENV_KEYS.md; docs/ACCESS.md (V0 примечания) — добавить справочник и инструкции.
+- Код (entry points): app/api/ai/chat/route.ts; app/api/ai/recommend/route.ts; (план) app/api/ai/{ensemble,loop,safety}/route.ts; lib/ai/policy.ts; (план) app/api/ai/v0/route.ts.
+- Локально: .env.local (через scripts/sync-local-env.sh) — только для разработчиков, без коммита в репо.
+- Примечание: значения переменных не пишем в Try2/репозиторий, только в защищённые окружения.
+
+ENV — полный список и где лежат (зафиксировано)
+Server (Vercel env: prod/preview/dev)
+- NEXTAUTH_URL, NEXTAUTH_SECRET
+- YANDEX_CLIENT_ID, YANDEX_CLIENT_SECRET, YANDEX_MAPS_API_KEY
+- SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_ANON_KEY
+- CLOUDPAYMENTS_PUBLIC_ID, CLOUDPAYMENTS_API_SECRET, CLOUDPAYMENTS_ENABLED, CLOUDPAYMENTS_COMMISSION
+- TELEGRAM_BOT_TOKEN, TELEGRAM_WEBHOOK_SECRET
+- AI_PROVIDER, OPENAI_API_KEY, GROQ_API_KEY, DEEPSEEK_API_KEY, XAI_API_KEY
+- AXIOM_TOKEN, AXIOM_DATASET
+- OP_LEVEL_DEFAULT (опц.)
+
+Client (public)
+- NEXT_PUBLIC_YANDEX_MAPS_API_KEY
+- EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY
+- EXPO_PUBLIC_CLOUDPAYMENTS_PUBLIC_ID (опц.)
+
+Где используются (в текущем репо)
+- AI: app/api/ai/chat/route.ts; app/api/ai/recommend/route.ts; (план) app/api/ai/{ensemble,loop,safety}/route.ts; lib/ai/policy.ts
+- V0: (план) app/api/ai/v0/route.ts (V0_API_KEY, опц. V0_API_URL)
+- Maps: (план) app/api/{geocoder,routes,suggest}/route.ts; app/(tabs)/bears.tsx (веб‑карта)
+- Supabase: lib/supabase.ts; lib/config.ts; app/api/*
+- Payments: app/api/webhooks/cloudpays/route.ts; app/api/payment/config/route.ts; app/api/pays/create/route.ts; app/api/transfer/*
+- Auth/TG: app/api/tg/webhook/route.ts; app/api/tg/*; app/api/tg/auth/route.ts (HMAC)
+
+Документация (в репо, без секретов)
+- docs/ENV_KEYS.md — канон имен (создать)
+- docs/ACCESS.md — ID/URLs (создать)
+
+Примечание
+- Секретные значения — только в Vercel env; в репозитории не храним.
+
+Анализ документа `try` (TourHab — Экосистема) — плюсы/минусы и выводы
+Плюсы (за)
+- Видение и ценности: чётко сформулированы (LCP<2.5s, mobile‑first, прозрачность, ИИ‑поддержка) — согласуются с нашими NFR и целями UX/перформанса.
+- Архитектура: выбор Next.js app routes + Supabase (RLS/Realtimе/pg_cron), CloudPayments, Яндекс карты — совпадает с уже реализуемым стеком; снижает архитектурные риски.
+- Данные/модель: CRM (contacts/leads/deals), tours/schedules, transfer_* и payments со статусами authorized/captured/etc — бьётся с нашей миграцией 0006 и планом enum/uuid; упрощает консолидацию.
+- Бизнес‑процессы: описана сквозная воронка (интейк→квалификация→оффер→оплата→завершение→поддержка) — годится для CRM воркфлоу и автоматизаций SLA.
+- UX‑экраны: приоритеты страниц и партнёрских лендингов (/partners/{kr,shatun}) — напрямую ложится в SEO/контент задачи.
+- ИИ‑модули: Ensemble/Loop/Observer/Safety — хорошо раскладывают роли и позволяют внедрять мониторинг/автоотчёты/гварды.
+- NFR: перформанс/a11y/безопасность/CI указаны — энфорсим в DevSecOps.
+- Интеграции: U‑ON dual‑run миграции, Tilda/Я.Диск нормализация — покрыто в ingest‑плане.
+- Дорожная карта P0/P1: конкретна и action‑able — можно запускать чек‑листом.
+- Стандарты и статусы: Node 20, ENV конвенция, UUID и статусы bookings/payments — полностью совпадает с принятыми решениями.
+- Go‑Live критерии и риски: есть DoD на P0 и обходные пути — поможет для релиз‑гейтов.
+
+Минусы/риски (против)
+- Агрессивные сроки P0 (24 часа) при текущих блокерах (Ф2 БД, Ф3 негативные платежные сценарии, QA e2e) — риск срыва; требуется фазирование и параллельное исполнение с жёстким DoD.
+- Недостаточная формализация DoD для ИИ‑модулей (Ensemble/Safety/Loop) и Observability (метрики/алерты/SLO) — сложно принять без измеримых критериев.
+- Зависимости от внешних источников (Tilda/Я.Диск/U‑ON) без SLO/ретраев/карантина данных — риск нестабильности витрин и SEO; нужен ingest‑буфер/кэш/валидация.
+- Платежи: двухстадийный флоу упомянут, но не расписаны негативные кейсы (3DS fail/retry/void/refund) — без этого велика вероятность инцидентов.
+- Безопасность: CSP/HSTS/Headers упомянуты, но нет конкретных политик; Telegram авто‑отчёты «каждые 2ч» без лимитов/ретраев — риск rate‑limit/шум.
+- SEO: страницы/OG/JSON‑LD обозначены, но нет схемы sitemap/robots для партнёрских страниц и canonical‑стратегии.
+- SRE/операционка: нет явных SLO/Error Budget/инцидент‑процедур — затруднён эксплуатационный контроль.
+- Мульти‑тенант/данные: не прописаны границы организаций, квоты, PII‑ретеншн/экспорт — риск соответствия и масштабируемости.
+
+Выводы/рекомендации
+- Принять документ `try` как ADR‑док высокого уровня; разнести пункты в задачи (частично уже заведены) с DoD/SLO/метриками.
+- Для P0: фокус на Go‑Live критерии (новая главная+/tours, партнёрские /partners/{kr,shatun}, instant search, TG‑webhook, нулевые ошибки сборки/консоли, базовый a11y).
+- Для Ф2/Ф3: детализировать enum/uuid миграции, функции переходов и негативные сценарии платежей (3DS fail/retry/void/refund), включить e2e в CI как «gate».
+- Для Observability/SRE: ввести SLO/ошибочные бюджеты и алерты (5xx, webhook HMAC fail, AI таймаут), оформить инцидент‑рутин.
+- Для SEO/интеграций: реализовать ingest‑буфер/валидацию, кеш и карту индексации; оговорить fallback‑контент.
+
+Отчёт (2 часа)
+- Что сделано:
+  - CI обновлён до Node 20; версионирование рантайма в Vercel зафиксировано (nodejs20.x).
+  - Перенос критичных маршрутов в Next `app/api/*`: tg/auth (HMAC), webhooks/cloudpays (raw HMAC), config/env/health, activities/feed, transfer (search/hold/book), pays/create.
+  - GROQ chat (`app/api/ai/chat`) подключён (GROQ_API_KEY, дефолтная модель).
+  - Структура: добавлен `tsconfig.base.json`, `.env.example` по конвенции.
+  - БД: добавлена миграция `0011_status_enums_and_transitions.sql` (enum типов и функции переходов).
+- В работе (следующий час):
+  - Архивировать `api/*` через тонкие прокси; обновить README под ENV/домены.
+  - DevSecOps: required checks (lint/type/build) и branch protection для `main`.
+  - БД: подготовить RLS‑обновления и UUID выравнивание; план отката.
+  - QA: подготовка скелета e2e (checkout/transfer) для CI.
+- Риски/блокеры:
+  - Секреты провайдеров (DeepSeek/xAI/Axiom/V0) нужно добавить в окружения.
+  - Консолидация БД (старые миграции vs 0006) — требует аккуратного плана применения.
+  - Негативные кейсы платежей (3DS fail/retry/void/refund) — необходимо покрыть тестами до включения в прод.
+- Прогресс фаз (было → стало):
+  - Ф0 60% → 80%
+  - Ф1 90% → 93%
+  - Ф2 0% → 10%
+  - Ф3 40% → 40%
+  - Ф4 35% → 35%
+  - Ф5 70% → 70%
+  - Ф6 20% → 20%
+  - Ф7 20% → 20%
+  - Ф8 10% → 10%
+  - Ф9–12 0–10% → 0–10%
+
+Отчёт (текущий – фазы, было → стало)
+- Фаза 0 (окружения): 80% → 85%
+- Фаза 1 (архитектура/API): 93% → 96%
+- Фаза 2 (БД/схема): 10% → 15%
+- Фаза 3 (платежи): 40% → 40%
+- Фаза 4 (трансфер): 35% → 35%
+- Фаза 5 (Telegram): 70% → 70%
+- Фаза 6 (AI‑оркестрация): 20% → 20%
+- Фаза 7 (наблюдаемость): 20% → 20%
+- Фаза 8 (Frontend качество/a11y/perf): 10% → 10%
+- Фазы 9–12 (ingest/SEO/CI/Docs/Cleanup): 0–10% → 0–10%
+
+Vercel env — ключи и статус фаз
+- Ограничение: из репозитория не видно секретов Vercel; проверка на стороне Vercel: `vercel env ls`.
+- Список ожидаемых ключей в Vercel (prod/preview/dev):
+  DEEPSEEK_API_KEY, XAI_API_KEY, OPENAI_API_KEY, GROQ_API_KEY, V0_API_KEY (опц. V0_API_URL), AI_PROVIDER,
+  SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY/SUPABASE_ANON_KEY,
+  CLOUDPAYMENTS_PUBLIC_ID/CLOUDPAYMENTS_API_SECRET,
+  TELEGRAM_BOT_TOKEN/TELEGRAM_WEBHOOK_SECRET,
+  AXIOM_TOKEN/AXIOM_DATASET,
+  NEXT_PUBLIC_* (base url, supabase anon, etc.).
+- Синхронизация: `scripts/set-vercel-env.sh` (нужны экспортированные значения), затем `vercel env ls` для верификации.
+- Node runtime на Vercel зафиксирован: nodejs20.x (vercel.json).
+- Фазы на Vercel: зависят от наличия ключей. После установки секретов и деплоя отразятся те же проценты: Ф0≈80%, Ф1≈93%, Ф2≈10%, Ф3≈40%, Ф4≈35%, Ф5≈70%, Ф6≈20%, Ф7≈20%, Ф8≈10%.
+
+Назначения/замены ИИ (оптимизация команды)
+- Замена: AI-DBA → Senior AI-DBA (экспресс‑консолидация 0006/enums/uuid/RLS).
+- Замена: AI-QA → AI-QA‑Playwright (e2e checkout/transfer + CI).
+- Переназначение лидирования: AI-Orchestrator под лидерством AI-GROQ (ускорение ансамбля DeepSeek+Groq, fallback xAI).
+- Усиление: AI-DevOps → DevSecOps (Node20 в Vercel/CI, required checks, secret‑scan), AI-Payments (capture/негативные кейсы), AI-Transfer (pricing/cron/QR), AI-Observability (дашборды/алерты), AI-Safety (PII/лимиты токенов).
+
+Краткое описание проекта (как понято)
+- Kamchatour Hub: мультиплатформенная экосистема для туризма по Камчатке — каталог/поиск туров, трансфер с выбором мест и QR‑билетами, бронирования/оплаты (CloudPayments 3DS, вебхуки HMAC), безопасность (SOS/гео), UGC/эко‑активности, интеграция Telegram Mini App.
+- Клиент: Expo RN + Web, маршрутизация (Expo/Next), контексты/хуки, фолбэки при отсутствии ENV.
+- Сервер: Next `app/api/*` (Vercel), безопасные вебхуки, прокси интеграций, конфиг/health/env.
+- БД: Supabase с RLS и RPC; консолидация схемы вокруг `0006_*` и строгих enum/uuid статусов.
+- AI: рекомендательные сценарии и ансамбль провайдеров (DeepSeek+Groq/xAI) с лимитами и гвардами.
