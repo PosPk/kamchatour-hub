@@ -1,13 +1,13 @@
 {
   "version": 2,
   "builds": [
-    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "public" } },
     { "src": "api/**/*.js", "use": "@vercel/node" }
   ],
-  "installCommand": "npm ci --no-audit --no-fund --omit=dev",
+  "installCommand": "cd new-web && npm ci --no-audit --no-fund --omit=dev",
+  "buildCommand": "cd new-web && npm install --no-audit --no-fund && npm run build",
+  "outputDirectory": "new-web/out",
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "handle": "filesystem" }
   ]
 }
