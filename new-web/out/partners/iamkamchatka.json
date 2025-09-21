@@ -1,0 +1,14 @@
+[
+  {
+    "id": "iam-001",
+    "title": "Этна-Камчатка: вулканы и океан",
+    "images": [
+      "https://via.placeholder.com/800x500?text=Kamchatka+1"
+    ],
+    "activity": "вулканы",
+    "region": "Петропавловск-Камчатский",
+    "price_from": 45000,
+    "duration_days": 4
+  }
+]
+
