@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm ci --no-audit --no-fund",
+  "devCommand": "npx expo start --web",
+  "builds": [
+    { "src": "dist/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
