@@ -13,6 +13,7 @@ function pickEnv() {
     HAS_NEXTAUTH_SECRET: redact(process.env.NEXTAUTH_SECRET),
     HAS_YANDEX_CLIENT_ID: redact(process.env.YANDEX_CLIENT_ID),
     HAS_YANDEX_CLIENT_SECRET: redact(process.env.YANDEX_CLIENT_SECRET),
+    HAS_GROQ_API_KEY: redact(process.env.GROQ_API_KEY),
   };
 }
 
