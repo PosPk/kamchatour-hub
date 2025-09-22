@@ -70,20 +70,24 @@ export default async function PartnerPage({ params }: { params: { slug: string }
       </section>
 
       {/* Tours list */}
-      <section style={{ display: 'grid', gap: 16 }}>
+      <section style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))' }}>
         {tours.map(t => (
-          <article key={t.id} style={{ border: '1px solid #e8eef5', borderRadius: 12, overflow: 'hidden' }}>
+          <article key={t.id} style={{ border: '1px solid #e8eef5', borderRadius: 12, overflow: 'hidden', display: 'grid', gridTemplateRows: 'auto 1fr' }}>
             {t.images?.[0] ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={t.images[0]} alt={t.title} style={{ width: '100%', height: 220, objectFit: 'cover' }} />
+              <img src={t.images[0]} alt={t.title} style={{ width: '100%', height: 180, objectFit: 'cover' }} />
             ) : null}
             <div style={{ padding: 14, display: 'grid', gap: 6 }}>
               <h3 style={{ margin: 0, fontSize: 16 }}>{t.title}</h3>
-              <p style={{ margin: 0, color: '#5C738A', fontSize: 13 }}>
-                {t.activity} • {t.region} • {t.duration_days} дн.
+              <p style={{ margin: 0, color: '#5C738A', fontSize: 13, display: 'flex', gap: 6, alignItems: 'center' }}>
+                <span>{t.activity}</span>
+                <span>•</span>
+                <span>{t.region}</span>
+                <span>•</span>
+                <span>{t.duration_days} дн.</span>
               </p>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <strong style={{ color: '#2B6CB0' }}>от {t.price_from} ₽</strong>
+                <strong style={{ color: '#2B6CB0', fontSize: 18 }}>от {t.price_from} ₽</strong>
                 <a href="#" style={{ color: '#4A90E2', fontWeight: 700, textDecoration: 'none' }}>Подробнее</a>
               </div>
             </div>
