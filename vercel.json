@@ -5,10 +5,9 @@
     { "src": "api/**/*.js", "use": "@vercel/node" }
   ],
   "installCommand": "cd new-web && npm ci --no-audit --no-fund --omit=dev",
-  "buildCommand": "cd new-web && npm run build",
+  "buildCommand": "cd new-web && npm run build && npm run export",
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "handle": "filesystem" }
   ]
 }
