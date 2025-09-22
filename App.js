@@ -1,8 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 export default function App() {
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    const YM_ID = 104238894;
+    // init ym function
+    // eslint-disable-next-line no-underscore-dangle
+    window.ym = window.ym || function () { (window.ym.a = window.ym.a || []).push(arguments); };
+    // inject tag.js once
+    const src = 'https://mc.yandex.ru/metrika/tag.js?id=' + YM_ID;
+    const exists = Array.from(document.scripts).some(s => s.src === src);
+    if (!exists) {
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = src;
+      const first = document.getElementsByTagName('script')[0];
+      first?.parentNode?.insertBefore(s, first);
+    }
+    // init counter
+    window.ym(YM_ID, 'init', {
+      ssr: true,
+      webvisor: true,
+      clickmap: true,
+      ecommerce: 'dataLayer',
+      accurateTrackBounce: true,
+      trackLinks: true,
+    });
+  }, []);
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
