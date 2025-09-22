@@ -1,0 +1,36 @@
+[
+  {
+    "id": "kr-001",
+    "title": "Рыбалка на р. Камчатка — 1 день",
+    "images": [
+      "https://downloader.disk.yandex.ru/preview/53ef8b63a44d0e7e348975ad27060da06ac53f6e1b88dbdb0cee0bdbf6206f2c/68d1035b/YscvPo3Y7VSJbuV4OssTCurVyyFCLPDu1hJkcB5cyEJo_FydnUbrlMlIrGCvF-0ViVJLWzOBBnCCXqNoE4ibGw%3D%3D?uid=0&filename=20250823_155659.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=0&tknv=v3&size=L&crop=0"
+    ],
+    "activity": "рыбалка",
+    "region": "Елизово, р. Камчатка",
+    "price_from": 12000,
+    "duration_days": 1
+  },
+  {
+    "id": "kr-002",
+    "title": "Рыбалка на р. Камчатка — 2 дня с проживанием",
+    "images": [
+      "https://downloader.disk.yandex.ru/preview/b44cb8f5c45fb0e51902e5064d2ae7a84e6584c1f9a6e76dcf2d945c4ae207c0/68d1035b/5NgYfi0PstCAhG4MZKnfezNXwSJgePV-8nHItFco16MW9puTu2kjrZ5sXSmm2eZa1T_idHiObtHqmKyX9mHMAA%3D%3D?uid=0&filename=20250823_155527.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=0&tknv=v3&size=L&crop=0"
+    ],
+    "activity": "рыбалка",
+    "region": "Елизово, база Камчатская рыбалка",
+    "price_from": 29000,
+    "duration_days": 2
+  },
+  {
+    "id": "kr-003",
+    "title": "Курильское озеро — медведи и рыбалка",
+    "images": [
+      "https://downloader.disk.yandex.ru/preview/21137b0cf369652a25507b23a233dc52354158b6be472a509da916bd8a3a1836/68d1035b/IvsM5txoco54iYuE9irJP9vTbp2VsFTaaYCHTCrds4IyHqfRByV1PF6HMWfU1Emun0AGVxAIo34e8QCrndBPEw%3D%3D?uid=0&filename=%D0%BB%D0%B8%D1%81%D0%B0%20%D1%81%20%D1%80%D1%8B%D0%B1%D0%BE%D0%B9.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=0&tknv=v3&size=L&crop=0"
+    ],
+    "activity": "медведи, рыбалка",
+    "region": "Южная Камчатка, Курильское озеро",
+    "price_from": 45000,
+    "duration_days": 1
+  }
+]
+
