@@ -75,6 +75,10 @@ export default async function PartnerPage({ params }: { params: { slug: string }
 
       {/* Partner badges */}
       <section style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        {slug === 'kr' ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src="/partners/logos/kr.svg" alt="KR" style={{ height: 32 }} />
+        ) : null}
         {['Wi‑Fi', 'All inclusive', 'Поздний заезд', 'Без комаров'].map(b => (
           <span key={b} style={{ background: '#E7F0FB', color: '#2B6CB0', borderRadius: 999, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>{b}</span>
         ))}
