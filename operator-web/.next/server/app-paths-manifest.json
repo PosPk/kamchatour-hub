@@ -1,6 +1,8 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/ai/page": "app/ai/page.js",
+  "/api/assets/presign/route": "app/api/assets/presign/route.js",
+  "/assets/upload/page": "app/assets/upload/page.js",
   "/api/ai/proxy/route": "app/api/ai/proxy/route.js",
   "/login/page": "app/login/page.js",
   "/page": "app/page.js"

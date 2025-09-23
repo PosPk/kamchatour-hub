@@ -22,6 +22,13 @@
       "static/chunks/main-app-2dc1dbd6d8e3efe9.js",
       "static/chunks/app/ai/page-860c1f5c33d5e529.js"
     ],
+    "/assets/upload/page": [
+      "static/chunks/webpack-8658fdbc42bfbbae.js",
+      "static/chunks/fd9d1056-7d9b70e9456442b8.js",
+      "static/chunks/117-611f4e0a9ffc26e1.js",
+      "static/chunks/main-app-2dc1dbd6d8e3efe9.js",
+      "static/chunks/app/assets/upload/page-8e82c4d3b6da9714.js"
+    ],
     "/login/page": [
       "static/chunks/webpack-8658fdbc42bfbbae.js",
       "static/chunks/fd9d1056-7d9b70e9456442b8.js",
