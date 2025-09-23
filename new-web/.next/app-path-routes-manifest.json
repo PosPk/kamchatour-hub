@@ -1,1 +1,1 @@
-{"/_not-found/page":"/_not-found","/api/env/route":"/api/env","/api/health/route":"/api/health","/page":"/","/partners/page":"/partners","/search/page":"/search","/partners/[slug]/page":"/partners/[slug]"}
+{"/_not-found/page":"/_not-found","/api/env/route":"/api/env","/api/health/route":"/api/health","/page":"/","/api/ydb/health/route":"/api/ydb/health","/partners/page":"/partners","/search/page":"/search","/partners/[slug]/page":"/partners/[slug]"}
