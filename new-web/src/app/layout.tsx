@@ -21,6 +21,25 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=104238894', 'ym');
           ym(104238894, 'init', { ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true });
         ` }} />
+        <Script id="jsonld-organization" type="application/ld+json" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Kamchatour Hub",
+          "url": "https://new-web.vercel.app/",
+          "logo": "/favicon.ico",
+          "sameAs": ["https://t.me/KamchatourHub_bot"]
+        }) }} />
+        <Script id="jsonld-website" type="application/ld+json" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Kamchatour Hub",
+          "url": "https://new-web.vercel.app/",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://new-web.vercel.app/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }) }} />
       </head>
       <body>
         <noscript>
