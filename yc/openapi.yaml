@@ -35,4 +35,12 @@ paths:
         tag: "$latest"
       responses:
         '200': { description: OK }
+  /api/ydb/health:
+    get:
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: ${YC_FN_YDB_HEALTH_ID}
+        tag: "$latest"
+      responses:
+        '200': { description: OK }
 

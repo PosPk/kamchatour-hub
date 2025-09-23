@@ -7,6 +7,7 @@ FN_HEALTH := yc-fn-health
 FN_ENV := yc-fn-env
 FN_TG_SEND := yc-fn-tg-send
 FN_TG_WEBHOOK := yc-fn-tg-webhook
+FN_YDB_HEALTH := yc-fn-ydb-health
 
 RUNTIME := nodejs18
 
@@ -19,6 +20,7 @@ package:
 	cd functions/env && $(ZIP) -qr ../../dist-env.zip .
 	cd functions/tg-send && $(ZIP) -qr ../../dist-tg-send.zip .
 	cd functions/tg-webhook && $(ZIP) -qr ../../dist-tg-webhook.zip .
+	cd functions/ydb-health && $(ZIP) -qr ../../dist-ydb-health.zip .
 
 deploy: package
 	$(YC) serverless function version create \
@@ -53,6 +55,14 @@ deploy: package
 	  --memory 128m \
 	  --source-path dist-tg-webhook.zip \
 	  --environment TELEGRAM_BOT_TOKEN=$$TELEGRAM_BOT_TOKEN TELEGRAM_WEBHOOK_SECRET=$$TELEGRAM_WEBHOOK_SECRET TELEGRAM_SEND_SECRET=$$TELEGRAM_SEND_SECRET || true
+	$(YC) serverless function version create \
+	  --function-name $(FN_YDB_HEALTH) \
+	  --runtime $(RUNTIME) \
+	  --entrypoint index.handler \
+	  --execution-timeout 5s \
+	  --memory 128m \
+	  --source-path dist-ydb-health.zip \
+	  --environment YDB_ENDPOINT=$$YDB_ENDPOINT YDB_DATABASE=$$YDB_DATABASE YDB_DOCAPI=$$YDB_DOCAPI || true
 
 apigw:
 	$(YC) serverless api-gateway create --name kamchatour-api --spec openapi.yaml || \
