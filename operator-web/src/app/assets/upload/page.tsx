@@ -10,14 +10,13 @@ export default function UploadPage() {
   async function onUpload() {
     try {
       if (!file || !key) { setMsg('Выберите файл и укажите ключ (путь в бакете)'); return; }
-      const presign = await fetch('/api/assets/presign', {
-        method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ key, contentType: file.type || contentType })
-      }).then(r => r.json());
-      if (!presign.ok) { setMsg('Ошибка пресайна: ' + presign.error); return; }
-      const res = await fetch(presign.url, { method: 'PUT', headers: { 'content-type': file.type || contentType }, body: file });
-      if (!res.ok) { setMsg('Ошибка загрузки: ' + res.status); return; }
-      setMsg('Загружено: s3://' + key);
+      const form = new FormData();
+      form.append('key', key);
+      form.append('file', file);
+      const res = await fetch('/api/assets/upload', { method: 'POST', body: form });
+      const data = await res.json();
+      if (!res.ok || !data.ok) { setMsg('Ошибка: ' + (data.error || res.status)); return; }
+      setMsg('Загружено: s3://' + data.key);
     } catch (e) {
       setMsg('Ошибка: ' + String(e));
     }
