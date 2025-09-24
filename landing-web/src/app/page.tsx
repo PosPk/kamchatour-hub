@@ -52,8 +52,8 @@ export default function Page() {
       {/* Personas grid */}
       <section className="px-6 py-6 grid gap-4">
         <div className="grid gap-1 text-center">
-          <div className="font-accent text-4xl sm:text-6xl tracking-wide">Камчатка</div>
-          <div className="font-display text-xl sm:text-3xl">экосистема путешествий</div>
+          <div className="font-display text-4xl sm:text-6xl tracking-wide">Камчатка.</div>
+          <div className="font-display text-xl sm:text-3xl">экосистема путешествий.</div>
         </div>
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-extrabold">Кому это нужно</h2>
