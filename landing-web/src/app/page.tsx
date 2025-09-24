@@ -17,7 +17,10 @@ export default function Page() {
       <header className="px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-premium-gold to-premium-ice" />
-          <span className="font-display text-xl tracking-tight">Kamchatour Hub</span>
+          <div className="grid leading-tight">
+            <div className="font-accent text-2xl tracking-wide">КАМЧАТКА</div>
+            <div className="font-display text-sm text-white/80">экосистема путешествий</div>
+          </div>
         </div>
         <nav className="hidden sm:flex gap-6 text-sm text-white/70">
           <Link href="/premium" className="hover:text-white">Commerce</Link>
