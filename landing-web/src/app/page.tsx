@@ -81,10 +81,10 @@ export default function Page() {
             </div>
             <div className="text-white/70 text-xs">Тестовый режим: интеграции в процессе</div>
           </div>
-          <a href="/hub/safety" className="block">
+          <a href="/hub/safety" className="group block" aria-label="Открыть карту Камчатки">
             <div className="w-full h-72 rounded-2xl overflow-hidden border border-white/10 bg-black grid place-items-center cursor-pointer">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="https://disk.yandex.ru/i/NuxEtlcx5LdrJg" alt="Контур Камчатки" className="max-h-full max-w-full object-contain" referrerPolicy="no-referrer" loading="lazy" />
+              <img src="/graphics/kamchatka-button.svg" alt="Кнопка карты Камчатки" className="h-[85%] object-contain transition group-hover:scale-105" loading="lazy" />
             </div>
           </a>
         </div>

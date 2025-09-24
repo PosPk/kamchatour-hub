@@ -1,20 +1,20 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/hub/cars/page": "app/hub/cars/page.js",
   "/api/ai/chat/route": "app/api/ai/chat/route.js",
+  "/hub/cars/page": "app/hub/cars/page.js",
   "/hub/gear/page": "app/hub/gear/page.js",
   "/hub/guide/page": "app/hub/guide/page.js",
-  "/hub/operator/page": "app/hub/operator/page.js",
   "/hub/safety/page": "app/hub/safety/page.js",
+  "/hub/operator/page": "app/hub/operator/page.js",
   "/hub/souvenirs/page": "app/hub/souvenirs/page.js",
   "/hub/stay/page": "app/hub/stay/page.js",
   "/hub/tourist/page": "app/hub/tourist/page.js",
   "/hub/transfer/page": "app/hub/transfer/page.js",
   "/page": "app/page.js",
+  "/premium/page": "app/premium/page.js",
   "/premium2/page": "app/premium2/page.js",
   "/v1/page": "app/v1/page.js",
   "/v2/page": "app/v2/page.js",
   "/v3/page": "app/v3/page.js",
-  "/v4/page": "app/v4/page.js",
-  "/premium/page": "app/premium/page.js"
+  "/v4/page": "app/v4/page.js"
 }
