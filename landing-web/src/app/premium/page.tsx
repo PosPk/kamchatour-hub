@@ -110,9 +110,10 @@ export default function PremiumCommerce() {
         <div className="absolute inset-0 gradient-gold-aurora animate-aurora" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <div className="absolute inset-0 p-8 grid content-end gap-4">
-          <h1 className="font-display text-4xl sm:text-6xl font-black leading-tight text-gold-gradient">
-            Камчатка. Премиум‑экосистема путешествий
-          </h1>
+          <div className="grid gap-2 text-center">
+            <div className="font-accent text-5xl sm:text-7xl tracking-wide text-gold-gradient">КАМЧАТКА</div>
+            <div className="font-display text-2xl sm:text-4xl font-black leading-tight">экосистема путешествий</div>
+          </div>
           <p className="max-w-2xl text-white/85">
             Коммерческие витрины, CRM, календарь ресурсов, онлайн‑бронь, рефералы и безопасность —
             в одном месте. Монетизация и контроль для партнёров.
