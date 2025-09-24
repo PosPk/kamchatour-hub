@@ -1,10 +1,11 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
+  "/ai/page": "app/ai/page.js",
   "/api/ai/proxy/route": "app/api/ai/proxy/route.js",
   "/api/assets/presign/route": "app/api/assets/presign/route.js",
-  "/ai/page": "app/ai/page.js",
-  "/login/page": "app/login/page.js",
   "/assets/upload/page": "app/assets/upload/page.js",
   "/page": "app/page.js",
+  "/stays/onboarding/page": "app/stays/onboarding/page.js",
+  "/login/page": "app/login/page.js",
   "/api/assets/upload/route": "app/api/assets/upload/route.js"
 }
