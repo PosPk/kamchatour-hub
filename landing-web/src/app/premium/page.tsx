@@ -95,10 +95,13 @@ export default function PremiumCommerce() {
         </div>
       </div>
 
-      {/* Cinematic Hero with gold aurora */}
+      {/* Cinematic Hero: fullscreen video, aurora overlay, parallax */}
       <section className="relative overflow-hidden rounded-3xl mx-6 mb-8">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={featured[0].img} alt="VIP Hero" className="w-full h-[62vh] object-cover" />
+        <div className="absolute inset-0 -z-10">
+          <video className="w-full h-[62vh] object-cover" autoPlay muted loop playsInline poster={featured[0].img}>
+            <source src="https://cdn.coverr.co/videos/coverr-aurora-over-mountains-0157/1080p.mp4" type="video/mp4" />
+          </video>
+        </div>
         <div className="absolute inset-0 gradient-gold-aurora animate-aurora" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <div className="absolute inset-0 p-8 grid content-end gap-4">
@@ -126,6 +129,10 @@ export default function PremiumCommerce() {
               </span>
             ))}
           </div>
+        </div>
+        {/* Scroll progress bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
+          <div className="h-full bg-premium-gold" style={{ width: '30%' }} />
         </div>
       </section>
 
@@ -185,7 +192,7 @@ export default function PremiumCommerce() {
         </div>
       </section>
 
-      {/* Featured cards (glass + shine) */}
+      {/* Featured cards (glass + shine + parallax hint) */}
       <section className="px-6 py-8 grid gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-extrabold">Избранные туры</h2>
@@ -193,7 +200,7 @@ export default function PremiumCommerce() {
         </div>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
           {featured.slice(1).map(f => (
-            <Link key={f.t} href={f.href} className="relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:scale-[1.01] transition">
+            <Link key={f.t} href={f.href} className="relative premium-card rounded-2xl overflow-hidden hover:translate-y-[-2px] transition will-change-transform">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={f.img} alt={f.t} className="w-full h-48 object-cover" />
               <div className="absolute inset-0 gold-shine animate-shine opacity-0 hover:opacity-40 transition" />

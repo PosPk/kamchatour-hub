@@ -4,6 +4,9 @@
 
 html, body { @apply m-0 p-0 bg-gray-50 text-slate-900; }
 
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
 /* Utilities */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -15,4 +18,10 @@ html, body { @apply m-0 p-0 bg-gray-50 text-slate-900; }
 /* Commerce overlay */
 .gradient-gold-aurora { background: radial-gradient(120% 60% at 0% 0%, rgba(255,215,0,0.18) 0%, rgba(0,0,0,0) 60%), radial-gradient(100% 60% at 100% 0%, rgba(135,206,235,0.15) 0%, rgba(0,0,0,0) 55%); }
 .gold-shine { background: linear-gradient(90deg, rgba(255,215,0,0) 0%, rgba(255,215,0,0.5) 50%, rgba(255,215,0,0) 100%); background-size: 200% 100%; }
+
+/* Premium card */
+.premium-card { backdrop-filter: blur(20px); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); }
+
+/* Volcano gradient */
+.volcano-gradient { background: linear-gradient(45deg, #e25822, #22a2e2, #1a1a1a); }
 
