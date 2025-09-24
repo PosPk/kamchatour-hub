@@ -1,84 +1,192 @@
-import Link from 'next/link';
+"use client";
 
-export default function Premium() {
-  const chips = ["Вулканы","Океан","Медведи","Сёрф","Снегоходы","Вертолёт"];
-  const featured = [
-    { t: 'Восхождение на вулкан', m: 'вулканы • 4 дня', p: 'от 45 000 ₽', href: '/partners/iamkamchatka', img: 'https://via.placeholder.com/1600x800?text=VIP+Hero' },
-    { t: 'Рыбалка на р. Камчатка', m: 'рыбалка • 1–2 дня', p: 'от 12 000 ₽', href: '/partners/kr', img: 'https://via.placeholder.com/1200x600?text=VIP+Card+1' },
-    { t: 'Долина гейзеров', m: 'вертолёт • 1 день', p: 'от 125 000 ₽', href: '/partners/iamkamchatka', img: 'https://via.placeholder.com/1200x600?text=VIP+Card+2' },
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+
+export default function PremiumCommerce() {
+  const roles = [
+    { k: 'tourist', label: 'Турист', href: '#tourist' },
+    { k: 'operator', label: 'Туроператор', href: '#operator' },
+    { k: 'guide', label: 'Гид', href: '#guide' },
+    { k: 'transfer', label: 'Трансфер', href: '#transfer' },
+    { k: 'stay', label: 'Размещение', href: '#stay' },
+    { k: 'souvenirs', label: 'Сувениры', href: '#souvenirs' },
+    { k: 'gear', label: 'Прокат снаряжения', href: '#gear' },
+    { k: 'cars', label: 'Прокат авто', href: '#cars' },
   ];
+
+  const chips = [
+    'Вулканы',
+    'Океан',
+    'Медведи',
+    'Сёрф',
+    'Снегоходы',
+    'Вертолёт',
+  ];
+
+  const featured = [
+    {
+      t: 'Восхождение на вулкан',
+      m: 'вулканы • 4 дня',
+      p: 'от 45 000 ₽',
+      href: '/partners/iamkamchatka',
+      img: 'https://images.unsplash.com/photo-1520496938500-76fd098ad75a?q=80&w=1920&auto=format&fit=crop',
+    },
+    {
+      t: 'Рыбалка на р. Камчатка',
+      m: 'рыбалка • 1–2 дня',
+      p: 'от 12 000 ₽',
+      href: '/partners/kr',
+      img: 'https://images.unsplash.com/photo-1508171716009-c6c4516af2e3?q=80&w=1600&auto=format&fit=crop',
+    },
+    {
+      t: 'Долина гейзеров',
+      m: 'вертолёт • 1 день',
+      p: 'от 125 000 ₽',
+      href: '/partners/iamkamchatka',
+      img: 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1600&auto=format&fit=crop',
+    },
+  ];
+
+  const [avgOrder, setAvgOrder] = useState(45000);
+  const [commission, setCommission] = useState(10);
+  const [orders, setOrders] = useState(25);
+  const roi = useMemo(() => {
+    const revenue = (avgOrder * (commission / 100)) * orders;
+    return Math.round(revenue);
+  }, [avgOrder, commission, orders]);
+
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="min-h-screen bg-premium-black text-white">
       {/* Header */}
       <header className="px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-blue-600" />
+          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-premium-gold to-premium-ice" />
           <span className="font-extrabold tracking-tight">Kamchatour Hub</span>
         </div>
-        <nav className="hidden sm:flex gap-6 text-sm text-slate-600">
-          <Link href="/partners" className="hover:text-slate-900">Партнёры</Link>
-          <Link href="/search" className="hover:text-slate-900">Поиск</Link>
-          <a href="#safety" className="hover:text-slate-900">Безопасность</a>
+        <nav className="hidden sm:flex gap-6 text-sm text-white/70">
+          <Link href="/partners" className="hover:text-white">Партнёры</Link>
+          <Link href="/search" className="hover:text-white">Поиск</Link>
+          <a href="#safety" className="hover:text-white">Безопасность</a>
         </nav>
-        <a href="#" className="rounded-xl bg-blue-600 text-white px-4 py-2 font-semibold">Стать партнёром</a>
+        <a href="#partner-cta" className="rounded-xl bg-premium-gold text-premium-black px-4 py-2 font-semibold hover:brightness-110">Стать партнёром</a>
       </header>
 
+      {/* Role switcher */}
+      <div className="px-6 pb-3 overflow-x-auto no-scrollbar">
+        <div className="flex gap-2">
+          {roles.map(r => (
+            <a key={r.k} href={r.href} className="px-3 py-2 rounded-full bg-white/10 hover:bg-white/15 text-sm whitespace-nowrap">
+              {r.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl mx-6 mb-6">
+      <section className="relative overflow-hidden rounded-3xl mx-6 mb-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={featured[0].img} alt="VIP Hero" className="w-full h-[56vh] object-cover" />
-        <div className="absolute inset-0 bg-black/35" />
-        <div className="absolute inset-0 p-8 grid content-end gap-3 text-white">
-          <h1 className="text-4xl sm:text-5xl font-extrabold">Камчатка — премиальные приключения</h1>
-          <p className="opacity-95 max-w-2xl">Маршруты к вулканам, океану и гейзерам. Партнёры‑профессионалы, безопасность, офлайн‑поддержка.</p>
+        <img src={featured[0].img} alt="VIP Hero" className="w-full h-[62vh] object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        <div className="absolute inset-0 p-8 grid content-end gap-4">
+          <h1 className="font-display text-4xl sm:text-6xl font-black leading-tight">
+            Камчатка. Премиум‑экосистема путешествий
+          </h1>
+          <p className="max-w-2xl text-white/85">
+            Коммерческие витрины, CRM, календарь ресурсов, онлайн‑бронь, рефералы и безопасность —
+            в одном месте. Монетизация и контроль для партнёров.
+          </p>
           <form action="/search" className="flex gap-2 items-center">
-            <input name="q" placeholder="Куда поедем? вулканы, океан, медведи…" className="flex-1 h-12 rounded-xl px-4 text-slate-900" />
-            <button className="h-12 rounded-xl px-5 font-bold bg-white text-blue-700">Искать</button>
+            <input
+              name="q"
+              placeholder="Куда поедем? вулканы, океан, медведи…"
+              className="flex-1 h-12 rounded-xl px-4 text-slate-900"
+            />
+            <button className="h-12 rounded-xl px-5 font-bold bg-premium-gold text-premium-black">
+              Искать
+            </button>
           </form>
           <div className="flex gap-2 flex-wrap">
-            {chips.map(c => <span key={c} className="px-3 py-2 bg-white/20 backdrop-blur text-white rounded-full text-sm font-semibold">{c}</span>)}
+            {chips.map(c => (
+              <span key={c} className="px-3 py-2 bg-white/15 backdrop-blur rounded-full text-sm font-semibold">
+                {c}
+              </span>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Trust */}
       <section className="px-6 py-4 grid gap-3">
-        <div className="text-sm text-slate-500">Нам доверяют</div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-12 rounded-lg bg-white border border-slate-200 shadow-sm" />
+        <div className="text-sm text-white/70">Нам доверяют</div>
+        <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-12 rounded-lg bg-white/5 border border-white/10" />
           ))}
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="px-6 py-4 grid gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-extrabold">Категории</h2>
-          <Link href="/search" className="text-blue-700 font-bold">Все</Link>
+      {/* Partner value & ROI */}
+      <section id="operator" className="px-6 py-6 grid gap-6">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+            <div className="text-premium-gold font-bold text-sm">Монетизация</div>
+            <div className="text-xl font-extrabold">Онлайн‑бронь и автоплатежи</div>
+            <div className="text-white/80 text-sm">Авторизация/капча платежей, холд/капчер CloudPayments.</div>
+          </div>
+          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+            <div className="text-premium-gold font-bold text-sm">Операции</div>
+            <div className="text-xl font-extrabold">Автоперераспределение ресурсов</div>
+            <div className="text-white/80 text-sm">Гиды, транспорт, размещение — оптимизация при погодных рисках.</div>
+          </div>
+          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+            <div className="text-premium-gold font-bold text-sm">Рефералы</div>
+            <div className="text-xl font-extrabold">Бусты и eco‑баллы</div>
+            <div className="text-white/80 text-sm">Лояльность и бонусы за экологичность.</div>
+          </div>
         </div>
-        <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
-          {chips.slice(0,4).map(x => (
-            <a key={x} href="#" className="aspect-video rounded-xl bg-white border border-slate-200 shadow-sm grid place-content-center font-extrabold text-slate-800">{x}</a>
-          ))}
+
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-6 grid gap-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="font-extrabold text-2xl">Калькулятор комиссий</div>
+            <div className="text-white/70 text-sm">Оцените ежемесячный доход от бронирований</div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-1">
+              <label className="text-sm text-white/70">Средний чек, ₽</label>
+              <input type="number" value={avgOrder} onChange={e => setAvgOrder(Number(e.target.value) || 0)} className="h-11 rounded-lg px-3 text-slate-900" />
+            </div>
+            <div className="grid gap-1">
+              <label className="text-sm text-white/70">Комиссия, %</label>
+              <input type="number" value={commission} onChange={e => setCommission(Number(e.target.value) || 0)} className="h-11 rounded-lg px-3 text-slate-900" />
+            </div>
+            <div className="grid gap-1">
+              <label className="text-sm text-white/70">Число заказов / мес</label>
+              <input type="number" value={orders} onChange={e => setOrders(Number(e.target.value) || 0)} className="h-11 rounded-lg px-3 text-slate-900" />
+            </div>
+          </div>
+          <div className="rounded-xl bg-black/40 border border-white/10 p-5">
+            <div className="text-sm text-white/70">Потенциальный доход (комиссии)</div>
+            <div className="text-3xl font-black text-premium-gold">{roi.toLocaleString('ru-RU')} ₽ / мес</div>
+          </div>
         </div>
       </section>
 
       {/* Featured cards */}
-      <section className="px-6 py-4 grid gap-4">
+      <section className="px-6 py-8 grid gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-extrabold">Избранные туры</h2>
-          <Link className="text-blue-700 font-bold" href="/partners">Каталог</Link>
+          <Link className="text-premium-gold font-bold" href="/partners">Каталог</Link>
         </div>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
           {featured.slice(1).map(f => (
-            <Link key={f.t} href={f.href} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+            <Link key={f.t} href={f.href} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:scale-[1.01] transition">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={f.img} alt={f.t} className="w-full h-44 object-cover" />
+              <img src={f.img} alt={f.t} className="w-full h-48 object-cover" />
               <div className="p-4 grid gap-1">
                 <div className="font-extrabold">{f.t}</div>
-                <div className="text-sm text-slate-500">{f.m}</div>
-                <div className="text-blue-700 font-black">{f.p}</div>
+                <div className="text-sm text-white/70">{f.m}</div>
+                <div className="text-premium-gold font-black">{f.p}</div>
               </div>
             </Link>
           ))}
@@ -87,10 +195,10 @@ export default function Premium() {
 
       {/* Safety */}
       <section id="safety" className="px-6 py-8">
-        <div className="rounded-2xl bg-slate-900 text-white p-6 grid gap-3">
+        <div className="rounded-2xl bg-gradient-to-br from-premium-ice/15 to-premium-gold/15 border border-white/10 text-white p-6 grid gap-3">
           <h3 className="text-xl font-extrabold">Безопасность и поддержка</h3>
           <div className="grid gap-3 sm:grid-cols-3">
-            <a href="#" className="rounded-xl bg-blue-600 hover:bg-blue-500 text-center py-3 font-bold">SOS</a>
+            <a href="#" className="rounded-xl bg-premium-gold text-premium-black text-center py-3 font-bold">SOS</a>
             <a href="#" className="rounded-xl bg-white/10 text-center py-3 font-bold">Регистрация группы (МЧС)</a>
             <a href="#" className="rounded-xl bg-white/10 text-center py-3 font-bold">Сейсмика</a>
           </div>
@@ -98,16 +206,31 @@ export default function Premium() {
       </section>
 
       {/* Footer CTA */}
-      <footer className="px-6 py-10 grid gap-3">
-        <div className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm grid gap-4 text-center">
+      <footer id="partner-cta" className="px-6 py-10 grid gap-3">
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-6 grid gap-4 text-center">
           <div className="text-2xl font-extrabold">Готовы подключиться как партнёр?</div>
-          <div className="text-slate-600">Витрина, CRM, календарь ресурсов, рефералы и безопасность — всё в одном месте.</div>
+          <div className="text-white/80">Витрина, CRM, календарь ресурсов, рефералы и безопасность — всё в одном месте.</div>
           <div className="flex gap-3 justify-center">
-            <a href="#" className="rounded-xl bg-blue-600 text-white px-5 py-3 font-bold">Стать партнёром</a>
-            <a href="#" className="rounded-xl bg-slate-100 text-slate-900 px-5 py-3 font-bold">Узнать условия</a>
+            <a href="#" className="rounded-xl bg-premium-gold text-premium-black px-5 py-3 font-bold">Стать партнёром</a>
+            <a href="#" className="rounded-xl bg-white/10 text-white px-5 py-3 font-bold">Узнать условия</a>
           </div>
         </div>
       </footer>
+
+      {/* Mobile bottom nav */}
+      <nav className="fixed bottom-3 left-0 right-0 px-4">
+        <div className="mx-auto max-w-md rounded-2xl bg-black/60 backdrop-blur border border-white/10 text-sm grid grid-cols-5 overflow-hidden">
+          {[
+            { t: 'Главная', href: '/' },
+            { t: 'Каталог', href: '/v1' },
+            { t: 'Карта', href: '/v2' },
+            { t: 'SOS', href: '#safety' },
+            { t: 'Профиль', href: '/v3' },
+          ].map(i => (
+            <a key={i.t} href={i.href} className="text-center py-3 hover:bg-white/5">{i.t}</a>
+          ))}
+        </div>
+      </nav>
     </main>
   );
 }
