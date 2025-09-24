@@ -58,19 +58,31 @@ export default function PremiumCommerce() {
 
   return (
     <main className="min-h-screen bg-premium-black text-white">
-      {/* Header */}
-      <header className="px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-premium-gold to-premium-ice" />
-          <span className="font-extrabold tracking-tight">Kamchatour Hub</span>
+      {/* Sticky persona header */}
+      <div className="sticky top-0 z-40 bg-black/75 backdrop-blur border-b border-white/10">
+        <header className="px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-premium-gold to-premium-ice animate-float" />
+            <span className="font-display text-xl tracking-tight">Kamchatour Hub</span>
+          </div>
+          <nav className="hidden sm:flex gap-6 text-sm text-white/70">
+            <Link href="/partners" className="hover:text-white">Партнёры</Link>
+            <Link href="/search" className="hover:text-white">Поиск</Link>
+            <a href="#safety" className="hover:text-white">Безопасность</a>
+          </nav>
+          <a href="#partner-cta" className="rounded-xl bg-premium-gold text-premium-black px-4 py-2 font-semibold hover:brightness-110">Стать партнёром</a>
+        </header>
+        {/* Role switcher */}
+        <div className="px-6 pb-3 overflow-x-auto no-scrollbar">
+          <div className="flex gap-2">
+            {roles.map(r => (
+              <a key={r.k} href={r.href} className="px-3 py-2 rounded-full bg-white/10 hover:bg-white/15 text-sm whitespace-nowrap">
+                {r.label}
+              </a>
+            ))}
+          </div>
         </div>
-        <nav className="hidden sm:flex gap-6 text-sm text-white/70">
-          <Link href="/partners" className="hover:text-white">Партнёры</Link>
-          <Link href="/search" className="hover:text-white">Поиск</Link>
-          <a href="#safety" className="hover:text-white">Безопасность</a>
-        </nav>
-        <a href="#partner-cta" className="rounded-xl bg-premium-gold text-premium-black px-4 py-2 font-semibold hover:brightness-110">Стать партнёром</a>
-      </header>
+      </div>
 
       {/* Role switcher */}
       <div className="px-6 pb-3 overflow-x-auto no-scrollbar">
@@ -83,10 +95,11 @@ export default function PremiumCommerce() {
         </div>
       </div>
 
-      {/* Hero */}
+      {/* Cinematic Hero with gold aurora */}
       <section className="relative overflow-hidden rounded-3xl mx-6 mb-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={featured[0].img} alt="VIP Hero" className="w-full h-[62vh] object-cover" />
+        <div className="absolute inset-0 gradient-gold-aurora animate-aurora" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <div className="absolute inset-0 p-8 grid content-end gap-4">
           <h1 className="font-display text-4xl sm:text-6xl font-black leading-tight">
@@ -126,7 +139,7 @@ export default function PremiumCommerce() {
         </div>
       </section>
 
-      {/* Partner value & ROI */}
+      {/* Partner value & live stats */}
       <section id="operator" className="px-6 py-6 grid gap-6">
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
@@ -172,7 +185,7 @@ export default function PremiumCommerce() {
         </div>
       </section>
 
-      {/* Featured cards */}
+      {/* Featured cards (glass + shine) */}
       <section className="px-6 py-8 grid gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-extrabold">Избранные туры</h2>
@@ -180,10 +193,11 @@ export default function PremiumCommerce() {
         </div>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
           {featured.slice(1).map(f => (
-            <Link key={f.t} href={f.href} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:scale-[1.01] transition">
+            <Link key={f.t} href={f.href} className="relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:scale-[1.01] transition">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={f.img} alt={f.t} className="w-full h-48 object-cover" />
-              <div className="p-4 grid gap-1">
+              <div className="absolute inset-0 gold-shine animate-shine opacity-0 hover:opacity-40 transition" />
+              <div className="relative p-4 grid gap-1">
                 <div className="font-extrabold">{f.t}</div>
                 <div className="text-sm text-white/70">{f.m}</div>
                 <div className="text-premium-gold font-black">{f.p}</div>

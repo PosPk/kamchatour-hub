@@ -37,12 +37,17 @@ module.exports = {
           '0%, 100%': { boxShadow: '0 0 0 0 rgba(255,107,53,0.45)' },
           '50%': { boxShadow: '0 0 0 12px rgba(255,107,53,0)' },
         },
+        shine: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '100%': { backgroundPosition: '200% 50%' },
+        },
       },
       animation: {
         aurora: 'aurora 8s ease-in-out infinite',
         float: 'float 6s ease-in-out infinite',
         shake: 'shake 0.8s ease-in-out infinite',
         pulseGlow: 'pulseGlow 2.4s ease-out infinite',
+        shine: 'shine 2.8s linear infinite',
       },
     },
   },
