@@ -84,17 +84,6 @@ export default function PremiumCommerce() {
         </div>
       </div>
 
-      {/* Role switcher */}
-      <div className="px-6 pb-3 overflow-x-auto no-scrollbar">
-        <div className="flex gap-2">
-          {roles.map(r => (
-            <a key={r.k} href={r.href} className="px-3 py-2 rounded-full bg-white/10 hover:bg-white/15 text-sm whitespace-nowrap">
-              {r.label}
-            </a>
-          ))}
-        </div>
-      </div>
-
       {/* Cinematic Hero: fullscreen video, aurora overlay, parallax */}
       <section className="relative overflow-hidden rounded-3xl mx-6 mb-8">
         <div className="absolute inset-0 -z-10">
