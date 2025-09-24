@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function PremiumCommerce() {
   const roles = [
@@ -48,6 +48,7 @@ export default function PremiumCommerce() {
     },
   ];
 
+  const [activeRole, setActiveRole] = useState<string>('tourist');
   const [avgOrder, setAvgOrder] = useState(45000);
   const [commission, setCommission] = useState(10);
   const [orders, setOrders] = useState(25);
@@ -55,6 +56,15 @@ export default function PremiumCommerce() {
     const revenue = (avgOrder * (commission / 100)) * orders;
     return Math.round(revenue);
   }, [avgOrder, commission, orders]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const persona = params.get('persona');
+    const hash = window.location.hash?.replace('#', '');
+    if (persona) setActiveRole(persona);
+    else if (hash && ['tourist','operator','guide','transfer','stay','souvenirs','gear','cars'].includes(hash)) setActiveRole(hash);
+  }, []);
 
   return (
     <main className="min-h-screen bg-premium-black text-white">
@@ -72,11 +82,17 @@ export default function PremiumCommerce() {
           </nav>
           <a href="#partner-cta" className="rounded-xl bg-premium-gold text-premium-black px-4 py-2 font-semibold hover:brightness-110">Стать партнёром</a>
         </header>
-        {/* Role switcher */}
+        {/* Role switcher */
+        }
         <div className="px-6 pb-3 overflow-x-auto no-scrollbar">
           <div className="flex gap-2">
             {roles.map(r => (
-              <a key={r.k} href={r.href} className="px-3 py-2 rounded-full bg-white/10 hover:bg-white/15 text-sm whitespace-nowrap">
+              <a
+                key={r.k}
+                href={r.href}
+                onClick={(e) => { e.preventDefault(); setActiveRole(r.k); const el = document.getElementById(r.k); el?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+                className={`px-3 py-2 rounded-full text-sm whitespace-nowrap ${activeRole===r.k ? 'bg-premium-gold text-premium-black' : 'bg-white/10 hover:bg-white/15'}`}
+              >
                 {r.label}
               </a>
             ))}
@@ -126,7 +142,7 @@ export default function PremiumCommerce() {
       </section>
 
       {/* Trust */}
-      <section className="px-6 py-4 grid gap-3">
+      <section className="px-6 py-4 grid gap-3" id="tourist">
         <div className="text-sm text-white/70">Нам доверяют</div>
         <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -135,48 +151,70 @@ export default function PremiumCommerce() {
         </div>
       </section>
 
-      {/* Partner value & live stats */}
+      {/* Partner value & live stats (shown when role = Туроператор) */}
       <section id="operator" className="px-6 py-6 grid gap-6">
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            <div className="text-premium-gold font-bold text-sm">Монетизация</div>
-            <div className="text-xl font-extrabold">Онлайн‑бронь и автоплатежи</div>
-            <div className="text-white/80 text-sm">Авторизация/капча платежей, холд/капчер CloudPayments.</div>
-          </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            <div className="text-premium-gold font-bold text-sm">Операции</div>
-            <div className="text-xl font-extrabold">Автоперераспределение ресурсов</div>
-            <div className="text-white/80 text-sm">Гиды, транспорт, размещение — оптимизация при погодных рисках.</div>
-          </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            <div className="text-premium-gold font-bold text-sm">Рефералы</div>
-            <div className="text-xl font-extrabold">Бусты и eco‑баллы</div>
-            <div className="text-white/80 text-sm">Лояльность и бонусы за экологичность.</div>
-          </div>
-        </div>
+        {activeRole === 'operator' && (
+          <>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+                <div className="text-premium-gold font-bold text-sm">Монетизация</div>
+                <div className="text-xl font-extrabold">Онлайн‑бронь и автоплатежи</div>
+                <div className="text-white/80 text-sm">Авторизация/капча платежей, холд/капчер CloudPayments.</div>
+              </div>
+              <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+                <div className="text-premium-gold font-bold text-sm">Операции</div>
+                <div className="text-xl font-extrabold">Автоперераспределение ресурсов</div>
+                <div className="text-white/80 text-sm">Гиды, транспорт, размещение — оптимизация при погодных рисках.</div>
+              </div>
+              <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+                <div className="text-premium-gold font-bold text-sm">Рефералы</div>
+                <div className="text-xl font-extrabold">Бусты и eco‑баллы</div>
+                <div className="text-white/80 text-sm">Лояльность и бонусы за экологичность.</div>
+              </div>
+            </div>
 
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-6 grid gap-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="font-extrabold text-2xl">Калькулятор комиссий</div>
-            <div className="text-white/70 text-sm">Оцените ежемесячный доход от бронирований</div>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="grid gap-1">
-              <label className="text-sm text-white/70">Средний чек, ₽</label>
-              <input type="number" value={avgOrder} onChange={e => setAvgOrder(Number(e.target.value) || 0)} className="h-11 rounded-lg px-3 text-slate-900" />
+            <div className="rounded-2xl bg-white/5 border border-white/10 p-6 grid gap-4">
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div className="font-extrabold text-2xl">Калькулятор партнёра</div>
+                <div className="text-white/70 text-sm">Оцените ежемесячный доход от бронирований</div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid gap-1">
+                  <label className="text-sm text-white/70">Средний чек, ₽</label>
+                  <input type="number" value={avgOrder} onChange={e => setAvgOrder(Number(e.target.value) || 0)} className="h-11 rounded-lg px-3 text-slate-900" />
+                </div>
+                <div className="grid gap-1">
+                  <label className="text-sm text-white/70">Комиссия, %</label>
+                  <input type="number" value={commission} onChange={e => setCommission(Number(e.target.value) || 0)} className="h-11 rounded-lg px-3 text-slate-900" />
+                </div>
+                <div className="grid gap-1">
+                  <label className="text-sm text-white/70">Число заказов / мес</label>
+                  <input type="number" value={orders} onChange={e => setOrders(Number(e.target.value) || 0)} className="h-11 rounded-lg px-3 text-slate-900" />
+                </div>
+              </div>
+              <div className="rounded-xl bg-black/40 border border-white/10 p-5">
+                <div className="text-sm text-white/70">Потенциальный доход (комиссии)</div>
+                <div className="text-3xl font-black text-premium-gold">{roi.toLocaleString('ru-RU')} ₽ / мес</div>
+              </div>
             </div>
-            <div className="grid gap-1">
-              <label className="text-sm text-white/70">Комиссия, %</label>
-              <input type="number" value={commission} onChange={e => setCommission(Number(e.target.value) || 0)} className="h-11 rounded-lg px-3 text-slate-900" />
-            </div>
-            <div className="grid gap-1">
-              <label className="text-sm text-white/70">Число заказов / мес</label>
-              <input type="number" value={orders} onChange={e => setOrders(Number(e.target.value) || 0)} className="h-11 rounded-lg px-3 text-slate-900" />
-            </div>
-          </div>
-          <div className="rounded-xl bg-black/40 border border-white/10 p-5">
-            <div className="text-sm text-white/70">Потенциальный доход (комиссии)</div>
-            <div className="text-3xl font-black text-premium-gold">{roi.toLocaleString('ru-RU')} ₽ / мес</div>
+          </>
+        )}
+      </section>
+
+      {/* How we earn: прозрачная монетизация 5–12% */}
+      <section className="px-6 py-6 grid gap-3" id="pricing">
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-6 grid gap-3">
+          <div className="text-sm text-white/70">Как мы зарабатываем</div>
+          <div className="text-xl font-extrabold">Комиссия только за успешную бронь</div>
+          <ul className="text-white/85 text-sm grid gap-2 list-disc pl-5">
+            <li>5–12% с успешной брони — ставка зависит от рейтинга партнёра</li>
+            <li>Для туриста — без наценки: цена идентична цене туроператора</li>
+            <li>Дополнительные услуги: страховки, предзаказы питания, прокат авто/снаряжения — по выбору</li>
+            <li>Реферальные программы и бусты — прозрачная отчётность в кабинете</li>
+          </ul>
+          <div className="flex gap-3 pt-1">
+            <a href="/partners" className="rounded-xl bg-premium-gold text-premium-black px-5 py-3 font-bold">Стать партнёром</a>
+            <a href="/operator-web/login" className="rounded-xl bg-white/10 text-white px-5 py-3 font-bold">Кабинет партнёра</a>
           </div>
         </div>
       </section>
