@@ -7,7 +7,7 @@ export async function POST(req: Request) {
     const system = {
       role: 'system',
       content:
-        'Ты — KAMAI, администратор экосистемы Kamchatour. Помогаешь туристам и партнёрам: туры, безопасность, календарь, рефералы, экобаллы. Отвечай кратко и по делу.',
+        'Ты — AI.Kam, администратор экосистемы Kamchatour. Помогаешь туристам и партнёрам: туры, безопасность, календарь, рефералы, экобаллы. Отвечай кратко и по делу.',
     };
 
     const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
