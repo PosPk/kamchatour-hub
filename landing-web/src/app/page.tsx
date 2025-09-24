@@ -13,6 +13,7 @@ export default function Page() {
     { key: 'cars', label: 'Прокат авто', href: '/hub/cars' },
   ];
   const BearMap = dynamic(() => import('./components/BearMap'), { ssr: false });
+  const KamaiWidget = dynamic(() => import('./components/KamaiWidget'), { ssr: false });
   return (
     <main className="min-h-screen bg-premium-black text-white">
       {/* Header */}
@@ -110,6 +111,8 @@ export default function Page() {
           ))}
         </div>
       </section>
+
+      <KamaiWidget />
     </main>
   );
 }
