@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 
 export default function Page() {
   const personas = [
@@ -11,6 +12,7 @@ export default function Page() {
     { key: 'gear', label: 'Прокат снаряжения', href: '/hub/gear' },
     { key: 'cars', label: 'Прокат авто', href: '/hub/cars' },
   ];
+  const BearMap = dynamic(() => import('./components/BearMap'), { ssr: false });
   return (
     <main className="min-h-screen bg-premium-black text-white">
       {/* Header */}
@@ -67,23 +69,24 @@ export default function Page() {
 
       {/* Ecosystem widgets */}
       <section className="px-6 py-6 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-2">
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-3">
           <div className="text-sm text-white/70">SOS и безопасность</div>
-          <div className="flex gap-3">
-            <a href="#" className="rounded-xl bg-premium-gold text-premium-black px-4 py-2 font-bold">SOS</a>
-            <a href="#" className="rounded-xl bg-white/10 px-4 py-2 font-bold">МЧС</a>
-            <a href="#" className="rounded-xl bg-white/10 px-4 py-2 font-bold">Сейсмика</a>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <a href="#" className="rounded-xl bg-premium-gold text-premium-black text-center py-3 font-bold">SOS</a>
+            <a href="#" className="rounded-xl bg-white/10 text-center py-3 font-bold">МЧС</a>
+            <a href="#" className="rounded-xl bg-white/10 text-center py-3 font-bold">Сейсмика</a>
           </div>
+          <div className="text-white/70 text-xs">Тестовый режим: интеграции в процессе</div>
         </div>
         <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-2">
           <div className="text-sm text-white/70">Экология</div>
           <div className="text-2xl font-black text-premium-gold">Eco‑points: 0</div>
           <div className="text-white/70 text-sm">Собирайте баллы за бережное поведение</div>
         </div>
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-2">
-          <div className="text-sm text-white/70">Партнёрам</div>
-          <div className="text-2xl font-black">Подключение за 5 минут</div>
-          <Link href="/partners" className="text-premium-gold font-bold">Стать партнёром →</Link>
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-3">
+          <div className="text-sm text-white/70">Карта медведей (наблюдения)</div>
+          <BearMap />
+          <div className="text-white/70 text-xs">Источник: пилотный GeoJSON (будут live‑данные)</div>
         </div>
       </section>
 

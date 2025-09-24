@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}";
+self.__REACT_LOADABLE_MANIFEST='{"app/components/BearMap.tsx -> leaflet":{"id":759,"files":["static/chunks/d0deef33.bd75b11a952a2d3d.js"]},"app/components/BearMap.tsx -> leaflet/dist/leaflet.css":{"id":5046,"files":["static/css/fc1c9daac70c093b.css","static/chunks/46.f58d36e5ae7c7ddb.js"]}}';

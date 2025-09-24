@@ -1,0 +1,1 @@
+"use strict";exports.id=545,exports.ids=[545],exports.modules={9545:(e,r,t)=>{t.r(r),t.d(r,{default:()=>s});let s=(0,t(5347).createProxy)(String.raw`/workspace/landing-web/src/app/components/BearMap.tsx#default`)}};
