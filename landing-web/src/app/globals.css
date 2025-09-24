@@ -31,3 +31,7 @@ html { scroll-behavior: smooth; }
 /* Perspective helper */
 .perspective-1000 { perspective: 1000px; transform-style: preserve-3d; }
 
+/* Gold text + glow */
+.text-gold { color: #FFD700; }
+.gold-glow { text-shadow: 0 0 8px rgba(255,215,0,0.35), 0 0 16px rgba(255,215,0,0.2), 0 0 24px rgba(255,215,0,0.1); }
+
