@@ -25,3 +25,9 @@ html { scroll-behavior: smooth; }
 /* Volcano gradient */
 .volcano-gradient { background: linear-gradient(45deg, #e25822, #22a2e2, #1a1a1a); }
 
+/* Gold gradient text */
+.text-gold-gradient { background: linear-gradient(90deg, #FFD700 0%, #FFB300 50%, #FF6B35 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* Perspective helper */
+.perspective-1000 { perspective: 1000px; transform-style: preserve-3d; }
+

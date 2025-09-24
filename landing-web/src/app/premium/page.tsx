@@ -94,7 +94,7 @@ export default function PremiumCommerce() {
         <div className="absolute inset-0 gradient-gold-aurora animate-aurora" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <div className="absolute inset-0 p-8 grid content-end gap-4">
-          <h1 className="font-display text-4xl sm:text-6xl font-black leading-tight">
+          <h1 className="font-display text-4xl sm:text-6xl font-black leading-tight text-gold-gradient">
             Камчатка. Премиум‑экосистема путешествий
           </h1>
           <p className="max-w-2xl text-white/85">
@@ -187,18 +187,9 @@ export default function PremiumCommerce() {
           <h2 className="text-xl font-extrabold">Избранные туры</h2>
           <Link className="text-premium-gold font-bold" href="/partners">Каталог</Link>
         </div>
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3 perspective-1000">
           {featured.slice(1).map(f => (
-            <Link key={f.t} href={f.href} className="relative premium-card rounded-2xl overflow-hidden hover:translate-y-[-2px] transition will-change-transform">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={f.img} alt={f.t} className="w-full h-48 object-cover" />
-              <div className="absolute inset-0 gold-shine animate-shine opacity-0 hover:opacity-40 transition" />
-              <div className="relative p-4 grid gap-1">
-                <div className="font-extrabold">{f.t}</div>
-                <div className="text-sm text-white/70">{f.m}</div>
-                <div className="text-premium-gold font-black">{f.p}</div>
-              </div>
-            </Link>
+            <TiltCard key={f.t} href={f.href} img={f.img} title={f.t} meta={f.m} price={f.p} />
           ))}
         </div>
       </section>
@@ -242,6 +233,21 @@ export default function PremiumCommerce() {
         </div>
       </nav>
     </main>
+  );
+}
+
+function TiltCard({ href, img, title, meta, price }: { href: string; img: string; title: string; meta: string; price: string }) {
+  return (
+    <Link href={href} className="group relative premium-card rounded-2xl overflow-hidden transition will-change-transform" style={{ transform: 'rotateX(0deg) rotateY(0deg)' }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={img} alt={title} className="w-full h-48 object-cover group-hover:scale-[1.03] transition" />
+      <div className="absolute inset-0 gold-shine animate-shine opacity-0 group-hover:opacity-40 transition" />
+      <div className="relative p-4 grid gap-1">
+        <div className="font-extrabold">{title}</div>
+        <div className="text-sm text-white/70">{meta}</div>
+        <div className="text-premium-gold font-black">{price}</div>
+      </div>
+    </Link>
   );
 }
 
