@@ -4,3 +4,11 @@
 
 html, body { @apply m-0 p-0 bg-gray-50 text-slate-900; }
 
+/* Utilities */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Adventure gradient tokens */
+.gradient-aurora { background: radial-gradient(120% 60% at 10% 10%, rgba(135,206,235,0.25) 0%, rgba(15,26,47,0) 60%), radial-gradient(100% 60% at 90% 0%, rgba(255,107,53,0.22) 0%, rgba(15,26,47,0) 55%); }
+.gradient-neon { background: linear-gradient(135deg, #FF6B35 0%, #FFD700 100%); }
+
