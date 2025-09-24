@@ -52,8 +52,8 @@ export default function Page() {
       {/* Personas grid */}
       <section className="px-6 py-6 grid gap-4">
         <div className="grid gap-1 text-center">
-          <div className="font-display text-4xl sm:text-6xl tracking-wide">Камчатка.</div>
-          <div className="font-display text-xl sm:text-3xl">экосистема путешествий.</div>
+          <div className="font-display text-gold-gradient text-5xl sm:text-7xl tracking-wide">Камчатка.</div>
+          <div className="font-display text-gold-gradient text-2xl sm:text-4xl">экосистема путешествий.</div>
         </div>
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-extrabold">Кому это нужно</h2>
@@ -82,7 +82,10 @@ export default function Page() {
             <div className="text-white/70 text-xs">Тестовый режим: интеграции в процессе</div>
           </div>
           <a href="/hub/safety" className="block">
-            <BearMap showPoints={false} className="cursor-pointer" />
+            <div className="w-full h-72 rounded-2xl overflow-hidden border border-white/10 bg-black grid place-items-center cursor-pointer">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="https://disk.yandex.ru/i/NuxEtlcx5LdrJg" alt="Контур Камчатки" className="max-h-full max-w-full object-contain" referrerPolicy="no-referrer" loading="lazy" />
+            </div>
           </a>
         </div>
         <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-2">
