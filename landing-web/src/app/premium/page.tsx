@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export default function PremiumCommerce() {
   const roles = [
@@ -225,7 +225,14 @@ export default function PremiumCommerce() {
           <h2 className="text-xl font-extrabold">Избранные туры</h2>
           <Link className="text-premium-gold font-bold" href="/partners">Каталог</Link>
         </div>
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3 perspective-1000">
+        {/* Mobile carousel */}
+        <div className="sm:hidden">
+          <Carousel
+            items={featured.slice(1).map(f => ({ href: f.href, img: f.img, title: f.t, meta: f.m, price: f.p }))}
+          />
+        </div>
+        {/* Desktop grid */}
+        <div className="hidden sm:grid gap-4 grid-cols-1 sm:grid-cols-3 perspective-1000">
           {featured.slice(1).map(f => (
             <TiltCard key={f.t} href={f.href} img={f.img} title={f.t} meta={f.m} price={f.p} />
           ))}
@@ -274,9 +281,9 @@ export default function PremiumCommerce() {
   );
 }
 
-function TiltCard({ href, img, title, meta, price }: { href: string; img: string; title: string; meta: string; price: string }) {
+function TiltCard({ href, img, title, meta, price, className }: { href: string; img: string; title: string; meta: string; price: string; className?: string }) {
   return (
-    <Link href={href} className="group relative premium-card rounded-2xl overflow-hidden transition will-change-transform" style={{ transform: 'rotateX(0deg) rotateY(0deg)' }}>
+    <Link href={href} className={`group relative premium-card rounded-2xl overflow-hidden transition will-change-transform ${className || ''}`} style={{ transform: 'rotateX(0deg) rotateY(0deg)' }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={img} alt={title} className="w-full h-48 object-cover group-hover:scale-[1.03] transition" />
       <div className="absolute inset-0 gold-shine animate-shine opacity-0 group-hover:opacity-40 transition" />
@@ -286,6 +293,30 @@ function TiltCard({ href, img, title, meta, price }: { href: string; img: string
         <div className="text-premium-gold font-black">{price}</div>
       </div>
     </Link>
+  );
+}
+
+type CarouselItem = { href: string; img: string; title: string; meta: string; price: string };
+function Carousel({ items }: { items: CarouselItem[] }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const scrollBy = (dir: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const delta = Math.max(280, Math.floor(el.clientWidth * 0.85));
+    el.scrollBy({ left: dir * delta, behavior: 'smooth' });
+  };
+  return (
+    <div className="relative">
+      <div ref={trackRef} className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 px-1">
+        {items.map((i) => (
+          <div key={i.title} className="min-w-[280px] snap-start">
+            <TiltCard {...i} className="w-[280px]" />
+          </div>
+        ))}
+      </div>
+      <button aria-label="prev" onClick={() => scrollBy(-1)} className="hidden sm:grid place-items-center absolute -left-2 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/60 border border-white/10">‹</button>
+      <button aria-label="next" onClick={() => scrollBy(1)} className="hidden sm:grid place-items-center absolute -right-2 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/60 border border-white/10">›</button>
+    </div>
   );
 }
 
