@@ -11,10 +11,17 @@ export default function BearMap() {
       // @ts-ignore
       await import('leaflet/dist/leaflet.css');
       if (!mapRef.current) return;
-      map = L.map(mapRef.current, { zoomControl: false }).setView([53.9, 159.6], 5);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
+      map = L.map(mapRef.current, { zoomControl: false, attributionControl: false }).setView([56, 160], 5);
+      // Dark background (no tiles, just black div)
+      const dark = L.tileLayer('', {});
+      dark.addTo(map);
+      // Draw Kamchatka outline
+      const outlineRes = await fetch('/data/kamchatka_outline.geojson');
+      const outlineGeo = await outlineRes.json();
+      const outline = L.geoJSON(outlineGeo, {
+        style: { color: '#ffffff', weight: 1.5, fill: false, opacity: 0.85 },
       }).addTo(map);
+      try { map.fitBounds(outline.getBounds(), { padding: [10, 10] }); } catch {}
       const res = await fetch('/data/bears.geojson');
       const geo = await res.json();
       const icon = (severity: string) => L.divIcon({
@@ -32,6 +39,6 @@ export default function BearMap() {
     })();
     return () => { try { (map as any)?.remove(); } catch {} };
   }, []);
-  return <div ref={mapRef} className="w-full h-72 rounded-2xl overflow-hidden border border-white/10" />;
+  return <div ref={mapRef} className="w-full h-72 rounded-2xl overflow-hidden border border-white/10 bg-black" />;
 }
 
