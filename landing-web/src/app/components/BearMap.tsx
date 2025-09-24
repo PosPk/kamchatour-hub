@@ -20,8 +20,13 @@ export default function BearMap({ showPoints = false, className }: Props) {
       // Draw Kamchatka outline
       const outlineRes = await fetch('/data/kamchatka_outline.geojson');
       const outlineGeo = await outlineRes.json();
+      // Glow layer (under)
+      L.geoJSON(outlineGeo, {
+        style: { color: '#FFD700', weight: 6, fill: false, opacity: 0.18, lineCap: 'round', lineJoin: 'round' },
+      }).addTo(map);
+      // Main stroke (over)
       const outline = L.geoJSON(outlineGeo, {
-        style: { color: '#FFD700', weight: 2, fill: false, opacity: 0.95 },
+        style: { color: '#FFD700', weight: 2.5, fill: false, opacity: 0.95, lineCap: 'round', lineJoin: 'round' },
       }).addTo(map);
       try { map.fitBounds(outline.getBounds(), { padding: [10, 10] }); } catch {}
       if (showPoints) {
