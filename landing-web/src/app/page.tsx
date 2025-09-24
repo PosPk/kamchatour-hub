@@ -20,10 +20,7 @@ export default function Page() {
       <header className="px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-premium-gold to-premium-ice" />
-          <div className="grid leading-tight">
-            <div className="font-accent text-2xl tracking-wide">КАМЧАТКА</div>
-            <div className="font-display text-sm text-white/80">экосистема путешествий</div>
-          </div>
+          <span className="font-display text-xl tracking-tight">Kamchatour Hub</span>
         </div>
         <nav className="hidden sm:flex gap-6 text-sm text-white/70">
           <Link href="/premium" className="hover:text-white">Commerce</Link>
@@ -54,6 +51,10 @@ export default function Page() {
 
       {/* Personas grid */}
       <section className="px-6 py-6 grid gap-4">
+        <div className="grid gap-1 text-center">
+          <div className="font-accent text-4xl sm:text-6xl tracking-wide">Камчатка</div>
+          <div className="font-display text-xl sm:text-3xl">экосистема путешествий</div>
+        </div>
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-extrabold">Кому это нужно</h2>
           <div className="text-white/70 text-sm">Выберите роль, чтобы продолжить</div>
