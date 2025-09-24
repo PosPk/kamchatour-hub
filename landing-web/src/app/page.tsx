@@ -70,19 +70,19 @@ export default function Page() {
 
       {/* Ecosystem widgets */}
       <section className="px-6 py-6 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-3 sm:col-span-2">
-          <div className="text-sm text-white/70">SOS и безопасность</div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <a href="#" className="rounded-xl bg-premium-gold text-premium-black text-center py-3 font-bold">SOS</a>
-            <a href="#" className="rounded-xl bg-white/10 text-center py-3 font-bold">МЧС</a>
-            <a href="#" className="rounded-xl bg-white/10 text-center py-3 font-bold">Сейсмика</a>
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-4 sm:grid-cols-2 sm:items-start">
+          <div className="grid gap-3">
+            <div className="text-sm text-white/70">SOS и безопасность</div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <a href="#" className="rounded-xl bg-premium-gold text-premium-black text-center py-3 font-bold">SOS</a>
+              <a href="#" className="rounded-xl bg-white/10 text-center py-3 font-bold">МЧС</a>
+              <a href="#" className="rounded-xl bg-white/10 text-center py-3 font-bold">Сейсмика</a>
+            </div>
+            <div className="text-white/70 text-xs">Тестовый режим: интеграции в процессе</div>
           </div>
-          <div className="grid gap-2">
-            <div className="text-sm text-white/70">Карта медведей (наблюдения)</div>
-            <BearMap />
-            <div className="text-white/70 text-xs">Источник: пилотный GeoJSON (будут live‑данные)</div>
-          </div>
-          <div className="text-white/70 text-xs">Тестовый режим: интеграции в процессе</div>
+          <a href="/hub/safety" className="block">
+            <BearMap showPoints={false} className="cursor-pointer" />
+          </a>
         </div>
         <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-2">
           <div className="text-sm text-white/70">Экология</div>
