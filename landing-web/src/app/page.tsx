@@ -72,9 +72,9 @@ export default function Page() {
       {/* Ecosystem widgets */}
       <section className="px-6 py-6 grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-4 sm:grid-cols-2 sm:items-start">
-          <div className="grid gap-3">
+          <div className="grid gap-4">
             <div className="text-sm text-white/70">SOS и безопасность</div>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3">
               <a href="#" className="rounded-xl bg-premium-gold text-premium-black text-center py-3 font-bold">SOS</a>
               <a href="#" className="rounded-xl bg-white/10 text-center py-3 font-bold">МЧС</a>
               <a href="#" className="rounded-xl bg-white/10 text-center py-3 font-bold">Сейсмика</a>
