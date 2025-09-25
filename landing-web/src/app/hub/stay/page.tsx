@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import DateRangePicker, { type DateRange } from '../../components/DateRangePicker';
 import GuestsSelector, { type Guests } from '../../components/GuestsSelector';
+import StaySearchBar from '../../components/StaySearchBar';
 
 type PropertyCard = {
   id: string;
@@ -53,7 +54,12 @@ export default function StayHub() {
         </div>
       </header>
 
-      {/* Search + filters (Booking-like simplified) */}
+      {/* Booking-like search bar */}
+      <section className="grid gap-3 relative">
+        <StaySearchBar onSearch={()=>{ /* TODO: hook to SSR search */ }} />
+      </section>
+
+      {/* Filters */}
       <section className="grid gap-3 relative">
         <div className="grid sm:grid-cols-5 gap-3">
           <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Куда: база, район…" className="h-11 rounded-xl px-3 text-slate-900 sm:col-span-2" />
