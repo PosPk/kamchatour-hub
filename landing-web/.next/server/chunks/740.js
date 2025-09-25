@@ -1,1 +1,0 @@
-"use strict";exports.id=740,exports.ids=[740],exports.modules={5740:(e,t,r)=>{r.r(t),r.d(t,{default:()=>s});let s=(0,r(5347).createProxy)(String.raw`/workspace/landing-web/src/app/components/KamaiWidget.tsx#default`)}};
