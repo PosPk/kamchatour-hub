@@ -5,6 +5,8 @@ import Link from 'next/link';
 import DateRangePicker, { type DateRange } from '../../components/DateRangePicker';
 import GuestsSelector, { type Guests } from '../../components/GuestsSelector';
 import StaySearchBar from '../../components/StaySearchBar';
+import FilterSidebar, { type Filters } from '../../components/FilterSidebar';
+import StayCard from '../../components/StayCard';
 
 type PropertyCard = {
   id: string;
@@ -39,6 +41,7 @@ export default function StayHub() {
   const [dateOpen, setDateOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>({ start: null, end: null });
   const [guests, setGuests] = useState<Guests>({ adults: 2, children: 0, rooms: 1 });
+  const [filters, setFilters] = useState<Filters>({ priceMin: 0, priceMax: 30000, types: [], minRating: null, amenities: [] });
 
   return (
     <main className="min-h-screen bg-premium-black text-white px-6 py-8 grid gap-6">
@@ -54,9 +57,16 @@ export default function StayHub() {
         </div>
       </header>
 
-      {/* Booking-like search bar */}
-      <section className="grid gap-3 relative">
-        <StaySearchBar onSearch={()=>{ /* TODO: hook to SSR search */ }} />
+      {/* Hero with search */}
+      <section className="relative overflow-hidden rounded-3xl">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1920&auto=format&fit=crop" alt="Hero" className="w-full h-[32vh] object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        <div className="absolute inset-0 p-6 grid content-end gap-3">
+          <div className="text-2xl font-extrabold">Найдите идеальное место для отдыха на Камчатке</div>
+          <div className="text-white/85">От уютных гостевых домов до современных отелей — с лучшей ценой.</div>
+          <StaySearchBar onSearch={()=>{ /* TODO: hook to SSR search */ }} />
+        </div>
       </section>
 
       {/* Filters */}
@@ -92,28 +102,25 @@ export default function StayHub() {
         </div>
       </section>
 
-      {/* Cards grid */}
-      <section className="grid gap-4 grid-cols-1 sm:grid-cols-3">
-        {filtered.map(p => (
-          <article key={p.id} className="rounded-2xl overflow-hidden border border-white/10 bg-white/5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={p.img} alt={p.title} className="w-full h-40 object-cover" />
-            <div className="p-4 grid gap-2">
-              <div className="flex items-center justify-between">
-                <h3 className="font-extrabold">{p.title}</h3>
-                <div className="text-premium-gold font-bold">{p.rating.toFixed(1)}</div>
-              </div>
-              <div className="text-white/70 text-sm">{p.location}</div>
-              <div className="text-sm flex flex-wrap gap-1">
-                {p.tags.map(tag => <span key={tag} className="px-2 py-1 rounded-full bg-white/10 text-white/80 text-xs">{tag}</span>)}
-              </div>
-              <div className="flex items-center justify-between pt-1">
-                <div className="text-white/85"><span className="font-black text-premium-gold">{p.priceFrom.toLocaleString('ru-RU')}</span> ₽/ночь</div>
-                <Link href={`/hub/stay/${p.id}`} className="px-3 py-2 rounded-lg bg-premium-gold text-premium-black font-semibold">Подробнее</Link>
-              </div>
-            </div>
-          </article>
-        ))}
+      {/* Two-column layout: filters + results */}
+      <section className="grid gap-4 sm:grid-cols-[280px_1fr]">
+        <FilterSidebar value={filters} onChange={setFilters} onApply={()=>{ /* hook to apply */ }} />
+        <div className="grid gap-3">
+          <div className="flex items-center justify-between text-sm">
+            <div className="text-white/70">Найдено вариантов: {filtered.length}</div>
+            <select className="h-10 rounded-xl px-3 bg-white/10 border border-white/10">
+              <option>Рекомендуемые</option>
+              <option>Цена: низкая → высокая</option>
+              <option>Цена: высокая → низкая</option>
+              <option>Рейтинг</option>
+            </select>
+          </div>
+          <div className="grid gap-3">
+            {filtered.map(p => (
+              <StayCard key={p.id} item={{ id: p.id, title: p.title, location: p.location, rating: p.rating, priceFrom: p.priceFrom, img: p.img, reviews: 128, summary: 'Рядом с термальными источниками, удобная парковка, Wi‑Fi' }} />
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Calendar preview (stub) */}
