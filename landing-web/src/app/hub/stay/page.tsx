@@ -40,7 +40,7 @@ export default function StayHub() {
 
   const [dateOpen, setDateOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>({ start: null, end: null });
-  const [guests, setGuests] = useState<Guests>({ adults: 2, children: 0, rooms: 1 });
+  const [guests, setGuests] = useState<Guests>({ adults: 2, children: 0, childAges: [], rooms: 1 });
   const [filters, setFilters] = useState<Filters>({ priceMin: 0, priceMax: 30000, types: [], minRating: null, amenities: [] });
 
   return (

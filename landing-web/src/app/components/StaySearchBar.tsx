@@ -11,7 +11,7 @@ export default function StaySearchBar({ onSearch }: { onSearch: (q: { location: 
   const [suggests, setSuggests] = useState<Suggest[]>([]);
   const [range, setRange] = useState<DateRange>({ start: null, end: null });
   const [dateOpen, setDateOpen] = useState(false);
-  const [guests, setGuests] = useState<Guests>({ adults: 2, children: 0, rooms: 1 });
+  const [guests, setGuests] = useState<Guests>({ adults: 2, children: 0, childAges: [], rooms: 1 });
   const [forWork, setForWork] = useState(false);
   const anchorRef = useRef<HTMLButtonElement>(null);
 
