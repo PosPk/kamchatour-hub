@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import KamchatkaButton from './components/KamchatkaButton';
+import KamchatkaGeoButton from './components/KamchatkaGeoButton';
 
 export default function Page() {
   const personas = [
@@ -83,7 +84,9 @@ export default function Page() {
             <div className="text-white/70 text-xs">Тестовый режим: интеграции в процессе</div>
           </div>
           <div className="w-full h-72 rounded-2xl overflow-hidden border border-white/10 bg-black grid place-items-center cursor-pointer group">
-            <KamchatkaButton />
+            <div className="w-[70%] sm:w-[80%]">
+              <KamchatkaGeoButton />
+            </div>
           </div>
         </div>
         <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-2">
