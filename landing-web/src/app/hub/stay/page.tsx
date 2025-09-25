@@ -36,7 +36,10 @@ export default function StayHub() {
   return (
     <main className="min-h-screen bg-premium-black text-white px-6 py-8 grid gap-6">
       <header className="flex items-center justify-between gap-3 flex-wrap">
-        <h1 className="text-2xl sm:text-3xl font-extrabold">Размещение</h1>
+        <div className="flex items-center gap-3">
+          <a href="/" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-sm">← На главную</a>
+          <h1 className="text-2xl sm:text-3xl font-extrabold">Размещение</h1>
+        </div>
         <div className="flex gap-2 bg-white/5 border border-white/10 rounded-full p-1">
           {(['tourist','operator'] as const).map(r => (
             <button key={r} onClick={() => setRole(r)} className={`px-3 py-1.5 rounded-full text-sm ${role===r?'bg-premium-gold text-premium-black':'hover:bg-white/10'}`}>{r==='tourist'?'Турист':'Туроператор'}</button>
@@ -44,17 +47,35 @@ export default function StayHub() {
         </div>
       </header>
 
-      {/* Search + filters */}
-      <section className="grid gap-3 sm:grid-cols-3">
-        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Поиск: база, район, тег…" className="h-11 rounded-xl px-3 text-slate-900" />
-        <div className="grid grid-cols-2 gap-3">
-          <input type="number" value={minPrice} onChange={e=>setMinPrice(e.target.value===''?'':Number(e.target.value))} placeholder="Мин ₽/ночь" className="h-11 rounded-xl px-3 text-slate-900" />
-          <input type="number" value={maxPrice} onChange={e=>setMaxPrice(e.target.value===''?'':Number(e.target.value))} placeholder="Макс ₽/ночь" className="h-11 rounded-xl px-3 text-slate-900" />
+      {/* Search + filters (Booking-like simplified) */}
+      <section className="grid gap-3">
+        <div className="grid sm:grid-cols-5 gap-3">
+          <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Куда: база, район…" className="h-11 rounded-xl px-3 text-slate-900 sm:col-span-2" />
+          <input type="date" className="h-11 rounded-xl px-3 text-slate-900" />
+          <input type="date" className="h-11 rounded-xl px-3 text-slate-900" />
+          <select className="h-11 rounded-xl px-3 text-slate-900">
+            <option>1 гость</option>
+            <option>2 гостя</option>
+            <option>3 гостя</option>
+            <option>4+ гостей</option>
+          </select>
         </div>
-        <div className="flex items-center gap-2 text-sm overflow-x-auto no-scrollbar">
-          {['баня','река','рыбалка','пансион','вид на вулканы','семейный','центр','трансфер'].map(t => (
-            <button key={t} onClick={()=>setQ((prev)=>prev?prev+" "+t:t)} className="px-3 py-2 rounded-full bg-white/10 hover:bg-white/15 whitespace-nowrap">{t}</button>
-          ))}
+        <div className="grid sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
+            <input type="number" value={minPrice} onChange={e=>setMinPrice(e.target.value===''?'':Number(e.target.value))} placeholder="Мин ₽/ночь" className="h-11 rounded-xl px-3 text-slate-900" />
+            <input type="number" value={maxPrice} onChange={e=>setMaxPrice(e.target.value===''?'':Number(e.target.value))} placeholder="Макс ₽/ночь" className="h-11 rounded-xl px-3 text-slate-900" />
+          </div>
+          <div className="flex items-center gap-2 text-sm overflow-x-auto no-scrollbar sm:col-span-2">
+            {['баня','река','рыбалка','пансион','вид на вулканы','семейный','центр','трансфер'].map(t => (
+              <button key={t} onClick={()=>setQ((prev)=>prev?prev+" "+t:t)} className="px-3 py-2 rounded-full bg-white/10 hover:bg-white/15 whitespace-nowrap">{t}</button>
+            ))}
+            <select className="h-10 rounded-xl px-3 bg-white/10 border border-white/10">
+              <option>Сортировка: по популярности</option>
+              <option>Сортировка: цена ↑</option>
+              <option>Сортировка: цена ↓</option>
+              <option>Сортировка: рейтинг</option>
+            </select>
+          </div>
         </div>
       </section>
 
