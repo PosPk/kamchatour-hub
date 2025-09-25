@@ -32,15 +32,12 @@ function computeBounds(geom: GeoJSONGeometry) {
     if (lat < minLat) minLat = lat;
     if (lat > maxLat) maxLat = lat;
   };
-  const eachPos = (coords: Polygon | Polygon[]) => {
-    const polys = Array.isArray(coords[0][0]) ? (coords as Polygon[]) : [coords as Polygon];
-    for (const poly of polys) {
-      for (const ring of poly) {
-        for (const [lon, lat] of ring) push(lon, lat);
-      }
+  const asPolygons = geom.type === 'MultiPolygon' ? (geom.coordinates as Polygon[]) : [geom.coordinates as Polygon];
+  for (const poly of asPolygons) {
+    for (const ring of poly) {
+      for (const [lon, lat] of ring) push(lon, lat);
     }
-  };
-  eachPos(geom.coordinates as any);
+  }
   return { minLon, minLat, maxLon, maxLat };
 }
 
@@ -58,7 +55,7 @@ function geoToSvgPath(geom: GeoJSONGeometry, viewW: number, viewH: number, paddi
   const project = (lon: number, lat: number) => [xOffset + lon * scale, yOffset - lat * scale] as [number, number];
 
   const parts: string[] = [];
-  const polys = (Array.isArray(geom.coordinates[0][0]) ? geom.coordinates : [geom.coordinates]) as Polygon[];
+  const polys = geom.type === 'MultiPolygon' ? (geom.coordinates as Polygon[]) : [geom.coordinates as Polygon];
   for (const poly of polys) {
     for (const ring of poly) {
       const ringPts = ring.map(([lon, lat]) => project(lon, lat));
