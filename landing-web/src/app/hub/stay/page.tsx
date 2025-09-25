@@ -123,21 +123,6 @@ export default function StayHub() {
         </div>
       </section>
 
-      {/* Calendar preview (stub) */}
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-4 grid gap-3">
-        <div className="text-sm text-white/70">Предпросмотр календаря (стаб)</div>
-        <div className="grid grid-cols-7 gap-[2px]">
-          {Array.from({length: 28}).map((_,i)=> (
-            <div key={i} className={`h-12 grid place-items-center text-xs ${i%5===0?'bg-green-900/40':'bg-white/5'}`}>{i+1}</div>
-          ))}
-        </div>
-        {role==='operator' && (
-          <div className="flex items-center justify-between pt-2">
-            <Link href="/operator-web/stays/onboarding" className="px-4 py-2 rounded-lg bg-premium-gold text-premium-black font-semibold">Добавить объект</Link>
-            <Link href="/operator-web" className="px-4 py-2 rounded-lg bg-white/10 font-semibold">Кабинет оператора</Link>
-          </div>
-        )}
-      </section>
     </main>
   );
 }
