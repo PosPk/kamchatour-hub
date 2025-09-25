@@ -1,11 +1,11 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/hub/cars/page": "app/hub/cars/page.js",
   "/api/ai/chat/route": "app/api/ai/chat/route.js",
   "/hub/gear/page": "app/hub/gear/page.js",
   "/hub/operator/page": "app/hub/operator/page.js",
-  "/hub/guide/page": "app/hub/guide/page.js",
+  "/hub/cars/page": "app/hub/cars/page.js",
   "/hub/safety/page": "app/hub/safety/page.js",
+  "/hub/guide/page": "app/hub/guide/page.js",
   "/hub/souvenirs/page": "app/hub/souvenirs/page.js",
   "/hub/stay/page": "app/hub/stay/page.js",
   "/hub/tourist/page": "app/hub/tourist/page.js",

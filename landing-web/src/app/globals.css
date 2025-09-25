@@ -40,10 +40,8 @@ html { scroll-behavior: smooth; }
 .group:hover .map-button { filter: drop-shadow(0 0 14px rgba(255,215,0,0.6)) drop-shadow(0 0 24px rgba(255,215,0,0.35)); }
 
 /* Kamchatka button inline SVG styles */
-.kamchatka-button { filter: drop-shadow(0 0 6px rgba(255,215,0,0.25)); transition: filter .4s ease, transform .25s ease; }
-.kamchatka-button:hover { filter: drop-shadow(0 0 20px gold) drop-shadow(0 0 40px rgba(255,215,0,0.6)); }
-.kamchatka-button:active { filter: drop-shadow(0 0 30px gold) drop-shadow(0 0 60px rgba(255,215,0,0.9)); }
-.kamchatka-path { fill: #000000; stroke: #333333; stroke-width: 0.5; transition: stroke .4s ease, stroke-width .4s ease; }
-.kamchatka-button:hover .kamchatka-path { stroke: gold; stroke-width: 1.5; }
-.kamchatka-button:active .kamchatka-path { stroke: #ffd700; stroke-width: 2.5; }
+.kamchatka-button { filter: drop-shadow(0 0 10px rgba(255,215,0,0.35)) drop-shadow(0 0 22px rgba(255,215,0,0.25)); transition: filter .3s ease; }
+.kamchatka-button:hover { filter: drop-shadow(0 0 18px gold) drop-shadow(0 0 36px rgba(255,215,0,0.5)); }
+.kamchatka-button:active { filter: drop-shadow(0 0 26px gold) drop-shadow(0 0 52px rgba(255,215,0,0.8)); }
+.kamchatka-path { fill: #000000; stroke: #FFD700; stroke-width: 2; vector-effect: non-scaling-stroke; paint-order: stroke; transition: stroke-width .2s ease; }
 

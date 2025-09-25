@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function KamchatkaButton() {
   return (
     <Link href="/hub/safety" aria-label="Открыть карту Камчатки" className="kamchatka-button inline-block">
-      <svg width="500" height="600" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+      <svg width="500" height="600" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
         <path
           className="kamchatka-path"
           d="M160,45
