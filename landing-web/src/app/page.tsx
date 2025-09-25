@@ -36,6 +36,7 @@ export default function Page() {
           <Link href="/premium" className="hover:text-white">Commerce</Link>
           <Link href="/premium2" className="hover:text-white">Adventure</Link>
           <Link href="/partners" className="hover:text-white">Партнёры</Link>
+          <Link href="/hub/stay" className="hover:text-white">Размещение</Link>
           <Link href="/search" className="hover:text-white">Поиск</Link>
         </nav>
       </header>
@@ -123,6 +124,7 @@ export default function Page() {
             { label: 'Поиск', href: '/search' },
             { label: 'Витрина Commerce', href: '/premium' },
             { label: 'Витрина Adventure', href: '/premium2' },
+            { label: 'Размещение', href: '/hub/stay' },
             { label: 'Безопасность', href: '/hub/safety' },
             { label: 'Рефералы и бусты', href: '/hub/operator' },
           ].map(a => (
