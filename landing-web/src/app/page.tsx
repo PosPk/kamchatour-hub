@@ -8,6 +8,10 @@ import { useState } from 'react';
 
 export default function Page() {
   const [customUrl, setCustomUrl] = useState<string | null>(null);
+  // Fetch persisted URL on mount
+  if (typeof window !== 'undefined' && customUrl === null) {
+    fetch('/api/kam-button').then(r => r.json()).then(d => { if (d?.url) setCustomUrl(d.url); }).catch(() => {});
+  }
   const personas = [
     { key: 'tourist', label: 'Турист', href: '/hub/tourist' },
     { key: 'operator', label: 'Туроператор', href: '/hub/operator' },

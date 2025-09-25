@@ -22,7 +22,11 @@ export default function UploadKamButton({ onReady }: { onReady: (url: string) =>
       const res = await fetch('/api/upload', { method: 'POST', body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || 'upload_failed');
-      try { onReady(data.url); } catch {}
+      try {
+        onReady(data.url);
+        // Persist selection
+        await fetch('/api/kam-button', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: data.url }) });
+      } catch {}
     } catch (e: any) {
       setError(e?.message || 'Ошибка загрузки');
     } finally {
