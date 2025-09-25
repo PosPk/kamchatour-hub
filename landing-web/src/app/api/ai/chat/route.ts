@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
 export async function POST(req: Request) {
   try {
@@ -20,6 +21,10 @@ export async function POST(req: Request) {
     };
 
     const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+    const SUPABASE_URL = process.env.SUPABASE_URL;
+    const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
+    const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE) : null;
+    const startedAt = Date.now();
     if (OPENROUTER_API_KEY) {
       const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -38,13 +43,21 @@ export async function POST(req: Request) {
       }
       const data = await resp.json();
       const content = data?.choices?.[0]?.message?.content ?? 'Готово.';
+      // Log usage
+      if (supabase) {
+        const costUsd = 0.002; // rough estimate per call; adjust via usage dashboard later
+        await supabase.from('ai_usage_logs').insert({
+          provider: 'openrouter', model: 'openai/gpt-4o-mini', tokens_in: 0, tokens_out: 0,
+          cost_usd: costUsd, duration_ms: Date.now() - startedAt, created_at: new Date().toISOString(),
+        });
+      }
       return NextResponse.json({ content });
     }
 
     // Demo fallback (no key)
     const last = messages[messages.length - 1]?.content || '';
     const demo =
-      'KAMAI (демо): я зафиксировал ваш запрос. На проде тут будет полноценный ИИ (OpenRouter). Вопрос: ' +
+      'AI.Kam (демо): я зафиксировал ваш запрос. На проде тут будет полноценный ИИ (OpenRouter). Вопрос: ' +
       (typeof last === 'string' ? last.slice(0, 240) : '');
     return NextResponse.json({ content: demo });
   } catch (e: any) {
