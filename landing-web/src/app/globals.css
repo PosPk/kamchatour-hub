@@ -35,3 +35,7 @@ html { scroll-behavior: smooth; }
 .text-gold { color: #FFD700; }
 .gold-glow { text-shadow: 0 0 8px rgba(255,215,0,0.35), 0 0 16px rgba(255,215,0,0.2), 0 0 24px rgba(255,215,0,0.1); }
 
+/* Map button glow */
+.map-button { filter: drop-shadow(0 0 6px rgba(255,215,0,0.35)); transition: transform .25s ease, filter .25s ease; }
+.group:hover .map-button { filter: drop-shadow(0 0 14px rgba(255,215,0,0.6)) drop-shadow(0 0 24px rgba(255,215,0,0.35)); }
+

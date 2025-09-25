@@ -84,7 +84,7 @@ export default function Page() {
           <a href="/hub/safety" className="group block" aria-label="Открыть карту Камчатки">
             <div className="w-full h-72 rounded-2xl overflow-hidden border border-white/10 bg-black grid place-items-center cursor-pointer">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/graphics/kamchatka-button.svg" alt="Кнопка карты Камчатки" className="h-[85%] object-contain transition group-hover:scale-105" loading="lazy" />
+              <img src="/graphics/kamchatka-button.svg" alt="Кнопка карты Камчатки" className="map-button h-[85%] object-contain transition group-hover:scale-105" loading="lazy" />
             </div>
           </a>
         </div>
