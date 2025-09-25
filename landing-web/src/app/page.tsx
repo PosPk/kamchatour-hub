@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import KamchatkaButton from './components/KamchatkaButton';
 
 export default function Page() {
   const personas = [
@@ -81,12 +82,9 @@ export default function Page() {
             </div>
             <div className="text-white/70 text-xs">Тестовый режим: интеграции в процессе</div>
           </div>
-          <a href="/hub/safety" className="group block" aria-label="Открыть карту Камчатки">
-            <div className="w-full h-72 rounded-2xl overflow-hidden border border-white/10 bg-black grid place-items-center cursor-pointer">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/graphics/kamchatka-button.svg" alt="Кнопка карты Камчатки" className="map-button h-[85%] object-contain transition group-hover:scale-105" loading="lazy" />
-            </div>
-          </a>
+          <div className="w-full h-72 rounded-2xl overflow-hidden border border-white/10 bg-black grid place-items-center cursor-pointer group">
+            <KamchatkaButton />
+          </div>
         </div>
         <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-2">
           <div className="text-sm text-white/70">Экология</div>
