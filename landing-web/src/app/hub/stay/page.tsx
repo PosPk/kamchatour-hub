@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import DateRangePicker, { type DateRange } from '../../components/DateRangePicker';
+import GuestsSelector, { type Guests } from '../../components/GuestsSelector';
 
 type PropertyCard = {
   id: string;
@@ -33,6 +35,10 @@ export default function StayHub() {
     });
   }, [q, minPrice, maxPrice]);
 
+  const [dateOpen, setDateOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange>({ start: null, end: null });
+  const [guests, setGuests] = useState<Guests>({ adults: 2, children: 0, rooms: 1 });
+
   return (
     <main className="min-h-screen bg-premium-black text-white px-6 py-8 grid gap-6">
       <header className="flex items-center justify-between gap-3 flex-wrap">
@@ -48,18 +54,19 @@ export default function StayHub() {
       </header>
 
       {/* Search + filters (Booking-like simplified) */}
-      <section className="grid gap-3">
+      <section className="grid gap-3 relative">
         <div className="grid sm:grid-cols-5 gap-3">
           <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Куда: база, район…" className="h-11 rounded-xl px-3 text-slate-900 sm:col-span-2" />
-          <input type="date" className="h-11 rounded-xl px-3 text-slate-900" />
-          <input type="date" className="h-11 rounded-xl px-3 text-slate-900" />
-          <select className="h-11 rounded-xl px-3 text-slate-900">
-            <option>1 гость</option>
-            <option>2 гостя</option>
-            <option>3 гостя</option>
-            <option>4+ гостей</option>
-          </select>
+          <button onClick={()=>setDateOpen(v=>!v)} className="h-11 rounded-xl px-3 text-slate-900 text-left">
+            {dateRange.start ? dateRange.start.toLocaleDateString('ru-RU') : 'Дата заезда'} — {dateRange.end ? dateRange.end.toLocaleDateString('ru-RU') : 'Дата выезда'}
+          </button>
+          <GuestsSelector value={guests} onChange={setGuests} />
         </div>
+        {dateOpen && (
+          <div className="absolute z-50 top-[3.5rem] left-0">
+            <DateRangePicker value={dateRange} onChange={setDateRange} onClose={()=>setDateOpen(false)} />
+          </div>
+        )}
         <div className="grid sm:grid-cols-3 gap-3">
           <div className="grid grid-cols-2 gap-3">
             <input type="number" value={minPrice} onChange={e=>setMinPrice(e.target.value===''?'':Number(e.target.value))} placeholder="Мин ₽/ночь" className="h-11 rounded-xl px-3 text-slate-900" />
