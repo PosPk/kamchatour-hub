@@ -6,10 +6,20 @@ type G = { type: 'Polygon'|'MultiPolygon'; coordinates: any };
 
 export default function KamchatkaSvgButton({ href = '/hub/safety' }: { href?: string }) {
   const [geom, setGeom] = useState<G|null>(null);
+  const [customD, setCustomD] = useState<string | null>(null);
   useEffect(() => { (async () => {
+    try {
+      // Try to load a custom SVG path first
+      const t = await fetch('/graphics/kamchatka-path.txt', { cache: 'no-store' });
+      if (t.ok) {
+        const pathText = (await t.text()).trim();
+        if (pathText && pathText.startsWith('M')) { setCustomD(pathText); return; }
+      }
+    } catch {}
     try { const r = await fetch('/data/kamchatka_outline.geojson', { cache: 'no-store' }); const j = await r.json(); const f = j.type==='FeatureCollection'? j.features?.[0] : j; setGeom(f.geometry); } catch {}
   })(); }, []);
   const d = useMemo(() => {
+    if (customD) return customD;
     if (!geom) return '';
     const viewW = 500, viewH = 600, pad = 10;
     let minLon=Infinity,minLat=Infinity,maxLon=-Infinity,maxLat=-Infinity;
