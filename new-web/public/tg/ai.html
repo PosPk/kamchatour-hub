@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>AI Loop</title>
+    <style>
+      body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:#f8fafc;color:#0f172a}
+      .wrap{padding:16px}
+      .row{display:flex;gap:8px}
+      .input{flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:10px;background:#fff}
+      .btn{display:inline-block;background:#0891b2;color:#fff;padding:10px 12px;border-radius:10px;text-decoration:none}
+      pre{white-space:pre-wrap;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px}
+      .step{margin-top:12px}
+      .title{font-weight:800;margin-bottom:8px}
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1 class="title">Итеративный AI цикл</h1>
+      <div class="row" style="margin-bottom:10px">
+        <input id="p" class="input" placeholder="Ваш первый промпт"/>
+        <a id="run" href="#" class="btn">Запустить</a>
+      </div>
+      <div id="out"></div>
+    </div>
+    <script>
+      async function run(){
+        const p=document.getElementById('p').value.trim();
+        const out=document.getElementById('out');
+        out.innerHTML='Выполняю…';
+        try{
+          const r = await fetch('/api/ai/loop', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prompt:p, steps:3 }) });
+          const json = await r.json();
+          const steps = Array.isArray(json.steps)? json.steps: [];
+          out.innerHTML = steps.map(s=>`<div class="step"><div class="title">Шаг ${s.index}</div><pre>${JSON.stringify(s.output, null, 2)}</pre></div>`).join('') + `<div class="step"><div class="title">Итог</div><pre>${JSON.stringify(json.final, null, 2)}</pre></div>`;
+        }catch(e){ out.textContent='Ошибка запуска цикла'; }
+      }
+      document.getElementById('run').addEventListener('click', (e)=>{ e.preventDefault(); run(); });
+    </script>
+  </body>
+  </html>
+
