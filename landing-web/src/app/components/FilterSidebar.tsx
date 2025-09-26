@@ -8,6 +8,7 @@ export type Filters = {
   types: string[];
   minRating: number | null;
   amenities: string[];
+  maxDistanceKm: number;
 };
 
 const TYPES = ['Отель','Гостевой дом','Апартаменты','Хостел','Частный дом'];
@@ -24,10 +25,10 @@ export default function FilterSidebar({ value, onChange, onApply }: { value: Fil
 
   return (
     <aside className="rounded-2xl border border-white/10 bg-white/5 p-4 grid gap-4">
-      <div className="text-lg font-extrabold">Фильтры</div>
+      <div className="text-lg font-extrabold">Фильтровать результаты</div>
 
       <div className="grid gap-2">
-        <div className="text-sm text-white/70">Цена за ночь, ₽</div>
+        <div className="text-sm text-white/70">Цена за ночь (руб.)</div>
         <div className="flex items-center gap-2">
           <input type="number" className="h-10 rounded-lg px-3 text-slate-900 w-28" value={v.priceMin} onChange={e=>set({ priceMin: Number(e.target.value)||0 })} />
           <span className="text-white/60">—</span>
@@ -40,8 +41,17 @@ export default function FilterSidebar({ value, onChange, onApply }: { value: Fil
       </div>
 
       <div className="grid gap-2">
+        <div className="text-sm text-white/70">Оценка по отзывам</div>
+        {[9,8,7,6].map(r => (
+          <label key={r} className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={v.minRating === r} onChange={()=>set({ minRating: v.minRating === r ? null : r })} /> {r===9?'Потрясающе: 9+':r===8?'Отлично: 8+':r===7?'Очень хорошо: 7+':'Хорошо: 6+'}
+          </label>
+        ))}
+      </div>
+
+      <div className="grid gap-2">
         <div className="text-sm text-white/70">Тип жилья</div>
-        {TYPES.map(t => (
+        {([...TYPES, 'Вилла']).map(t => (
           <label key={t} className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={v.types.includes(t)} onChange={()=>toggle('types', t)} /> {t}
           </label>
@@ -49,22 +59,20 @@ export default function FilterSidebar({ value, onChange, onApply }: { value: Fil
       </div>
 
       <div className="grid gap-2">
-        <div className="text-sm text-white/70">Рейтинг</div>
-        {[9,8,7].map(r => (
-          <label key={r} className="flex items-center gap-2 text-sm">
-            <input type="radio" name="minRating" checked={v.minRating===r} onChange={()=>set({ minRating: r })} /> От {r} и выше
-          </label>
-        ))}
-        <button onClick={()=>set({ minRating: null })} className="text-xs text-white/70 hover:text-white text-left">Сбросить</button>
-      </div>
-
-      <div className="grid gap-2">
         <div className="text-sm text-white/70">Удобства</div>
-        {AMENITIES.map(a => (
+        {[...AMENITIES, 'Питание включено','Размещение с животными'].map(a => (
           <label key={a} className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={v.amenities.includes(a)} onChange={()=>toggle('amenities', a)} /> {a}
           </label>
         ))}
+      </div>
+
+      <div className="grid gap-2">
+        <div className="text-sm text-white/70">Расстояние до центра (км)</div>
+        <div className="flex items-center gap-2">
+          <input type="range" min={1} max={50} step={1} value={v.maxDistanceKm} onChange={e=>set({ maxDistanceKm: Number(e.target.value) })} className="w-full" />
+          <div className="w-12 text-right text-sm">{v.maxDistanceKm}</div>
+        </div>
       </div>
 
       <button onClick={onApply} className="h-11 rounded-xl bg-premium-gold text-premium-black font-bold">Применить фильтры</button>
