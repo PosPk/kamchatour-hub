@@ -7,6 +7,7 @@ export default function UploadKamButton({ onReady }: { onReady: (url: string) =>
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savedUrl, setSavedUrl] = useState<string | null>(null);
+  const [serverUrl, setServerUrl] = useState<string | null>(null);
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -20,10 +21,14 @@ export default function UploadKamButton({ onReady }: { onReady: (url: string) =>
     try {
       const form = new FormData();
       form.append('file', file);
+      form.append('prefix', 'graphics/kamchatka-button');
       const res = await fetch('/api/upload', { method: 'POST', body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || 'upload_failed');
-      try { onReady(data.url); } catch {}
+      try {
+        setServerUrl(data.url);
+        onReady(data.url);
+      } catch {}
     } catch (e: any) {
       setError(e?.message || 'Ошибка загрузки');
     } finally {
@@ -43,15 +48,15 @@ export default function UploadKamButton({ onReady }: { onReady: (url: string) =>
           <img src={preview} alt="Предпросмотр" className="max-h-48 mx-auto" />
         </div>
       )}
-      {preview && !busy && (
+      {serverUrl && !busy && (
         <button
           onClick={async () => {
             try {
               setBusy(true);
-              const res = await fetch('/api/kam-button', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: preview }) });
+              const res = await fetch('/api/kam-button', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: serverUrl }) });
               const j = await res.json();
               if (!res.ok) throw new Error(j?.error || 'save_failed');
-              setSavedUrl(preview);
+              setSavedUrl(serverUrl);
             } catch (e:any) {
               setError(e?.message || 'Ошибка сохранения');
             } finally {
