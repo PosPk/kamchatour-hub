@@ -64,6 +64,7 @@ export default function DateRangePicker({ value, onChange, onClose, anchorRef }:
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
   const [view, setView] = useState<Date>(() => startOfDay(value.start || today));
   const ref = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number; width: number } | null>(null);
 
   const range = useMemo(() => value, [value]);
 
@@ -77,6 +78,22 @@ export default function DateRangePicker({ value, onChange, onClose, anchorRef }:
     document.addEventListener('mousedown', onDocClick);
     return () => document.removeEventListener('mousedown', onDocClick);
   }, [onClose, anchorRef]);
+
+  useEffect(() => {
+    function compute() {
+      const a = anchorRef?.current;
+      if (!a) return;
+      const r = a.getBoundingClientRect();
+      setCoords({ top: r.bottom + window.scrollY + 6, left: r.left + window.scrollX, width: r.width });
+    }
+    compute();
+    window.addEventListener('scroll', compute, true);
+    window.addEventListener('resize', compute);
+    return () => {
+      window.removeEventListener('scroll', compute, true);
+      window.removeEventListener('resize', compute);
+    };
+  }, [anchorRef]);
 
   const pick = (d: Date) => {
     if (!range.start || (range.start && range.end)) {
@@ -95,7 +112,9 @@ export default function DateRangePicker({ value, onChange, onClose, anchorRef }:
   };
 
   return (
-    <div ref={ref} className="absolute z-50 mt-2 rounded-2xl border border-white/10 bg-premium-black shadow-xl overflow-hidden">
+    <div ref={ref} className="fixed z-[9999] rounded-2xl border border-white/10 bg-premium-black shadow-xl overflow-hidden"
+      style={coords ? { top: coords.top, left: coords.left, minWidth: Math.max(320, coords.width) } : undefined}
+    >
       <div className="flex items-center justify-between px-3 py-2 border-b border-white/10">
         <div className="text-sm text-white/70">Выберите даты</div>
         <div className="flex gap-2">
@@ -112,6 +131,9 @@ export default function DateRangePicker({ value, onChange, onClose, anchorRef }:
         <div className="text-sm text-white/70">
           {range.start ? range.start.toLocaleDateString('ru-RU') : '—'} → {range.end ? range.end.toLocaleDateString('ru-RU') : '—'}
         </div>
+        {range.start && range.end ? (
+          <div className="text-sm text-white/85">{Math.max(1, Math.round((startOfDay(range.end).getTime() - startOfDay(range.start).getTime()) / (1000*60*60*24)))} ночей</div>
+        ) : <div />}
         <button onClick={onClose} className="px-3 py-2 rounded-lg bg-premium-gold text-premium-black font-semibold text-sm">Готово</button>
       </div>
     </div>

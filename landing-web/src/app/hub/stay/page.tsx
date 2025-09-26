@@ -73,15 +73,13 @@ export default function StayHub() {
       <section className="grid gap-3 relative">
         <div className="grid sm:grid-cols-5 gap-3">
           <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Куда: база, район…" className="h-11 rounded-xl px-3 text-slate-900 sm:col-span-2" />
-          <button onClick={()=>setDateOpen(v=>!v)} className="h-11 rounded-xl px-3 text-slate-900 text-left">
+          <button onClick={()=>setDateOpen(v=>!v)} className="h-11 rounded-xl px-3 text-slate-900 text-left relative" id="date-anchor">
             {dateRange.start ? dateRange.start.toLocaleDateString('ru-RU') : 'Дата заезда'} — {dateRange.end ? dateRange.end.toLocaleDateString('ru-RU') : 'Дата выезда'}
           </button>
           <GuestsSelector value={guests} onChange={setGuests} />
         </div>
         {dateOpen && (
-          <div className="absolute z-50 top-[3.5rem] left-0">
-            <DateRangePicker value={dateRange} onChange={setDateRange} onClose={()=>setDateOpen(false)} />
-          </div>
+          <DateRangePicker value={dateRange} onChange={setDateRange} onClose={()=>setDateOpen(false)} anchorRef={{ current: (document?.getElementById?.('date-anchor') as any) || null }} />
         )}
         <div className="grid sm:grid-cols-3 gap-3">
           <div className="grid grid-cols-2 gap-3">
