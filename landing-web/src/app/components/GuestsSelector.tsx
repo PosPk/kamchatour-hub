@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 export type Guests = { adults: number; children: number; childAges: number[]; rooms: number };
 
-export default function GuestsSelector({ value, onChange }: { value: Guests; onChange: (g: Guests) => void }) {
+export default function GuestsSelector({ value, onChange, className }: { value: Guests; onChange: (g: Guests) => void; className?: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [coords, setCoords] = useState<{ top: number; left: number; width: number } | null>(null);
@@ -22,7 +22,7 @@ export default function GuestsSelector({ value, onChange }: { value: Guests; onC
       ? `${value.children} реб.` + (value.childAges.length ? ' (' + value.childAges.join(',') + ')' : '')
       : '0 реб.';
     return (
-      <button onClick={() => setOpen(v=>!v)} className="h-11 rounded-xl px-3 text-slate-900 w-full text-left">
+      <button onClick={() => setOpen(v=>!v)} className={`h-11 rounded-xl px-3 text-slate-900 w-full text-left ${className || ''}`}>
         {value.adults} взр., {childrenLabel}, {value.rooms} ном.
       </button>
     );
