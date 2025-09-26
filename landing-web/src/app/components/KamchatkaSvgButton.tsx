@@ -8,6 +8,7 @@ export default function KamchatkaSvgButton({ href = '/hub/safety' }: { href?: st
   const [geom, setGeom] = useState<G|null>(null);
   const [customD, setCustomD] = useState<string | null>(null);
   const [imgUrl, setImgUrl] = useState<string | null>(null);
+  const staticFallback = '/graphics/kamchatka-button.svg';
   useEffect(() => { (async () => {
     try {
       // Try to load a custom SVG path first
@@ -58,6 +59,11 @@ export default function KamchatkaSvgButton({ href = '/hub/safety' }: { href?: st
           // eslint-disable-next-line @next/next/no-img-element
           <img src={imgUrl} alt="Камчатка" className="kamchatka-button w-full h-auto" />
         ) : (
+          // Static fallback asset bundled with the site
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={staticFallback} alt="Камчатка" className="kamchatka-button w-full h-auto" onError={(e)=>{ (e.currentTarget as HTMLImageElement).style.display='none'; }}/>
+        )}
+        {!imgUrl && (
           <svg viewBox="0 0 500 600" className="w-full h-auto">
             <path d={d || 'M160,45 C150,65 145,85 140,105 C135,125 130,145 125,165 C120,185 125,205 135,225 C145,245 160,255 180,260 C200,265 220,260 240,250 C260,240 270,225 275,205 C280,185 275,165 270,145 C265,125 260,105 255,85 C250,65 240,50 220,45 C200,40 180,40 160,45 Z'} className="fill-black" stroke="#FFD700" strokeWidth="2" vectorEffect="non-scaling-stroke"/>
           </svg>
