@@ -15,7 +15,13 @@ export default function Page() {
       const ls = localStorage.getItem('kam_button_url');
       if (ls) setCustomUrl(ls);
     } catch {}
-    fetch('/api/kam-button', { cache: 'no-store' }).then(r => r.json()).then(d => { if (d?.url) { setCustomUrl(d.url); try { localStorage.setItem('kam_button_url', d.url); } catch {}; } }).catch(() => {});
+    fetch('/api/kam-button', { cache: 'no-store' }).then(r => r.json()).then(d => {
+      const candidate = d?.pinnedUrl || d?.url;
+      if (candidate) {
+        setCustomUrl(candidate);
+        try { localStorage.setItem('kam_button_url', candidate); } catch {}
+      }
+    }).catch(() => {});
   }
   const personas = [
     { key: 'tourist', label: 'Турист', href: '/hub/tourist' },

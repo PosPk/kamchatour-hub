@@ -27,9 +27,10 @@ export default function KamchatkaSvgButton({ href = '/hub/safety' }: { href?: st
       const conf = await fetch('/api/kam-button', { cache: 'no-store' });
       if (conf.ok) {
         const cj = await conf.json();
-        if (cj?.url) {
-          setImgUrl(cj.url);
-          try { if (typeof window !== 'undefined') localStorage.setItem('kam_button_url', cj.url); } catch {}
+        const candidate = cj?.pinnedUrl || cj?.url;
+        if (candidate) {
+          setImgUrl(candidate);
+          try { if (typeof window !== 'undefined') localStorage.setItem('kam_button_url', candidate); } catch {}
           return;
         }
       }

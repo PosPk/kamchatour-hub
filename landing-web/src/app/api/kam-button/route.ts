@@ -40,7 +40,18 @@ export async function GET() {
       }
     } catch {}
 
-    return NextResponse.json({ url: json?.url || null }, { headers: { 'Cache-Control': 'no-store' } });
+    // Try to expose pinned public URL
+    let pinnedUrl: string | null = null;
+    try {
+      const { data: files } = await supabase.storage.from(BUCKET).list('graphics/kamchatka-button');
+      const pinned = (files || []).find((f: any) => typeof f?.name === 'string' && f.name.startsWith('pinned.'));
+      if (pinned) {
+        const { data: pub } = await supabase.storage.from(BUCKET).getPublicUrl(`graphics/kamchatka-button/${pinned.name}`);
+        pinnedUrl = pub?.publicUrl || null;
+      }
+    } catch {}
+
+    return NextResponse.json({ url: json?.url || null, pinnedUrl }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (e: any) {
     return NextResponse.json({ url: null }, { headers: { 'Cache-Control': 'no-store' } });
   }
