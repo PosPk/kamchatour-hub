@@ -14,14 +14,14 @@ function getSupabase() {
 export async function GET() {
   try {
     const supabase = getSupabase();
-    if (!supabase) return NextResponse.json({ url: null, note: 'missing_supabase_env' });
+    if (!supabase) return NextResponse.json({ url: null, note: 'missing_supabase_env' }, { headers: { 'Cache-Control': 'no-store' } });
     const { data, error } = await supabase.storage.from(BUCKET).download(CONFIG_KEY);
-    if (error) return NextResponse.json({ url: null });
+    if (error) return NextResponse.json({ url: null }, { headers: { 'Cache-Control': 'no-store' } });
     const text = await data.text();
     const json = JSON.parse(text || '{}');
-    return NextResponse.json({ url: json?.url || null });
+    return NextResponse.json({ url: json?.url || null }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (e: any) {
-    return NextResponse.json({ url: null });
+    return NextResponse.json({ url: null }, { headers: { 'Cache-Control': 'no-store' } });
   }
 }
 

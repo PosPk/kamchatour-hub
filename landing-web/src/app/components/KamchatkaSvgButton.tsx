@@ -7,6 +7,7 @@ type G = { type: 'Polygon'|'MultiPolygon'; coordinates: any };
 export default function KamchatkaSvgButton({ href = '/hub/safety' }: { href?: string }) {
   const [geom, setGeom] = useState<G|null>(null);
   const [customD, setCustomD] = useState<string | null>(null);
+  const [imgUrl, setImgUrl] = useState<string | null>(null);
   useEffect(() => { (async () => {
     try {
       // Try to load a custom SVG path first
@@ -14,6 +15,22 @@ export default function KamchatkaSvgButton({ href = '/hub/safety' }: { href?: st
       if (t.ok) {
         const pathText = (await t.text()).trim();
         if (pathText && pathText.startsWith('M')) { setCustomD(pathText); return; }
+      }
+    } catch {}
+    try {
+      // Prefer saved image URL if present
+      if (typeof window !== 'undefined') {
+        const ls = localStorage.getItem('kam_button_url');
+        if (ls) setImgUrl(ls);
+      }
+      const conf = await fetch('/api/kam-button', { cache: 'no-store' });
+      if (conf.ok) {
+        const cj = await conf.json();
+        if (cj?.url) {
+          setImgUrl(cj.url);
+          try { if (typeof window !== 'undefined') localStorage.setItem('kam_button_url', cj.url); } catch {}
+          return;
+        }
       }
     } catch {}
     try { const r = await fetch('/data/kamchatka_outline.geojson', { cache: 'no-store' }); const j = await r.json(); const f = j.type==='FeatureCollection'? j.features?.[0] : j; setGeom(f.geometry); } catch {}
@@ -37,9 +54,14 @@ export default function KamchatkaSvgButton({ href = '/hub/safety' }: { href?: st
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className="group inline-block">
       <div className="rounded-2xl border border-white/10 bg-black grid place-items-center map-button-glow">
-        <svg viewBox="0 0 500 600" className="w-full h-auto">
-          <path d={d || 'M160,45 C150,65 145,85 140,105 C135,125 130,145 125,165 C120,185 125,205 135,225 C145,245 160,255 180,260 C200,265 220,260 240,250 C260,240 270,225 275,205 C280,185 275,165 270,145 C265,125 260,105 255,85 C250,65 240,50 220,45 C200,40 180,40 160,45 Z'} className="fill-black" stroke="#FFD700" strokeWidth="2" vectorEffect="non-scaling-stroke"/>
-        </svg>
+        {imgUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imgUrl} alt="Камчатка" className="kamchatka-button w-full h-auto" />
+        ) : (
+          <svg viewBox="0 0 500 600" className="w-full h-auto">
+            <path d={d || 'M160,45 C150,65 145,85 140,105 C135,125 130,145 125,165 C120,185 125,205 135,225 C145,245 160,255 180,260 C200,265 220,260 240,250 C260,240 270,225 275,205 C280,185 275,165 270,145 C265,125 260,105 255,85 C250,65 240,50 220,45 C200,40 180,40 160,45 Z'} className="fill-black" stroke="#FFD700" strokeWidth="2" vectorEffect="non-scaling-stroke"/>
+          </svg>
+        )}
       </div>
     </a>
   );

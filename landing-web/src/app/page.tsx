@@ -11,7 +11,11 @@ export default function Page() {
   const [customUrl, setCustomUrl] = useState<string | null>(null);
   // Fetch persisted URL on mount
   if (typeof window !== 'undefined' && customUrl === null) {
-    fetch('/api/kam-button').then(r => r.json()).then(d => { if (d?.url) setCustomUrl(d.url); }).catch(() => {});
+    try {
+      const ls = localStorage.getItem('kam_button_url');
+      if (ls) setCustomUrl(ls);
+    } catch {}
+    fetch('/api/kam-button', { cache: 'no-store' }).then(r => r.json()).then(d => { if (d?.url) { setCustomUrl(d.url); try { localStorage.setItem('kam_button_url', d.url); } catch {}; } }).catch(() => {});
   }
   const personas = [
     { key: 'tourist', label: 'Турист', href: '/hub/tourist' },

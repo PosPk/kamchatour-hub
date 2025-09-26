@@ -57,6 +57,7 @@ export default function UploadKamButton({ onReady }: { onReady: (url: string) =>
               const j = await res.json();
               if (!res.ok) throw new Error(j?.error || 'save_failed');
               setSavedUrl(serverUrl);
+              try { if (typeof window !== 'undefined' && serverUrl) localStorage.setItem('kam_button_url', serverUrl); } catch {}
             } catch (e:any) {
               setError(e?.message || 'Ошибка сохранения');
             } finally {
