@@ -6,6 +6,7 @@ export default function UploadKamButton({ onReady }: { onReady: (url: string) =>
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [savedUrl, setSavedUrl] = useState<string | null>(null);
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -22,11 +23,7 @@ export default function UploadKamButton({ onReady }: { onReady: (url: string) =>
       const res = await fetch('/api/upload', { method: 'POST', body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || 'upload_failed');
-      try {
-        onReady(data.url);
-        // Persist selection
-        await fetch('/api/kam-button', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: data.url }) });
-      } catch {}
+      try { onReady(data.url); } catch {}
     } catch (e: any) {
       setError(e?.message || 'Ошибка загрузки');
     } finally {
@@ -46,6 +43,25 @@ export default function UploadKamButton({ onReady }: { onReady: (url: string) =>
           <img src={preview} alt="Предпросмотр" className="max-h-48 mx-auto" />
         </div>
       )}
+      {preview && !busy && (
+        <button
+          onClick={async () => {
+            try {
+              setBusy(true);
+              const res = await fetch('/api/kam-button', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: preview }) });
+              const j = await res.json();
+              if (!res.ok) throw new Error(j?.error || 'save_failed');
+              setSavedUrl(preview);
+            } catch (e:any) {
+              setError(e?.message || 'Ошибка сохранения');
+            } finally {
+              setBusy(false);
+            }
+          }}
+          className="h-10 rounded-lg bg-premium-gold text-premium-black font-semibold"
+        >Сохранить</button>
+      )}
+      {savedUrl && <div className="text-xs text-green-400">Сохранено. Будет подставляться автоматически.</div>}
     </div>
   );
 }
