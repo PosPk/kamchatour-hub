@@ -1,0 +1,13 @@
+{
+  "type": "bus",
+  "rows": [
+    { "index": 1, "seats": ["1A", "1B", "1C", "1D"], "aisle": true },
+    { "index": 2, "seats": ["2A", "2B", "2C", "2D"], "aisle": true },
+    { "index": 3, "seats": ["3A", "3B", "3C", "3D"], "aisle": true },
+    { "index": 4, "seats": ["4A", "4B", "4C", "4D"], "aisle": true },
+    { "index": 5, "seats": ["5A", "5B", "5C", "5D"], "aisle": true }
+  ],
+  "emergency": ["1D", "5A"],
+  "classes": { "priority": ["1A", "1B"], "standard": [] }
+}
+
