@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic';
 import KamchatkaButton from './components/KamchatkaButton';
 import KamchatkaGeoButton from './components/KamchatkaGeoButton';
 import KamchatkaSvgButton from './components/KamchatkaSvgButton';
-import UploadKamButton from './components/UploadKamButton';
 import { useState } from 'react';
 
 export default function Page() {
@@ -112,9 +111,6 @@ export default function Page() {
                 <KamchatkaSvgButton href="/hub/safety" />
               )}
             </div>
-          </div>
-          <div className="sm:col-span-2">
-            <UploadKamButton onReady={(url) => setCustomUrl(url)} />
           </div>
         </div>
         <div className="rounded-2xl bg-white/5 border border-white/10 p-5 grid gap-2">
