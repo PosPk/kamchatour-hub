@@ -41,10 +41,10 @@ export default function FilterSidebar({ value, onChange, onApply }: { value: Fil
       </div>
 
       <div className="grid gap-2">
-        <div className="text-sm text-white/70">Оценка по отзывам</div>
-        {[9,8,7,6].map(r => (
+        <div className="text-sm text-white/70">Рейтинг гостей</div>
+        {[4.5,4.0,3.5,3.0].map(r => (
           <label key={r} className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={v.minRating === r} onChange={()=>set({ minRating: v.minRating === r ? null : r })} /> {r===9?'Потрясающе: 9+':r===8?'Отлично: 8+':r===7?'Очень хорошо: 7+':'Хорошо: 6+'}
+            <input type="checkbox" checked={v.minRating === r} onChange={()=>set({ minRating: v.minRating === r ? null : r })} /> {r.toFixed(1)}+
           </label>
         ))}
       </div>

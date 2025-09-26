@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useMemo, useState } from 'react';
 
 export type StayItem = {
   id: string;
@@ -12,17 +13,44 @@ export type StayItem = {
   summary?: string;
 };
 
-export default function StayCard({ item }: { item: StayItem }) {
+function Stars({ n }: { n: number }) {
+  const arr = new Array(5).fill(0).map((_,i)=>i < n);
+  return (
+    <div className="flex gap-0.5" aria-label={`${n} звёзд`}>
+      {arr.map((f,i)=>(<span key={i} className={f? 'text-premium-gold':'text-white/30'}>★</span>))}
+    </div>
+  );
+}
+
+export default function StayCard({ item }: { item: StayItem & { stars?: number; images?: string[] } }) {
+  const images = useMemo(()=> item.images && item.images.length ? item.images : [item.img], [item]);
+  const [idx, setIdx] = useState(0);
+  const prev = () => setIdx(i => (i - 1 + images.length) % images.length);
+  const next = () => setIdx(i => (i + 1) % images.length);
   return (
     <article className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden hover:border-premium-gold/50 transition">
       <div className="grid grid-cols-1 sm:grid-cols-[240px_1fr]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={item.img} alt={item.title} className="w-full h-48 sm:h-44 object-cover" loading="lazy" />
+        <div className="relative w-full h-48 sm:h-44 overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={images[idx]} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
+          {images.length > 1 && (
+            <div className="absolute inset-0 flex items-center justify-between p-2">
+              <button onClick={prev} className="h-8 w-8 rounded-full bg-black/50 text-white grid place-items-center">‹</button>
+              <button onClick={next} className="h-8 w-8 rounded-full bg-black/50 text-white grid place-items-center">›</button>
+            </div>
+          )}
+          {images.length > 1 && (
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+              {images.map((_,i)=>(<span key={i} className={`h-1.5 w-1.5 rounded-full ${i===idx?'bg-premium-gold':'bg-white/50'}`} />))}
+            </div>
+          )}
+        </div>
         <div className="p-4 grid gap-2">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h3 className="font-extrabold text-lg">{item.title}</h3>
               <div className="text-white/70 text-sm">{item.location}</div>
+              {typeof (item as any).stars === 'number' && <Stars n={(item as any).stars as number} />}
             </div>
             <div className="rounded-xl bg-black/60 border border-white/10 px-3 py-2 text-center">
               <div className="text-xl font-black text-premium-gold">{item.rating.toFixed(1)}</div>

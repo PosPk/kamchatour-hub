@@ -7,6 +7,7 @@ import GuestsSelector, { type Guests } from '../../components/GuestsSelector';
 import StaySearchBar from '../../components/StaySearchBar';
 import FilterSidebar, { type Filters } from '../../components/FilterSidebar';
 import StayCard from '../../components/StayCard';
+import { HOTELS } from './hotels';
 
 type PropertyCard = {
   id: string;
@@ -18,25 +19,27 @@ type PropertyCard = {
   tags: string[];
 };
 
-const MOCK: PropertyCard[] = [
-  { id: 'kutkha', title: 'База «Кутха»', location: 'Елизовский район', rating: 4.8, priceFrom: 4200, img: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop', tags: ['баня','река','семейный'] },
-  { id: 'river-lodge', title: 'River Lodge', location: 'р. Камчатка', rating: 4.9, priceFrom: 5800, img: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1200&auto=format&fit=crop', tags: ['рыбалка','трансфер','полный пансион'] },
-  { id: 'volcano-view', title: 'Volcano View', location: 'Петропавловск‑Камчатский', rating: 4.7, priceFrom: 3500, img: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?q=80&w=1200&auto=format&fit=crop', tags: ['вид на вулканы','центр'] },
-];
+const MOCK: PropertyCard[] = HOTELS.map(h => ({ id: h.id, title: h.name, location: h.location, rating: h.rating, priceFrom: h.price, img: h.images[0], tags: h.amenities.slice(0,3) }));
 
 export default function StayHub() {
   const [role, setRole] = useState<'tourist' | 'operator'>('tourist');
   const [q, setQ] = useState('');
   const [minPrice, setMinPrice] = useState<number | ''>('');
   const [maxPrice, setMaxPrice] = useState<number | ''>('');
+  const [sort, setSort] = useState<'pop'|'price_asc'|'price_desc'|'rating'>('pop');
   const filtered = useMemo(() => {
     return MOCK.filter(p => {
       const okQ = !q || (p.title + ' ' + p.location + ' ' + p.tags.join(' ')).toLowerCase().includes(q.toLowerCase());
       const okMin = minPrice === '' || p.priceFrom >= Number(minPrice);
       const okMax = maxPrice === '' || p.priceFrom <= Number(maxPrice);
       return okQ && okMin && okMax;
+    }).sort((a,b)=>{
+      if (sort==='price_asc') return a.priceFrom - b.priceFrom;
+      if (sort==='price_desc') return b.priceFrom - a.priceFrom;
+      if (sort==='rating') return b.rating - a.rating;
+      return 0;
     });
-  }, [q, minPrice, maxPrice]);
+  }, [q, minPrice, maxPrice, sort]);
 
   const [dateOpen, setDateOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>({ start: null, end: null });
@@ -90,11 +93,11 @@ export default function StayHub() {
             {['баня','река','рыбалка','пансион','вид на вулканы','семейный','центр','трансфер'].map(t => (
               <button key={t} onClick={()=>setQ((prev)=>prev?prev+" "+t:t)} className="px-3 py-2 rounded-full bg-white/10 hover:bg-white/15 whitespace-nowrap">{t}</button>
             ))}
-            <select className="h-10 rounded-xl px-3 bg-white/10 border border-white/10">
-              <option>Сортировка: по популярности</option>
-              <option>Сортировка: цена ↑</option>
-              <option>Сортировка: цена ↓</option>
-              <option>Сортировка: рейтинг</option>
+            <select value={sort} onChange={e=>setSort(e.target.value as any)} className="h-10 rounded-xl px-3 bg-white/10 border border-white/10">
+              <option value="pop">Сортировка: по популярности</option>
+              <option value="price_asc">Сортировка: цена ↑</option>
+              <option value="price_desc">Сортировка: цена ↓</option>
+              <option value="rating">Сортировка: рейтинг</option>
             </select>
           </div>
         </div>
@@ -114,9 +117,12 @@ export default function StayHub() {
             </select>
           </div>
           <div className="grid gap-3">
-            {filtered.map(p => (
-              <StayCard key={p.id} item={{ id: p.id, title: p.title, location: p.location, rating: p.rating, priceFrom: p.priceFrom, img: p.img, reviews: 128, summary: 'Рядом с термальными источниками, удобная парковка, Wi‑Fi' }} />
-            ))}
+            {filtered.map(p => {
+              const full = HOTELS.find(h=>h.id===p.id);
+              return (
+                <StayCard key={p.id} item={{ id: p.id, title: p.title, location: p.location, rating: p.rating, priceFrom: p.priceFrom, img: p.img, reviews: full?.reviews || 0, summary: full?.description.slice(0,120)+'…', stars: full?.stars, images: full?.images }} />
+              );
+            })}
           </div>
         </div>
       </section>
