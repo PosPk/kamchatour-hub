@@ -3,6 +3,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import KamchatkaButton from './components/KamchatkaButton';
 import KamchatkaGeoButton from './components/KamchatkaGeoButton';
+import KamchatkaSvgButton from './components/KamchatkaSvgButton';
 import UploadKamButton from './components/UploadKamButton';
 import { useState } from 'react';
 
@@ -96,9 +97,9 @@ export default function Page() {
             <div className="w-[70%] sm:w-[80%]">
               {customUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <a href="/hub/safety" aria-label="Открыть карту Камчатки"><img src={customUrl} alt="Кнопка Камчатки" className="kamchatka-button mx-auto" /></a>
+                <a href="/hub/safety" target="_blank" rel="noopener noreferrer" aria-label="Открыть карту Камчатки"><img src={customUrl} alt="Кнопка Камчатки" className="kamchatka-button mx-auto" /></a>
               ) : (
-                <KamchatkaGeoButton />
+                <KamchatkaSvgButton href="/hub/safety" />
               )}
             </div>
           </div>
