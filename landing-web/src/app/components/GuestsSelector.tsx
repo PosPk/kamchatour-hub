@@ -7,6 +7,7 @@ export type Guests = { adults: number; children: number; childAges: number[]; ro
 export default function GuestsSelector({ value, onChange }: { value: Guests; onChange: (g: Guests) => void }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number; width: number } | null>(null);
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
@@ -31,7 +32,15 @@ export default function GuestsSelector({ value, onChange }: { value: Guests; onC
     <div className="relative" ref={ref}>
       <Badge />
       {open && (
-        <div className="absolute z-50 mt-2 rounded-2xl border border-white/10 bg-premium-black shadow-xl w-64 p-3 grid gap-3">
+        <div
+          className="fixed z-[9999] rounded-2xl border border-white/10 bg-premium-black shadow-xl p-3 grid gap-3"
+          style={{
+            top: (() => { const r = ref.current?.getBoundingClientRect(); return r ? r.bottom + window.scrollY + 6 : 0; })(),
+            left: (() => { const r = ref.current?.getBoundingClientRect(); return r ? r.left + window.scrollX : 0; })(),
+            minWidth: Math.max(260, (ref.current?.getBoundingClientRect()?.width || 260)),
+            position: 'fixed' as const,
+          }}
+        >
           {(() => {
             const rows: Array<{ k: 'adults' | 'children' | 'rooms'; label: string }> = [
               { k: 'adults', label: 'Взрослые' },
