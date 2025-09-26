@@ -22,7 +22,21 @@ function Stars({ n }: { n: number }) {
   );
 }
 
-export default function StayCard({ item }: { item: StayItem & { stars?: number; images?: string[] } }) {
+function AmenityIcon({ name }: { name: string }) {
+  const map: Record<string, string> = {
+    'Бесплатный Wi‑Fi': '📶',
+    'Парковка': '🅿️',
+    'Завтрак': '🥐',
+    'Термальный бассейн': '♨️',
+    'Спа‑услуги': '💆',
+    'Трансфер': '🚌',
+    'Размещение с животными': '🐾',
+  };
+  const icon = map[name] || '•';
+  return <span className="inline-flex items-center gap-1 text-xs bg-white/10 px-2 py-1 rounded-full">{icon}<span className="hidden sm:inline">{name}</span></span>;
+}
+
+export default function StayCard({ item }: { item: StayItem & { stars?: number; images?: string[]; type?: string; amenities?: string[] } }) {
   const images = useMemo(()=> item.images && item.images.length ? item.images : [item.img], [item]);
   const [idx, setIdx] = useState(0);
   const prev = () => setIdx(i => (i - 1 + images.length) % images.length);
@@ -50,7 +64,10 @@ export default function StayCard({ item }: { item: StayItem & { stars?: number; 
             <div>
               <h3 className="font-extrabold text-lg">{item.title}</h3>
               <div className="text-white/70 text-sm">{item.location}</div>
-              {typeof (item as any).stars === 'number' && <Stars n={(item as any).stars as number} />}
+              <div className="flex flex-wrap gap-2 mt-1">
+                {item.type && <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-white/10 border border-white/10">{item.type}</span>}
+                {typeof (item as any).stars === 'number' && <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-white/10 border border-white/10">{(item as any).stars}★</span>}
+              </div>
             </div>
             <div className="rounded-xl bg-black/60 border border-white/10 px-3 py-2 text-center">
               <div className="text-xl font-black text-premium-gold">{item.rating.toFixed(1)}</div>
@@ -58,11 +75,16 @@ export default function StayCard({ item }: { item: StayItem & { stars?: number; 
             </div>
           </div>
           {item.summary && <div className="text-sm text-white/80">{item.summary}</div>}
+          {!!(item.amenities && item.amenities.length) && (
+            <div className="flex flex-wrap gap-2 pt-1">
+              {(item.amenities || []).slice(0,4).map(a => <AmenityIcon key={a} name={a} />)}
+            </div>
+          )}
           <div className="flex items-center justify-between pt-2">
             <div className="text-white/85"><span className="text-2xl font-black text-premium-gold">{item.priceFrom.toLocaleString('ru-RU')}</span> ₽ / ночь</div>
             <div className="flex gap-2">
               <Link href={`/hub/stay/${item.id}`} className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 font-semibold">Подробнее</Link>
-              <Link href={`/hub/stay/${item.id}`} className="px-4 py-2 rounded-lg bg-premium-gold text-premium-black font-semibold">Забронировать</Link>
+              <Link href={`/hub/stay/${item.id}`} className="px-4 py-2 rounded-lg bg-orange-300 text-premium-black font-semibold">Забронировать</Link>
             </div>
           </div>
         </div>
