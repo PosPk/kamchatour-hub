@@ -6,13 +6,16 @@ export type Filters = {
   priceMin: number;
   priceMax: number;
   types: string[];
-  minRating: number | null;
+  minRating: number | null; // гостевой рейтинг (4.5+)
+  minStars: number | null; // звездность (>=)
   amenities: string[];
+  region: string | null; // город/район
   maxDistanceKm: number;
 };
 
-const TYPES = ['Отель','Гостевой дом','Апартаменты','Хостел','Частный дом'];
-const AMENITIES = ['Бесплатный Wi‑Fi','Парковка','Спа‑услуги','Трансфер','Термальный бассейн'];
+const TYPES = ['Отель','Гостевой дом','Апартаменты','Турбаза','Хостел','Частный дом','Вилла'];
+const AMENITIES = ['Бесплатный Wi‑Fi','Парковка','Завтрак','Термальный бассейн','Спа‑услуги','Трансфер'];
+const REGIONS = ['Петропавловск‑Камчатский','Елизово','Паратунка','Мильково','р. Камчатка'];
 
 export default function FilterSidebar({ value, onChange, onApply }: { value: Filters; onChange: (f: Filters) => void; onApply: () => void }) {
   const v = value;
@@ -50,8 +53,17 @@ export default function FilterSidebar({ value, onChange, onApply }: { value: Fil
       </div>
 
       <div className="grid gap-2">
+        <div className="text-sm text-white/70">Категория (звёзды)</div>
+        {[5,4,3,2].map(s => (
+          <label key={s} className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={v.minStars === s} onChange={()=>set({ minStars: v.minStars === s ? null : s })} /> {s}★ и выше
+          </label>
+        ))}
+      </div>
+
+      <div className="grid gap-2">
         <div className="text-sm text-white/70">Тип жилья</div>
-        {([...TYPES, 'Вилла']).map(t => (
+        {TYPES.map(t => (
           <label key={t} className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={v.types.includes(t)} onChange={()=>toggle('types', t)} /> {t}
           </label>
@@ -60,11 +72,19 @@ export default function FilterSidebar({ value, onChange, onApply }: { value: Fil
 
       <div className="grid gap-2">
         <div className="text-sm text-white/70">Удобства</div>
-        {[...AMENITIES, 'Питание включено','Размещение с животными'].map(a => (
+        {[...AMENITIES, 'Размещение с животными'].map(a => (
           <label key={a} className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={v.amenities.includes(a)} onChange={()=>toggle('amenities', a)} /> {a}
           </label>
         ))}
+      </div>
+
+      <div className="grid gap-2">
+        <div className="text-sm text-white/70">Район Камчатки</div>
+        <select value={v.region || ''} onChange={e=>set({ region: e.target.value || null })} className="h-10 rounded-lg px-3 bg-white/10 border border-white/10">
+          <option value="">Любой</option>
+          {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+        </select>
       </div>
 
       <div className="grid gap-2">
