@@ -17,7 +17,7 @@ const TYPES = ['Отель','Гостевой дом','Апартаменты','
 const AMENITIES = ['Бесплатный Wi‑Fi','Парковка','Завтрак','Термальный бассейн','Спа‑услуги','Трансфер'];
 const REGIONS = ['Петропавловск‑Камчатский','Елизово','Паратунка','Мильково','р. Камчатка'];
 
-export default function FilterSidebar({ value, onChange, onApply }: { value: Filters; onChange: (f: Filters) => void; onApply: () => void }) {
+export default function FilterSidebar({ value, onChange, onApply, onReset }: { value: Filters; onChange: (f: Filters) => void; onApply: () => void; onReset?: () => void }) {
   const v = value;
   const set = (p: Partial<Filters>) => onChange({ ...v, ...p });
   const toggle = (key: 'types'|'amenities', item: string) => {
@@ -95,7 +95,10 @@ export default function FilterSidebar({ value, onChange, onApply }: { value: Fil
         </div>
       </div>
 
-      <button onClick={onApply} className="h-11 rounded-xl bg-premium-gold text-premium-black font-bold">Применить фильтры</button>
+      <div className="grid grid-cols-2 gap-2">
+        <button onClick={()=>onReset?.()} className="h-11 rounded-xl bg-white/10">Сбросить всё</button>
+        <button onClick={onApply} className="h-11 rounded-xl bg-premium-gold text-premium-black font-bold">Применить</button>
+      </div>
     </aside>
   );
 }

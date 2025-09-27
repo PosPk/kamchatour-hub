@@ -208,7 +208,7 @@ export default function StayHub() {
       {/* Two-column layout: filters + results */}
       <section className="grid gap-4 sm:grid-cols-[280px_1fr]">
         <div className="hidden sm:block">
-          <FilterSidebar value={filters} onChange={setFilters} onApply={()=>{ /* hook to apply */ }} />
+          <FilterSidebar value={filters} onChange={setFilters} onApply={()=>{ /* hook to apply */ }} onReset={()=>{ setQ(''); setMinPrice(''); setMaxPrice(''); setFilters({ priceMin: 0, priceMax: 30000, types: [], minRating: null, minStars: null, amenities: [], region: null, maxDistanceKm: 50 }); }} />
         </div>
         <div className="grid gap-3">
           <div className="flex items-center justify-between text-sm">
@@ -261,7 +261,7 @@ export default function StayHub() {
               <div className="text-lg font-extrabold">Фильтры{activeCount>0?` (${activeCount})`:''}</div>
               <button onClick={()=>setMobileFiltersOpen(false)} className="h-8 w-8 rounded-lg bg-white/10">✕</button>
             </div>
-            <FilterSidebar value={filters} onChange={setFilters} onApply={()=>setMobileFiltersOpen(false)} />
+            <FilterSidebar value={filters} onChange={setFilters} onApply={()=>setMobileFiltersOpen(false)} onReset={()=>{ setQ(''); setMinPrice(''); setMaxPrice(''); setFilters({ priceMin: 0, priceMax: 30000, types: [], minRating: null, minStars: null, amenities: [], region: null, maxDistanceKm: 50 }); }} />
             <div className="grid grid-cols-2 gap-2 mt-2">
               <button onClick={()=>{ setFilters({ priceMin: 0, priceMax: 30000, types: [], minRating: null, minStars: null, amenities: [], region: null, maxDistanceKm: 50 }); }} className="h-11 rounded-xl bg-white/10">Сбросить</button>
               <button onClick={()=>setMobileFiltersOpen(false)} className="h-11 rounded-xl bg-premium-gold text-premium-black font-bold">Показать</button>
