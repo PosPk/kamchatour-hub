@@ -163,10 +163,16 @@ export default function StayHub() {
           <a href="/" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-sm">← На главную</a>
           <h1 className="text-2xl sm:text-3xl font-extrabold">Размещение</h1>
         </div>
-        <div className="flex gap-2 bg-white/5 border border-white/10 rounded-full p-1">
-          {(['tourist','operator'] as const).map(r => (
-            <button key={r} onClick={() => setRole(r)} className={`px-3 py-1.5 rounded-full text-sm ${role===r?'bg-premium-gold text-premium-black':'hover:bg-white/10'}`}>{r==='tourist'?'Турист':'Туроператор'}</button>
-          ))}
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-3">
+            <a href="/hub/owner/auth/signin" className="text-white/80 hover:text-white text-sm">Вход для партнёров</a>
+            <a href="/hub/owner/auth/signup" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Разместить объект</a>
+          </div>
+          <div className="flex gap-2 bg-white/5 border border-white/10 rounded-full p-1">
+            {(['tourist','operator'] as const).map(r => (
+              <button key={r} onClick={() => setRole(r)} className={`px-3 py-1.5 rounded-full text-sm ${role===r?'bg-premium-gold text-premium-black':'hover:bg-white/10'}`}>{r==='tourist'?'Турист':'Туроператор'}</button>
+            ))}
+          </div>
         </div>
       </header>
 

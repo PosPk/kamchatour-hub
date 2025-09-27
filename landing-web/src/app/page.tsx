@@ -42,13 +42,19 @@ export default function Page() {
           <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-premium-gold to-premium-ice" />
           <span className="font-display text-xl tracking-tight">Kamchatour Hub</span>
         </div>
-        <nav className="hidden sm:flex gap-6 text-sm text-white/70">
-          <Link href="/premium" className="hover:text-white">Commerce</Link>
-          <Link href="/premium2" className="hover:text-white">Adventure</Link>
-          <Link href="/partners" className="hover:text-white">Партнёры</Link>
-          <Link href="/hub/stay" className="hover:text-white">Размещение</Link>
-          <Link href="/search" className="hover:text-white">Поиск</Link>
-        </nav>
+        <div className="flex items-center gap-6">
+          <nav className="hidden sm:flex gap-6 text-sm text-white/70">
+            <Link href="/premium" className="hover:text-white">Commerce</Link>
+            <Link href="/premium2" className="hover:text-white">Adventure</Link>
+            <Link href="/partners" className="hover:text-white">Партнёры</Link>
+            <Link href="/hub/stay" className="hover:text-white">Размещение</Link>
+            <Link href="/search" className="hover:text-white">Поиск</Link>
+          </nav>
+          <div className="hidden sm:flex items-center gap-3">
+            <Link href="/hub/owner/auth/signin" className="text-white/80 hover:text-white text-sm">Вход для партнёров</Link>
+            <Link href="/hub/owner/auth/signup" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Разместить объект</Link>
+          </div>
+        </div>
       </header>
 
       {/* Hero */}
