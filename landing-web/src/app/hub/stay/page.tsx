@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import DateRangePicker, { type DateRange } from '../../components/DateRangePicker';
 import GuestsSelector, { type Guests } from '../../components/GuestsSelector';
@@ -29,6 +29,76 @@ export default function StayHub() {
   const [sort, setSort] = useState<'pop'|'price_asc'|'price_desc'|'rating'>('pop');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<Filters>({ priceMin: 0, priceMax: 30000, types: [], minRating: null, minStars: null, amenities: [], region: null, maxDistanceKm: 50 });
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Active filters counter (for mobile badge)
+  const activeCount = useMemo(() => {
+    let c = 0;
+    if (filters.priceMin > 0 || filters.priceMax < 30000) c++;
+    if (filters.region) c++;
+    c += filters.types.length;
+    if (filters.minStars) c++;
+    if (filters.minRating) c++;
+    c += filters.amenities.length;
+    return c;
+  }, [filters]);
+
+  // Parse URL params → state
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const qp = new URLSearchParams(window.location.search);
+    const qParam = qp.get('q') || '';
+    const pmin = qp.get('price_min');
+    const pmax = qp.get('price_max');
+    const region = qp.get('region') || qp.get('district');
+    const types = qp.getAll('type');
+    const rating = qp.get('rating');
+    const stars = qp.get('stars');
+    const amenities = qp.getAll('amenity');
+    const srt = (qp.get('sort') as any) || 'pop';
+    setQ(qParam);
+    setMinPrice(pmin ? Number(pmin) : '');
+    setMaxPrice(pmax ? Number(pmax) : '');
+    setSort(['pop','price_asc','price_desc','rating'].includes(srt) ? srt : 'pop');
+    setFilters(f => ({
+      ...f,
+      region: region || null,
+      types: types.length ? types : [],
+      minRating: rating ? Number(rating) : null,
+      minStars: stars ? Number(stars) : null,
+      amenities: amenities.length ? amenities : [],
+      priceMin: pmin ? Number(pmin) : 0,
+      priceMax: pmax ? Number(pmax) : 30000,
+    }));
+  }, []);
+
+  // State → URL (debounced)
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    setLoading(true);
+    debounceRef.current = setTimeout(() => {
+      const params = new URLSearchParams();
+      if (q) params.set('q', q);
+      if (minPrice !== '' && Number(minPrice) > 0) params.set('price_min', String(minPrice));
+      if (maxPrice !== '' && Number(maxPrice) < 1000000) params.set('price_max', String(maxPrice));
+      if (filters.priceMin > 0) params.set('price_min', String(filters.priceMin));
+      if (filters.priceMax < 30000) params.set('price_max', String(filters.priceMax));
+      if (filters.region) params.set('region', String(filters.region));
+      filters.types.forEach(t => params.append('type', t));
+      if (filters.minRating) params.set('rating', String(filters.minRating));
+      if (filters.minStars) params.set('stars', String(filters.minStars));
+      filters.amenities.forEach(a => params.append('amenity', a));
+      if (sort && sort !== 'pop') params.set('sort', sort);
+      const url = params.toString() ? `/hub/stay?${params.toString()}` : '/hub/stay';
+      if (typeof window !== 'undefined') {
+        const newUrl = `${window.location.origin}${url}`;
+        window.history.pushState({}, '', newUrl);
+      }
+      setLoading(false);
+    }, 300);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [q, minPrice, maxPrice, filters, sort]);
 
   const filtered = useMemo(() => {
     const list = HOTELS.filter(h => {
@@ -78,6 +148,7 @@ export default function StayHub() {
   const [guests, setGuests] = useState<Guests>({ adults: 2, children: 0, childAges: [], rooms: 1 });
 
   return (
+    <Suspense fallback={<main className="min-h-screen bg-premium-black text-white px-6 py-8 grid place-items-center"><div className="text-white/70">Загрузка…</div></main>}>
     <main className="min-h-screen bg-premium-black text-white px-6 py-8 grid gap-6">
       <header className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3">
@@ -151,8 +222,16 @@ export default function StayHub() {
           </div>
           {/* Mobile filters trigger */}
           <div className="sm:hidden">
-            <button onClick={()=>setMobileFiltersOpen(true)} className="w-full h-11 rounded-xl bg-premium-gold text-premium-black font-bold">Фильтры</button>
+            <button onClick={()=>setMobileFiltersOpen(true)} className="w-full h-11 rounded-xl bg-premium-gold text-premium-black font-bold">Фильтры{activeCount>0?` (${activeCount})`:''}</button>
           </div>
+          {loading && (
+            <div className="grid gap-3 animate-pulse">
+              {Array.from({length:4}).map((_,i)=> (
+                <div key={i} className="h-40 rounded-2xl bg-white/5 border border-white/10" />
+              ))}
+            </div>
+          )}
+          {!loading && (
           <div className="grid gap-3">
             {filtered.map(p => {
               const full = HOTELS.find(h=>h.id===p.id);
@@ -160,7 +239,16 @@ export default function StayHub() {
                 <StayCard key={p.id} item={{ id: p.id, title: p.title, location: p.location, rating: p.rating, priceFrom: p.priceFrom, img: p.img, reviews: full?.reviews || 0, summary: full?.description.slice(0,120)+'…', stars: full?.stars, images: full?.images, type: full?.type, amenities: full?.amenities }} />
               );
             })}
+            {filtered.length===0 && (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-3">🏔️</div>
+                <div className="text-xl font-extrabold mb-1">Подходящих вариантов не найдено</div>
+                <div className="text-white/70 mb-3">Измените параметры или сбросьте фильтры</div>
+                <button onClick={()=>{ setQ(''); setMinPrice(''); setMaxPrice(''); setFilters({ priceMin: 0, priceMax: 30000, types: [], minRating: null, minStars: null, amenities: [], region: null, maxDistanceKm: 50 }); }} className="h-11 px-5 rounded-xl bg-white/10 hover:bg-white/15">Сбросить фильтры</button>
+              </div>
+            )}
           </div>
+          )}
         </div>
       </section>
 
@@ -168,9 +256,9 @@ export default function StayHub() {
       {mobileFiltersOpen && (
         <div className="fixed inset-0 z-50 sm:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={()=>setMobileFiltersOpen(false)} />
-          <div className="absolute right-0 top-0 h-full w-[88%] max-w-[360px] bg-premium-black border-l border-white/10 p-4 overflow-y-auto">
+          <div className="absolute right-0 top-0 h-full w-[88%] max-w-[360px] bg-premium-black border-l border-white/10 p-4 overflow-y-auto transition-transform duration-300 translate-x-0">
             <div className="flex items-center justify-between mb-3">
-              <div className="text-lg font-extrabold">Фильтры</div>
+              <div className="text-lg font-extrabold">Фильтры{activeCount>0?` (${activeCount})`:''}</div>
               <button onClick={()=>setMobileFiltersOpen(false)} className="h-8 w-8 rounded-lg bg-white/10">✕</button>
             </div>
             <FilterSidebar value={filters} onChange={setFilters} onApply={()=>setMobileFiltersOpen(false)} />
@@ -183,6 +271,7 @@ export default function StayHub() {
       )}
 
     </main>
+    </Suspense>
   );
 }
 
