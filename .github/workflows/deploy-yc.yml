@@ -1,0 +1,60 @@
+name: Deploy to Yandex Object Storage
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build web
+        run: npm run build
+
+      - name: Configure AWS CLI for Yandex Cloud
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.YC_AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.YC_AWS_SECRET }}
+          aws-region: ${{ secrets.YC_REGION }}
+
+      - name: Ensure website hosting is configured
+        run: |
+          aws s3 website s3://${{ secrets.YC_BUCKET }} \
+            --index-document index.html \
+            --error-document error.html \
+            --endpoint-url https://storage.yandexcloud.net
+
+      - name: Sync HTML with short cache
+        run: |
+          aws s3 sync public/ s3://${{ secrets.YC_BUCKET }}/ \
+            --endpoint-url https://storage.yandexcloud.net \
+            --delete \
+            --acl public-read \
+            --cache-control "public,max-age=300" \
+            --content-type "text/html; charset=utf-8" --exclude "*" --include "*.html"
+
+      - name: Sync assets with long cache
+        run: |
+          aws s3 sync public/ s3://${{ secrets.YC_BUCKET }}/ \
+            --endpoint-url https://storage.yandexcloud.net \
+            --delete \
+            --acl public-read \
+            --cache-control "public,max-age=31536000,immutable" \
+            --exclude "*.html"
+
+      - name: Output URL
+        run: echo "https://${{ secrets.YC_BUCKET }}.website.yandexcloud.net"

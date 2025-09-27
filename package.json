@@ -6,16 +6,39 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build": "expo export -p web && rm -rf public && mv dist public && cp -f static/robots.txt public/robots.txt && cp -f public/index.html public/error.html",
+    "lint": "eslint . --ext .js,.jsx",
+    "lint:fix": "eslint . --ext .js,.jsx --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "test": "jest",
+    "doctor": "expo-doctor",
+    "clean": "rm -rf dist public"
   },
   "dependencies": {
-    "expo": "~53.0.20",
+    "@expo/metro-runtime": "~5.0.4",
+    "expo": "53.0.22",
+    "expo-blur": "~14.1.5",
+    "expo-linear-gradient": "~14.1.5",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
-    "react-native": "0.79.5"
+    "react-dom": "19.0.0",
+    "react-native": "0.79.5",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-web": "^0.20.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-native": "^5.0.0",
+    "prettier": "^3.6.2"
+  },
+  "engines": {
+    "node": ">=18 <21",
+    "npm": ">=9"
   },
   "private": true
 }

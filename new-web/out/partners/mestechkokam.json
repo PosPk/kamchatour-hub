@@ -1,0 +1,13 @@
+[
+  {
+    "id": "mkam-001",
+    "title": "Местечко Кам — база и туры",
+    "images": [
+      "https://via.placeholder.com/800x500?text=MestechkoKam"
+    ],
+    "activity": "база+туры",
+    "region": "Елизово / Камчатка",
+    "price_from": 0,
+    "duration_days": 1
+  }
+]

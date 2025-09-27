@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { @apply m-0 p-0 bg-gray-50 text-slate-900; }
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Utilities */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Adventure gradient tokens */
+.gradient-aurora { background: radial-gradient(120% 60% at 10% 10%, rgba(135,206,235,0.25) 0%, rgba(15,26,47,0) 60%), radial-gradient(100% 60% at 90% 0%, rgba(255,107,53,0.22) 0%, rgba(15,26,47,0) 55%); }
+.gradient-neon { background: linear-gradient(135deg, #FF6B35 0%, #FFD700 100%); }
+
+/* Commerce overlay */
+.gradient-gold-aurora { background: radial-gradient(120% 60% at 0% 0%, rgba(255,215,0,0.18) 0%, rgba(0,0,0,0) 60%), radial-gradient(100% 60% at 100% 0%, rgba(135,206,235,0.15) 0%, rgba(0,0,0,0) 55%); }
+.gold-shine { background: linear-gradient(90deg, rgba(255,215,0,0) 0%, rgba(255,215,0,0.5) 50%, rgba(255,215,0,0) 100%); background-size: 200% 100%; }
+
+/* Premium card */
+.premium-card { backdrop-filter: blur(20px); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); }
+
+/* Volcano gradient */
+.volcano-gradient { background: linear-gradient(45deg, #e25822, #22a2e2, #1a1a1a); }
+
+/* Gold gradient text */
+.text-gold-gradient { background: linear-gradient(90deg, #FFD700 0%, #FFB300 50%, #FF6B35 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* Perspective helper */
+.perspective-1000 { perspective: 1000px; transform-style: preserve-3d; }
+
+/* Gold text + glow */
+.text-gold { color: #FFD700; }
+.gold-glow { text-shadow: 0 0 8px rgba(255,215,0,0.35), 0 0 16px rgba(255,215,0,0.2), 0 0 24px rgba(255,215,0,0.1); }
+
+/* Map button glow */
+.map-button { filter: drop-shadow(0 0 6px rgba(255,215,0,0.35)); transition: transform .25s ease, filter .25s ease; }
+.group:hover .map-button { filter: drop-shadow(0 0 14px rgba(255,215,0,0.6)) drop-shadow(0 0 24px rgba(255,215,0,0.35)); }
+
+/* Kamchatka button inline SVG styles */
+.kamchatka-button { filter: drop-shadow(0 0 10px rgba(255,215,0,0.35)) drop-shadow(0 0 22px rgba(255,215,0,0.25)); transition: filter .3s ease; }
+.kamchatka-button:hover { filter: drop-shadow(0 0 18px gold) drop-shadow(0 0 36px rgba(255,215,0,0.5)); }
+.kamchatka-button:active { filter: drop-shadow(0 0 26px gold) drop-shadow(0 0 52px rgba(255,215,0,0.8)); }
+.kamchatka-path { fill: #000000; stroke: #FFD700; stroke-width: 2; vector-effect: non-scaling-stroke; paint-order: stroke; transition: stroke-width .2s ease; }
+

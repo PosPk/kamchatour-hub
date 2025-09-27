@@ -1,0 +1,25 @@
+[
+  {
+    "id": "kr-001",
+    "title": "Рыбалка на р. Камчатка — 1 день",
+    "images": [
+      "https://downloader.disk.yandex.ru/preview/53ef8b63a44d0e7e348975ad27060da06ac53f6e1b88dbdb0cee0bdbf6206f2c/68d1035b/YscvPo3Y7VSJbuV4OssTCurVyyFCLPDu1hJkcB5cyEJo_FydnUbrlMlIrGCvF-0ViVJLWzOBBnCCXqNoE4ibGw%3D%3D?uid=0&filename=20250823_155659.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=0&tknv=v3&size=L&crop=0"
+    ],
+    "activity": "рыбалка",
+    "region": "р. Камчатка",
+    "price_from": 12000,
+    "duration_days": 1
+  },
+  {
+    "id": "kr-002",
+    "title": "Рыбалка на р. Камчатка — 2 дня с проживанием",
+    "images": [
+      "https://downloader.disk.yandex.ru/preview/b44cb8f5c45fb0e51902e5064d2ae7a84e6584c1f9a6e76dcf2d945c4ae207c0/68d1035b/5NgYfi0PstCAhG4MZKnfezNXwSJgePV-8nHItFco16MW9puTu2kjrZ5sXSmm2eZa1T_idHiObtHqmKyX9mHMAA%3D%3D?uid=0&filename=20250823_155527.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=0&tknv=v3&size=L&crop=0"
+    ],
+    "activity": "рыбалка",
+    "region": "р. Камчатка",
+    "price_from": 29000,
+    "duration_days": 2
+  }
+]
+

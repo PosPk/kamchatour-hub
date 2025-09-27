@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "new-web/package.json", "use": "@vercel/static-build", "config": { "distDir": "out" } },
+    { "src": "api/**/*.js", "use": "@vercel/node" }
+  ],
+  "installCommand": "cd new-web && npm install --no-audit --no-fund",
+  "buildCommand": "cd new-web && npm run build",
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "handle": "filesystem" }
+  ]
+}

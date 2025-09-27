@@ -1,0 +1,69 @@
+[
+  {
+    "id": "iam-001",
+    "title": "Вулканы и океан: стартовый маршрут",
+    "images": [
+      "https://via.placeholder.com/800x500?text=Vulcano+and+Ocean"
+    ],
+    "activity": "вулканы",
+    "region": "Петропавловск-Камчатский",
+    "price_from": 45000,
+    "duration_days": 4
+  },
+  {
+    "id": "iam-002",
+    "title": "Медведи и нерка: фототур",
+    "images": [
+      "https://via.placeholder.com/800x500?text=Bears+Photo+Tour"
+    ],
+    "activity": "фотоохота",
+    "region": "Кроноцкий заповедник",
+    "price_from": 69000,
+    "duration_days": 3
+  },
+  {
+    "id": "iam-003",
+    "title": "Вертолёт к Долине Гейзеров",
+    "images": [
+      "https://via.placeholder.com/800x500?text=Valley+of+Geysers"
+    ],
+    "activity": "вертолёт",
+    "region": "Долина гейзеров",
+    "price_from": 125000,
+    "duration_days": 1
+  },
+  {
+    "id": "iam-004",
+    "title": "Треккинг: Толбачик и лавовые поля",
+    "images": [
+      "https://via.placeholder.com/800x500?text=Tolbachik+Trekking"
+    ],
+    "activity": "треккинг",
+    "region": "Северный перевал",
+    "price_from": 58000,
+    "duration_days": 5
+  },
+  {
+    "id": "iam-005",
+    "title": "Сёрф Камчатка: Халактырский пляж",
+    "images": [
+      "https://via.placeholder.com/800x500?text=Khalaktyrsky+Surf"
+    ],
+    "activity": "сёрф",
+    "region": "Халактырский пляж",
+    "price_from": 32000,
+    "duration_days": 2
+  },
+  {
+    "id": "iam-006",
+    "title": "Снегоходы: Вачкажец",
+    "images": [
+      "https://via.placeholder.com/800x500?text=Snowmobile+Vachkazhets"
+    ],
+    "activity": "снегоходы",
+    "region": "Вачкажец",
+    "price_from": 39000,
+    "duration_days": 2
+  }
+]
+

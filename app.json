@@ -32,7 +32,6 @@
       }
     },
     "owner": "pos-servis",
-    "repository": "https://github.com/PosPk/kamchatour-hub",
     "updates": {
       "url": "https://u.expo.dev/trey-kamchatka-app"
     }
