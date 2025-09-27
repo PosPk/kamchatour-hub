@@ -213,17 +213,19 @@ export default function StayHub() {
         <div className="grid gap-3">
           <div className="flex items-center justify-between text-sm">
             <div className="text-white/70">Найдено вариантов: {filtered.length}</div>
-            <select className="h-10 rounded-xl px-3 bg-white/10 border border-white/10">
-              <option>Рекомендуемые</option>
-              <option>Цена: низкая → высокая</option>
-              <option>Цена: высокая → низкая</option>
-              <option>Рейтинг</option>
+            <select value={sort} onChange={e=>setSort(e.target.value as any)} className="h-10 rounded-xl px-3 bg-white/10 border border-white/10">
+              <option value="pop">Рекомендуемые</option>
+              <option value="price_asc">Цена: низкая → высокая</option>
+              <option value="price_desc">Цена: высокая → низкая</option>
+              <option value="rating">Рейтинг</option>
             </select>
           </div>
           {/* Mobile filters trigger */}
           <div className="sm:hidden">
             <button onClick={()=>setMobileFiltersOpen(true)} className="w-full h-11 rounded-xl bg-premium-gold text-premium-black font-bold">Фильтры{activeCount>0?` (${activeCount})`:''}</button>
           </div>
+          {/* Floating mobile FAB */}
+          <button onClick={()=>setMobileFiltersOpen(true)} className="sm:hidden fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full bg-premium-gold text-premium-black font-black shadow-lg">{activeCount>0?activeCount:'≡'}</button>
           {loading && (
             <div className="grid gap-3 animate-pulse">
               {Array.from({length:4}).map((_,i)=> (
