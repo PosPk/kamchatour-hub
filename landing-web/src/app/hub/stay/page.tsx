@@ -73,9 +73,17 @@ export default function StayHub() {
     }));
   }, []);
 
-  // State → URL (debounced)
+  // State → URL (debounced with adaptive delays)
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    // detect change type for delay tuning
+    const delay = (() => {
+      // prioritize price slider changes
+      if (minPrice !== '' || maxPrice !== '' || filters.priceMin !== 0 || filters.priceMax !== 30000) return 150;
+      // checkboxes/quick toggles
+      if (filters.types.length || filters.amenities.length || filters.region || filters.minRating || filters.minStars) return 50;
+      return 300;
+    })();
     setLoading(true);
     debounceRef.current = setTimeout(() => {
       const params = new URLSearchParams();
@@ -96,7 +104,7 @@ export default function StayHub() {
         window.history.pushState({}, '', newUrl);
       }
       setLoading(false);
-    }, 300);
+    }, delay);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [q, minPrice, maxPrice, filters, sort]);
 
@@ -225,7 +233,7 @@ export default function StayHub() {
             <button onClick={()=>setMobileFiltersOpen(true)} className="w-full h-11 rounded-xl bg-premium-gold text-premium-black font-bold">Фильтры{activeCount>0?` (${activeCount})`:''}</button>
           </div>
           {/* Floating mobile FAB */}
-          <button onClick={()=>setMobileFiltersOpen(true)} className="sm:hidden fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full bg-premium-gold text-premium-black font-black shadow-lg">{activeCount>0?activeCount:'≡'}</button>
+          <button aria-label="Открыть фильтры" onClick={()=>setMobileFiltersOpen(true)} className="sm:hidden fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-premium-gold text-premium-black font-black shadow-lg">{activeCount>0?activeCount:'≡'}</button>
           {loading && (
             <div className="grid gap-3 animate-pulse">
               {Array.from({length:4}).map((_,i)=> (
@@ -258,10 +266,10 @@ export default function StayHub() {
       {mobileFiltersOpen && (
         <div className="fixed inset-0 z-50 sm:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={()=>setMobileFiltersOpen(false)} />
-          <div className="absolute right-0 top-0 h-full w-[88%] max-w-[360px] bg-premium-black border-l border-white/10 p-4 overflow-y-auto transition-transform duration-300 translate-x-0">
+          <div className="absolute right-0 top-0 h-full w-[88%] max-w-[360px] bg-premium-black border-l border-white/10 p-4 overflow-y-auto transition-transform duration-300 translate-x-0" role="dialog" aria-label="Панель фильтров">
             <div className="flex items-center justify-between mb-3">
               <div className="text-lg font-extrabold">Фильтры{activeCount>0?` (${activeCount})`:''}</div>
-              <button onClick={()=>setMobileFiltersOpen(false)} className="h-8 w-8 rounded-lg bg-white/10">✕</button>
+              <button aria-label="Закрыть фильтры" onClick={()=>setMobileFiltersOpen(false)} className="h-8 w-8 rounded-lg bg-white/10">✕</button>
             </div>
             <FilterSidebar value={filters} onChange={setFilters} onApply={()=>setMobileFiltersOpen(false)} onReset={()=>{ setQ(''); setMinPrice(''); setMaxPrice(''); setFilters({ priceMin: 0, priceMax: 30000, types: [], minRating: null, minStars: null, amenities: [], region: null, maxDistanceKm: 50 }); }} />
             <div className="grid grid-cols-2 gap-2 mt-2">
