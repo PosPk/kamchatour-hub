@@ -4,8 +4,8 @@
   "/api/ai/groq/route": "app/api/ai/groq/route.js",
   "/api/kam-button/route": "app/api/kam-button/route.js",
   "/api/upload/route": "app/api/upload/route.js",
-  "/hub/cars/page": "app/hub/cars/page.js",
   "/hub/gear/page": "app/hub/gear/page.js",
+  "/hub/cars/page": "app/hub/cars/page.js",
   "/hub/guide/page": "app/hub/guide/page.js",
   "/hub/operator/page": "app/hub/operator/page.js",
   "/hub/safety/page": "app/hub/safety/page.js",
@@ -15,10 +15,15 @@
   "/hub/tourist/page": "app/hub/tourist/page.js",
   "/hub/transfer/page": "app/hub/transfer/page.js",
   "/page": "app/page.js",
-  "/premium/page": "app/premium/page.js",
   "/premium2/page": "app/premium2/page.js",
   "/v1/page": "app/v1/page.js",
+  "/premium/page": "app/premium/page.js",
   "/v2/page": "app/v2/page.js",
   "/v3/page": "app/v3/page.js",
-  "/v4/page": "app/v4/page.js"
+  "/v4/page": "app/v4/page.js",
+  "/hub/owner/properties/page": "app/hub/owner/properties/page.js",
+  "/hub/owner/dashboard/page": "app/hub/owner/dashboard/page.js",
+  "/hub/owner/properties/add/page": "app/hub/owner/properties/add/page.js",
+  "/hub/owner/auth/signup/page": "app/hub/owner/auth/signup/page.js",
+  "/hub/owner/auth/signin/page": "app/hub/owner/auth/signin/page.js"
 }
